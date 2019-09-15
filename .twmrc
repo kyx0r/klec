@@ -2,7 +2,6 @@
 NoGrabServer
 RestartPreviousState
 DecorateTransients
-OpaqueMove
 TitleFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
 ResizeFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
 MenuFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
@@ -56,6 +55,14 @@ Button1 = : iconmgr : f.iconify
 Button2 = : iconmgr : f.iconify
 
 "Tab" = m     : all : f.focus
+"b" = m     : all : f.iconify
+
+ShowIconManager
+IconManagerGeometry "320x200+0+0" 3
+"Left" = m : all : f.lefticonmgr
+"Down" = m : all : f.downiconmgr
+"Up" = m : all : f.upiconmgr
+"Right" = m : all : f.righticonmgr
 
 #
 # And a menus with the usual things
@@ -74,7 +81,7 @@ menu "defops"
 "Show Iconmgr"	f.showiconmgr
 "Hide Iconmgr"	f.hideiconmgr
 ""		f.nop
-"Xterm"		f.exec "exec xterm &"
+"Xterm"		f.exec "exec xterm -ls -xrm 'XTerm*selectToClipboard: true' &"
 "chromium"	f.exec "exec chromium &"
 "vbox" 		f.exec "exec virtualbox &"
 ""		f.nop
