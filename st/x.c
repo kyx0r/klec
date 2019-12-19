@@ -803,6 +803,23 @@ xloadcols(void)
 	loaded = 1;
 }
 
+void
+setopague(const Arg* a)
+{
+  static char on = 0;
+  if(on)
+    {
+      alpha = 0.0f;
+      on = 0;
+    }
+  else
+    {
+      alpha = 1.0f;
+      on = 1;
+    }
+  xloadcols();      
+}
+
 int
 xsetcolorname(int x, const char *name)
 {
