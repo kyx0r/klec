@@ -31,6 +31,8 @@ void xfinishdraw(void);
 void xloadcols(void);
 int xsetcolorname(int, const char *);
 void setopague(const Arg* a);
+void incalpha(const Arg* a);
+void decalpha(const Arg* a);
 void xsettitle(char *);
 int xsetcursor(int);
 void xsetmode(int, unsigned int);

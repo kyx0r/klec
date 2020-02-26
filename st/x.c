@@ -806,18 +806,42 @@ xloadcols(void)
 void
 setopague(const Arg* a)
 {
-  static char on = 0;
-  if(on)
-    {
-      alpha = 0.0f;
-      on = 0;
-    }
-  else
-    {
-      alpha = 1.0f;
-      on = 1;
-    }
-  xloadcols();      
+	static char on = 0;
+	if(on)
+	{
+		alpha = 0.0f;
+		on = 0;
+	}
+	else
+	{
+		alpha = 1.0f;
+		on = 1;
+	}
+	xloadcols();      
+	redraw();
+}
+void
+incalpha(const Arg* a)
+{
+	if(alpha >= 1.0f)
+	{
+		return;
+	}
+	alpha += 0.01f;
+	xloadcols();      
+	redraw();
+}
+
+void
+decalpha(const Arg* a)
+{
+	if(alpha <= 0.0f)
+	{
+		return;
+	}
+	alpha -= 0.01f;
+	xloadcols();      
+	redraw();
 }
 
 int
