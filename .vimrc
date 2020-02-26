@@ -3,6 +3,9 @@
 syntax on
 set encoding=utf-8
 set number
+set backupdir-=.
+set backupdir^=/tmp
+
 let g:ycm_global_ycm_extra_conf = '~/VEther/.ycm_extra_conf.py'
 let g:ycm_enable_diagnostic_signs = 0
 let g:ycm_enable_diagnostic_highlighting = 0
@@ -43,3 +46,4 @@ cnoremap <C-h> <Left>
 cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 cnoremap <C-l> <Right>
+colorscheme 256_noir
