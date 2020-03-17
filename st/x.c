@@ -1921,6 +1921,14 @@ kpress(XEvent *ev)
 		return;
 
 	len = XmbLookupString(xw.xic, e, buf, sizeof buf, &ksym, &status);
+	if ( IS_SET(MODE_KBDSELECT) )
+	{
+		if ( match(XK_NO_MOD, e->state) ||
+				(XK_Shift_L | XK_Shift_R) & e->state )
+			win.mode ^= trt_kbdselect(ksym, buf, len);
+		return;
+	}
+
 	/* 1. shortcuts */
 	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
 		if (ksym == bp->keysym && match(bp->mod, e->state)) {
@@ -2142,6 +2150,14 @@ config_init(void)
 	db = XrmGetStringDatabase(resm);
 	for (p = resources; p < resources + LEN(resources); p++)
 		resource_load(db, p->name, p->type, p->dst);
+}
+
+void toggle_winmode(int flag) {
+        win.mode ^= flag;
+}
+
+void keyboard_select(const Arg *dummy) {
+    win.mode ^= trt_kbdselect(-1, NULL, 0);
 }
 
 void
