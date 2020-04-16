@@ -1,4 +1,5 @@
 
+RandomPlacement          # determine window placement automatically
 NoGrabServer
 RestartPreviousState
 DecorateTransients
@@ -26,6 +27,27 @@ Color
     IconBorderColor "gray85"
     IconManagerBackground "rgb:2/a/9"
     IconManagerForeground "gray85"
+}
+
+Cursors
+{
+    Frame     "left_ptr"
+    Title     "left_ptr"
+    Icon      "left_ptr"
+    IconMgr   "left_ptr"
+    Move      "fleur"
+    Resize    "fleur"
+    Menu      "hand1"
+    Button    "hand2"
+    Wait      "clock"
+    Select    "dot"
+    Destroy   "pirate"
+}
+
+WindowRing 
+{
+	"st" 
+	"firefox"
 }
 
 #
@@ -56,13 +78,22 @@ Button2 = : iconmgr : f.iconify
 
 "Tab" = m     : all : f.focus
 "b" = m     : all : f.iconify
+"n" = m     : all : f.fullzoom
+"m" = m     : window : f.iconify
+"x" = m      : all : f.warpring "next"
+Button1 = s : all : f.menu "defops"
+
+Function "abl" { f.lefticonmgr f.showiconmgr}
+Function "abd" { f.downiconmgr f.showiconmgr}
+Function "abu" { f.upiconmgr  f.showiconmgr}
+Function "abr" { f.righticonmgr f.showiconmgr}
 
 ShowIconManager
 IconManagerGeometry "320x200+0+0" 3
-"Left" = m : all : f.lefticonmgr
-"Down" = m : all : f.downiconmgr
-"Up" = m : all : f.upiconmgr
-"Right" = m : all : f.righticonmgr
+"h" = m : all : f.function "abl"
+"j" = m : all : f.function "abd"
+"k" = m : all : f.function "abu"
+"l" = m : all : f.function "abr"
 
 #
 # And a menus with the usual things
@@ -75,6 +106,11 @@ menu "defops"
 "Move"		f.move
 "Raise"		f.raise
 "Lower"		f.lower
+"Swap Screen"   f.warptoscreen "next"
+"Zoom"          f.zoom
+"Full Zoom"     f.fullzoom
+"Identify"      f.identify
+"Force Move"    f.forcemove
 ""		f.nop
 "Focus"		f.focus
 "Unfocus"	f.unfocus
@@ -82,8 +118,10 @@ menu "defops"
 "Hide Iconmgr"	f.hideiconmgr
 ""		f.nop
 "Xterm"		f.exec "exec xterm -ls -xrm 'XTerm*selectToClipboard: true' &"
+"XtermB"	f.exec "exec xterm -fa monaco -fs 13 -bg black -fg green -xrm 'XTerm*selectToClipboard: true' &"
 "chromium"	f.exec "exec chromium &"
 "vbox" 		f.exec "exec virtualbox &"
+"emacs"         f.exec "exec emacs ~/ &"
 ""		f.nop
 "Kill"		f.destroy
 "Delete"	f.delete
@@ -91,3 +129,4 @@ menu "defops"
 "Restart"	f.restart
 "Exit"		f.quit
 }
+
