@@ -40,7 +40,7 @@ Cursors
     Menu      "hand1"
     Button    "hand2"
     Wait      "clock"
-    Select    "dot"
+    Select    "left_ptr"
     Destroy   "pirate"
 }
 
@@ -48,6 +48,8 @@ WindowRing
 {
 	"st" 
 	"firefox"
+	"chromium"
+	"gimp"
 }
 
 #
@@ -76,12 +78,17 @@ Button2 = : icon : f.iconify
 Button1 = : iconmgr : f.iconify
 Button2 = : iconmgr : f.iconify
 
+Function "hide-next" { f.warpring "next" f.iconify }
+
 "Tab" = m     : all : f.focus
 "b" = m     : all : f.iconify
 "n" = m     : all : f.fullzoom
-"m" = m     : window : f.iconify
+"m" = m     : window : f.function "hide-next"
 "x" = m      : all : f.warpring "next"
-Button1 = s : all : f.menu "defops"
+"z" = m : all : f.delete
+"t" = m : all : f.exec "exec st &"
+"d" = m : all : f.exec "exec dmenu_run -nf '#BBBBBB' -nb '#000000' -sb '#292929' -sf '#EEEEEE' -fn 'monospace-10' -p 'Y'"
+#Button1 = s : all : f.menu "defops"
 
 Function "abl" { f.lefticonmgr f.showiconmgr}
 Function "abd" { f.downiconmgr f.showiconmgr}
@@ -119,9 +126,6 @@ menu "defops"
 ""		f.nop
 "Xterm"		f.exec "exec xterm -ls -xrm 'XTerm*selectToClipboard: true' &"
 "XtermB"	f.exec "exec xterm -fa monaco -fs 13 -bg black -fg green -xrm 'XTerm*selectToClipboard: true' &"
-"chromium"	f.exec "exec chromium &"
-"vbox" 		f.exec "exec virtualbox &"
-"emacs"         f.exec "exec emacs ~/ &"
 ""		f.nop
 "Kill"		f.destroy
 "Delete"	f.delete
