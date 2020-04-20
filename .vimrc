@@ -46,4 +46,4 @@ cnoremap <C-h> <Left>
 cnoremap <C-j> <Down>
 cnoremap <C-k> <Up>
 cnoremap <C-l> <Right>
-colorscheme 256_noir
+"colorscheme 256_noir
