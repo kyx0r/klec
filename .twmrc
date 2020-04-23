@@ -2,6 +2,10 @@
 RandomPlacement          # determine window placement automatically
 NoGrabServer
 RestartPreviousState
+NoDefaults
+OpaqueMove
+BorderWidth 0
+ClientBorderWidth 0
 
 Color
 {
@@ -55,6 +59,15 @@ WindowRing
 	"TinyEngine"
 }
 
+NoTitle
+{
+	"st" 
+	"firefox"
+	"chromium"
+	"gimp"
+	"TinyEngine"
+}
+
 #
 # Define some useful functions for motion-based actions.
 #
@@ -93,6 +106,9 @@ Function "hide-next" { f.warpring "next" f.iconify }
 "n" = m     : all : f.fullzoom
 "m" = m     : all : f.function "hide-next"
 "x" = m      : all : f.warpring "next"
+"g" = m      : all : f.forcemove
+"1" = m      : all : f.rightzoom
+"2" = m      : all : f.leftzoom
 "c" = m      : all : f.restart
 "z" = m : all : f.delete
 "t" = m : all : f.exec "exec st &"
