@@ -5,6 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+set -o vi
+
 feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz
 export PATH=/home/ether/temp/st:$PATH
 

@@ -2,13 +2,6 @@
 RandomPlacement          # determine window placement automatically
 NoGrabServer
 RestartPreviousState
-DecorateTransients
-TitleFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
-ResizeFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
-MenuFont "-adobe-helvetica-bold-r-normal--*-120-*-*-*-*-*-*"
-IconFont "-adobe-helvetica-bold-r-normal--*-100-*-*-*-*-*-*"
-IconManagerFont "-adobe-helvetica-bold-r-normal--*-100-*-*-*"
-#ClientBorderWidth
 
 Color
 {
@@ -39,9 +32,18 @@ Cursors
     Resize    "fleur"
     Menu      "hand1"
     Button    "hand2"
-    Wait      "clock"
-    Select    "left_ptr"
+    Wait      "left_ptr"
+    Select    "dot"
     Destroy   "pirate"
+}
+
+IconifyByUnmapping
+{
+	"st" 
+	"firefox"
+	"chromium"
+	"gimp"
+	"TinyEngine"
 }
 
 WindowRing 
@@ -50,6 +52,7 @@ WindowRing
 	"firefox"
 	"chromium"
 	"gimp"
+	"TinyEngine"
 }
 
 #
@@ -78,29 +81,30 @@ Button2 = : icon : f.iconify
 Button1 = : iconmgr : f.iconify
 Button2 = : iconmgr : f.iconify
 
+Function "abd" { f.showiconmgr f.downiconmgr }
+Function "abu" { f.showiconmgr f.upiconmgr }
+Function "abid" { f.showiconmgr f.iconify f.focus f.downiconmgr f.raise }
+Function "abiu" { f.showiconmgr f.iconify f.focus f.upiconmgr f.raise }
+
 Function "hide-next" { f.warpring "next" f.iconify }
 
 "Tab" = m     : all : f.focus
 "b" = m     : all : f.iconify
 "n" = m     : all : f.fullzoom
-"m" = m     : window : f.function "hide-next"
+"m" = m     : all : f.function "hide-next"
 "x" = m      : all : f.warpring "next"
+"c" = m      : all : f.restart
 "z" = m : all : f.delete
 "t" = m : all : f.exec "exec st &"
 "d" = m : all : f.exec "exec dmenu_run -nf '#BBBBBB' -nb '#000000' -sb '#292929' -sf '#EEEEEE' -fn 'monospace-10' -p 'Y'"
 #Button1 = s : all : f.menu "defops"
 
-Function "abl" { f.lefticonmgr f.showiconmgr}
-Function "abd" { f.downiconmgr f.showiconmgr}
-Function "abu" { f.upiconmgr  f.showiconmgr}
-Function "abr" { f.righticonmgr f.showiconmgr}
-
 ShowIconManager
-IconManagerGeometry "320x200+0+0" 3
-"h" = m : all : f.function "abl"
-"j" = m : all : f.function "abd"
-"k" = m : all : f.function "abu"
-"l" = m : all : f.function "abr"
+IconManagerGeometry "320x200+0+0" 1
+"h" = m : all : f.function "abid"
+"j" = m : all : f.function "abiu"
+"k" = m : all : f.function "abd"
+"l" = m : all : f.function "abu"
 
 #
 # And a menus with the usual things
