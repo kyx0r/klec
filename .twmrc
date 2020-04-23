@@ -48,6 +48,7 @@ IconifyByUnmapping
 	"chromium"
 	"gimp"
 	"TinyEngine"
+	"IBus Preferences"
 }
 
 WindowRing 
@@ -57,6 +58,7 @@ WindowRing
 	"chromium"
 	"gimp"
 	"TinyEngine"
+	"IBus Preferences"
 }
 
 NoTitle
@@ -66,6 +68,7 @@ NoTitle
 	"chromium"
 	"gimp"
 	"TinyEngine"
+	"IBus Preferences"
 }
 
 #
@@ -100,11 +103,13 @@ Function "abid" { f.showiconmgr f.iconify f.focus f.downiconmgr f.raise }
 Function "abiu" { f.showiconmgr f.iconify f.focus f.upiconmgr f.raise }
 
 Function "hide-next" { f.warpring "next" f.iconify }
+Function "deic-next" { f.showiconmgr f.deiconify f.upiconmgr }
 
 "Tab" = m     : all : f.focus
 "b" = m     : all : f.iconify
 "n" = m     : all : f.fullzoom
 "m" = m     : all : f.function "hide-next"
+"e" = m     : all : f.function "deic-next"
 "x" = m      : all : f.warpring "next"
 "g" = m      : all : f.forcemove
 "1" = m      : all : f.rightzoom
