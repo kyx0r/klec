@@ -10,11 +10,14 @@ bind -m vi-insert "\C-l":clear-screen
 
 feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz
 export PATH=/home/ether/temp/st:$PATH
-export PATH=/home/ether/tiny_vulkan/src:$PATH
+export PATH=/home/ether/Hihon:$PATH
 
 export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[35m\]\w\[\e[m\]\[\e[36m\]]\[\e[m\]\[$\[\e[m\] "
 
-#xv /home/ether/f.jpg -root -geometry 1920x1080 -quit
-
 alias ls='ls --color=auto'
+alias 'l'='ls'
+alias 'll'='ls -golh'
+alias 'rm'='rm -rf'
+alias 'v'='vim'
+
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
