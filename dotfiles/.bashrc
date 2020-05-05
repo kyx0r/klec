@@ -19,5 +19,6 @@ alias 'l'='ls -golhaS --group-directories-first'
 alias 'rm'='rm -rf'
 alias 'v'='vim'
 alias 's'='sudo'
+alias 'f'='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080'
 
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
