@@ -13,7 +13,7 @@ set -o vi
 bind -m vi-insert "\C-l":clear-screen
 
 if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
-if xhost >& /dev/null ; then
+if xset q &>/dev/null; then
 feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz &
 disown
 fi
