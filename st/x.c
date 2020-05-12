@@ -2000,6 +2000,7 @@ run(void)
 	int ttyfd;
 	struct timespec drawtimeout, *tv = NULL, now, last, lastblink;
 	long deltatime;
+	//XWarpPointer(xw.dpy, parent, xw.win, 0, 0, 0, 0, x, y);
 
 	/* Waiting for window mapping */
 	do {
