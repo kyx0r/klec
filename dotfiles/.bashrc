@@ -11,10 +11,16 @@ export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]
 
 set -o vi
 bind -m vi-insert "\C-l":clear-screen
+
 if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
-	feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz
+if xhost >& /dev/null ; then
+feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz &
+disown
+fi
 fi
 
+alias grep='grep --color=auto'
+alias ip='ip -color=auto'
 alias ls='ls --color=auto'
 alias 'l'='ls -golhaS --group-directories-first'
 alias 'rm'='rm -rf'
