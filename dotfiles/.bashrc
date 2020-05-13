@@ -27,5 +27,8 @@ alias 'rm'='rm -rf'
 alias 'v'='vim'
 alias 's'='su root'
 alias 'f'='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080'
+alias 'ga'='git add .'
+alias 'gc'='git commit -a -m'
+alias 'gp'='git push'
 
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
