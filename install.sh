@@ -7,5 +7,7 @@ cp dotfiles/.vimrc ~/
 cp dotfiles/keynavrc /etc
 cp dotfiles/local.conf /etc/fonts
 cd st
-make
+make install
+cd ../
+cd dwm
 make install
