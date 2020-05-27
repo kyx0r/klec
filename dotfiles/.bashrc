@@ -31,5 +31,6 @@ alias 'fu'='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080 --max-dim
 alias 'ga'='git add .'
 alias 'gc'='git commit -a -m'
 alias 'gp'='git push'
+alias 'gs'='git status'
 
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
