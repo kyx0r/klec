@@ -77,6 +77,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_j,      setlayout,      {.v = &layouts[1]} },
 	{ MODKEY,                       XK_k,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_c,      swapfocus,      {.i = -1 } },
+//	{ MODKEY|ControlMask,           XK_comma,  cyclelayout,    {.i = -1 } },
+	{ MODKEY,           		XK_s, cyclelayout,    {.i = +1 } },
 //	{ MODKEY,                       XK_n,      togglefullscr,  {0} },
 	//{ MODKEY,                       XK_space,  setlayout,      {0} },
 	{ MODKEY,                       XK_n,  togglefloating, {0} },

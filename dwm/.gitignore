@@ -2,3 +2,6 @@
 *.a
 dwm
 tags
+*.rej
+*.orig
+f
