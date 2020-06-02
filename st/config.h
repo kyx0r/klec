@@ -131,7 +131,15 @@ static const char *colorname[] = {
 unsigned int defaultfg = 7;
 unsigned int defaultbg = 0;
 static unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 257;
+static unsigned int defaultrcs = 256;
+
+/* Colors used for selection */
+unsigned int selectionbg = 257;
+unsigned int selectionfg = 7;
+/* If 0 use selectionfg as foreground in order to have a uniform foreground-color */
+/* Else if 1 keep original foreground-color of each cell => more colors :) */
+static int ignoreselfg = 1;
+
 
 /*
  * Default shape of cursor
@@ -199,7 +207,8 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
 	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
 	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-	{ MODKEY,              XK_i,           kscrolldown,    {.i = -1} },
+	{ MODKEY,               XK_i,           kscrolldown,    {.i = -1} },
+	{ MODKEY,		XK_y,           keyboard_select, { 0 } },
 //	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
 //	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
 };
