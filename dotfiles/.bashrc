@@ -32,5 +32,6 @@ alias 'ga'='git add .'
 alias 'gc'='git commit -a -m'
 alias 'gp'='git push'
 alias 'gs'='git status'
+alias 'p'='sudo pacman'
 
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
