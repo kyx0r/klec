@@ -61,7 +61,7 @@ static double maxlatency = 33;
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 800;
+static unsigned int blinktimeout = 400;
 
 /*
  * thickness of underline and bar cursors
@@ -140,15 +140,20 @@ unsigned int selectionfg = 7;
 /* Else if 1 keep original foreground-color of each cell => more colors :) */
 static int ignoreselfg = 1;
 
-
 /*
- * Default shape of cursor
- * 2: Block ("█")
- * 4: Underline ("_")
- * 6: Bar ("|")
- * 7: Snowman ("☃")
+ * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
+
+ * Default style of cursor
+ * 0: blinking block
+ * 1: blinking block (default)
+ * 2: steady block ("â–ˆ")
+ * 3: blinking underline
+ * 4: steady underline ("_")
+ * 5: blinking bar
+ * 6: steady bar ("|")
+ * 7: Snowman ("â˜ƒ")
  */
-static unsigned int cursorshape = 2;
+static unsigned int cursorstyle = 1;
 
 /*
  * Default columns and rows numbers

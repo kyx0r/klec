@@ -1533,13 +1533,22 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 		switch (win.cursor) {
 		case 7: /* st extension */
 			g.u = 0x2603; /* snowman (U+2603) */
-			/* FALLTHROUGH */
+			xdrawglyph(g, cx, cy);
+			break;
 		case 0: /* Blinking Block */
 		case 1: /* Blinking Block (Default) */
+			if (IS_SET(MODE_BLINK))
+				break;
+			/* FALLTHROUGH */
+
 		case 2: /* Steady Block */
 			xdrawglyph(g, cx, cy);
 			break;
 		case 3: /* Blinking Underline */
+			if (IS_SET(MODE_BLINK))
+				break;
+			/* FALLTHROUGH */
+
 		case 4: /* Steady Underline */
 			XftDrawRect(xw.draw, &drawcol,
 					win.hborderpx + cx * win.cw,
@@ -1548,6 +1557,9 @@ xdrawcursor(int cx, int cy, Glyph g, int ox, int oy, Glyph og)
 					win.cw, cursorthickness);
 			break;
 		case 5: /* Blinking bar */
+			if (IS_SET(MODE_BLINK))
+				break;
+			/* FALLTHROUGH */
 		case 6: /* Steady bar */
 			XftDrawRect(xw.draw, &drawcol,
 					win.hborderpx + cx * win.cw,
@@ -1884,6 +1896,7 @@ run(void)
 	int xfd = XConnectionNumber(xw.dpy), ttyfd, xev, drawing;
 	struct timespec seltv, *tv, now, lastblink, trigger;
 	double timeout;
+	int blinkcursor;
 
 	/* Waiting for window mapping */
 	do {
@@ -1950,6 +1963,10 @@ run(void)
 		if (FD_ISSET(ttyfd, &rfd) || xev) {
 			if (!drawing) {
 				trigger = now;
+				if (IS_SET(MODE_BLINK)) {
+					win.mode ^= MODE_BLINK;
+				}
+				lastblink = now;
 				drawing = 1;
 			}
 			timeout = (maxlatency - TIMEDIFF(now, trigger)) \
@@ -1960,7 +1977,9 @@ run(void)
 
 		/* idle detected or maxlatency exhausted -> draw */
 		timeout = -1;
-		if (blinktimeout && tattrset(ATTR_BLINK)) {
+		blinkcursor = win.cursor == 0 || win.cursor == 1 ||
+		              win.cursor == 3 || win.cursor == 5;
+		if (blinktimeout && (blinkcursor || tattrset(ATTR_BLINK))) {
 			timeout = blinktimeout - TIMEDIFF(now, lastblink);
 			if (timeout <= 0) {
 				if (-timeout > blinktimeout) /* start visible */
@@ -2004,7 +2023,7 @@ main(int argc, char *argv[])
 {
 	xw.l = xw.t = 0;
 	xw.isfixed = False;
-	xsetcursor(cursorshape);
+	xsetcursor(cursorstyle);
 
 	ARGBEGIN {
 	case 'a':
