@@ -12,3 +12,6 @@ make install
 cd ../
 cd dwm
 make install
+cd ../
+cd slstatus
+make install
