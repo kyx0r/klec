@@ -5,6 +5,7 @@ cp dotfiles/.bashrc ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/
 cp dotfiles/keynavrc /etc
+cp dotfiles/lynx.cfg /etc
 cp dotfiles/local.conf /etc/fonts
 cd st
 make install

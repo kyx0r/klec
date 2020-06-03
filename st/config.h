@@ -153,7 +153,7 @@ static int ignoreselfg = 1;
  * 6: steady bar ("|")
  * 7: Snowman ("â˜ƒ")
  */
-static unsigned int cursorstyle = 1;
+static unsigned int cursorstyle = 3;
 
 /*
  * Default columns and rows numbers

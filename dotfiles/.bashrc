@@ -33,5 +33,12 @@ alias 'gc'='git commit -a -m'
 alias 'gp'='git push'
 alias 'gs'='git status'
 alias 'p'='sudo pacman'
+alias 'c'='cd ..'
+alias 'r'='sudo'
+
+complete -cf r
 
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
+
+#disable ^s lock
+stty -ixon 
