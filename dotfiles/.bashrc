@@ -35,6 +35,7 @@ alias 'gs'='git status'
 alias 'p'='sudo pacman'
 alias 'c'='cd ..'
 alias 'r'='sudo'
+alias 'm'='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
 complete -cf r
 
