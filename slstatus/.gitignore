@@ -1,0 +1,4 @@
+slstatus
+*.o
+components/*.o
+tags
