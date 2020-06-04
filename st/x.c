@@ -1937,6 +1937,7 @@ run(void)
 		}
 	} while (ev.type != MapNotify);
 
+	cresize(w, h);
 	ttyfd = ttynew(opt_line, shell, opt_io, opt_cmd);
 	cresize(w, h);
 
