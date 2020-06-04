@@ -37,6 +37,8 @@ alias 'p'='sudo pacman'
 alias 'c'='cd ..'
 alias 'r'='sudo'
 alias 'm'='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
+alias 'mi'='sudo make install'
+alias ','='sudo vim /etc/X11/xinit/xinitrc'
 
 complete -cf r
 
