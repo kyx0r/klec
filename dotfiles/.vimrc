@@ -4,6 +4,7 @@ set encoding=utf-8
 set number
 set backupdir-=.
 set backupdir^=/tmp
+set backspace=indent,eol,start
 
 function! SwitchToNextBuffer(incr)
   let help_buffer = (&filetype == 'help')
