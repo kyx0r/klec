@@ -20,9 +20,9 @@ fi
 fi
 
 alias grep='grep --color=auto'
-alias ip='ip -color=auto'
+alias ip='ip'
 alias ls='ls --color=auto'
-alias 'l'='ls -golhaS --group-directories-first'
+alias 'l'='ls -glhaS'
 alias 'df'='df -h'
 alias 'rm'='rm -rf'
 alias 'v'='vim'
