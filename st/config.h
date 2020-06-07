@@ -6,7 +6,7 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 //static char *font = "mono:pixelsize=18:antialias=true:autohint=true:style=Bold";
-static char *font = "Terminus (TTF):pixelsize=24:antialias=true:autohint=true";
+static char *font = "Terminus:pixelsize=24:antialias=true:autohint=true";
 static int borderpx = 0;
 
 /*
