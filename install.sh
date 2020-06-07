@@ -2,6 +2,7 @@ cp ten_years__time_by_bythmark_d4dg6dz ~/
 cp -r GoldenShimmer /usr/share/icons
 cp dotfiles/.twmrc ~/
 cp dotfiles/.bashrc ~/
+cp dotfiles/.bash_profile ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/
 cp dotfiles/.gitconfig ~/

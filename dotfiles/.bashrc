@@ -7,7 +7,7 @@
 
 export PATH=/home/ether/Hihon:$PATH
 export EDITOR=vim
-export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[35m\]\w\[\e[m\]\[\e[36m\]]\[\e[m\]\[$\[\e[m\] "
+export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[35m\]\w\[\e[m\]\[\e[36m\]]\[\e[m\]$ "
 
 set -o vi
 bind -m vi-insert "\C-l":clear-screen
@@ -47,3 +47,4 @@ mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
 
 #disable ^s lock
 stty -ixon 
+shopt -s autocd
