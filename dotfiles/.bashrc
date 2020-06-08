@@ -8,6 +8,10 @@
 export PATH=/home/ether/Hihon:$PATH
 export EDITOR=vim
 export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[35m\]\w\[\e[m\]\[\e[36m\]]\[\e[m\]$ "
+export CFLAGS="-Os -pipe -march=native"                              
+export CXXFLAGS="$CFLAGS"                                            
+export MAKEFLAGS="-j8"                                               
+    
 
 set -o vi
 bind -m vi-insert "\C-l":clear-screen

@@ -20,3 +20,4 @@ mount --rbind /proc /ramroot/proc
 mkdir /ramroot/oldroot
 wait < <(jobs -p)
 pivot_root /ramroot /ramroot/oldroot
+umount /oldroot -f -l
