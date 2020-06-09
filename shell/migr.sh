@@ -4,7 +4,11 @@
 #
 
 mkdir -p /ramroot
-mount -o size=8G -t tmpfs tmpfs /ramroot
+modprobe zram num_devices=1
+echo 8G > /sys/block/zram0/disksize
+mkfs.ext4 /dev/zram0
+mount /dev/zram0 /ramroot
+#mount -o size=8G -t tmpfs tmpfs /ramroot
 cp -a /{bin,etc,sbin,lib64,lib32,lib} /ramroot
 mkdir /ramroot/usr
 cp -a /usr/{bin,sbin,lib32,lib64,lib,share,include,local} /ramroot/usr &
