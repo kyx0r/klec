@@ -20,9 +20,8 @@ mount --rbind /run /ramroot/run
 mount --rbind /tmp /ramroot/tmp
 mount --rbind /dev /ramroot/dev
 mount --rbind /proc /ramroot/proc
-#mount -t proc none /ramroot/proc
 mkdir /ramroot/oldroot
 wait < <(jobs -p)
 pivot_root /ramroot /ramroot/oldroot
-cd /
 umount /oldroot -f -l
+cd /
