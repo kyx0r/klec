@@ -44,6 +44,7 @@ alias 'r'='sudo'
 alias 'm'='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 alias 'mi'='sudo make install'
 alias ','='sudo vim /etc/X11/xinit/xinitrc'
+alias 'd'='gdb --args'
 
 complete -cf r
 
