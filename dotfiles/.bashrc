@@ -9,7 +9,9 @@ export PATH=/root/klec/shell:$PATH
 export EDITOR=vim
 export PS1="\[\e[36m\][\[\e[m\]\[\e[31m\]\u\[\e[m\]\[\e[34m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]:\[\e[35m\]\w\[\e[m\]\[\e[36m\]]\[\e[m\]$ "
 export CFLAGS="-O3 -pipe -march=native"                              
+export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"                                            
+export KCPPFLAGS="$CFLAGS"                                            
 export MAKEFLAGS="-j8"                                               
     
 
