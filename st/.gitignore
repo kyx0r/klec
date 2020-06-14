@@ -5,3 +5,5 @@ f
 *.orig
 tags
 config.def.h
+*.swp*
+*.diff

@@ -19,6 +19,7 @@ char *argv0;
 #include "arg.h"
 #include "st.h"
 #include "win.h"
+#include "normalMode.h"
 
 /* types used in config.h */
 typedef struct {
@@ -267,6 +268,7 @@ clipcopy(const Arg *dummy)
 
 	free(xsel.clipboard);
 	xsel.clipboard = NULL;
+	xsetsel(getsel());
 
 	if (xsel.primary != NULL) {
 		xsel.clipboard = xstrdup(xsel.primary);
@@ -788,6 +790,8 @@ xloadcolor(int i, const char *name, Color *ncolor)
 	return XftColorAllocName(xw.dpy, xw.vis, xw.cmap, name, ncolor);
 }
 
+void normalMode() { historyModeToggle((win.mode ^=MODE_NORMAL) & MODE_NORMAL); }
+
 void
 xloadcols(void)
 {
@@ -1245,8 +1249,10 @@ xmakeglyphfontspecs(XftGlyphFontSpec *specs, const Glyph *glyphs, int len, int x
 
 	for (i = 0, xp = winx, yp = winy + font->ascent; i < len; ++i) {
 		/* Fetch rune and mode for current glyph. */
-		rune = glyphs[i].u;
-		mode = glyphs[i].mode;
+		Glyph g = glyphs[i];
+		historyOverlay(x+i, y, &g);
+		rune = g.u;
+		mode = g.mode;
 
 		/* Skip dummy wide-character spacing. */
 		if (mode == ATTR_WDUMMY)
@@ -1641,6 +1647,7 @@ xdrawline(Line line, int x1, int y1, int x2)
 	i = ox = 0;
 	for (x = x1; x < x2 && i < numspecs; x++) {
 		new = line[x];
+		historyOverlay(x, y1, &new);
 		if (new.mode == ATTR_WDUMMY)
 			continue;
 		if (selected(x, y1))
@@ -1841,6 +1848,11 @@ kpress(XEvent *ev)
 
 	else
 		len = XLookupString(e, buf, sizeof buf, &ksym, NULL);
+       if (IS_SET(MODE_NORMAL)) {
+               if (kpressHist(buf, len, match(ControlMask, e->state), &ksym)
+                                                     == finished) normalMode();
+               return;
+       }
 
 	/* 1. shortcuts */
 	for (bp = shortcuts; bp < shortcuts + LEN(shortcuts); bp++) {
