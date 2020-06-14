@@ -5,7 +5,6 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-//static char *font = "mono:pixelsize=18:antialias=true:autohint=true:style=Bold";
 static char *font = "Terminus:pixelsize=24:antialias=true:autohint=true";
 static int borderpx = 0;
 
@@ -61,7 +60,7 @@ static double maxlatency = 33;
  * blinking timeout (set to 0 to disable blinking) for the terminal blinking
  * attribute.
  */
-static unsigned int blinktimeout = 400;
+static unsigned int blinktimeout = 800;
 
 /*
  * thickness of underline and bar cursors
@@ -131,7 +130,7 @@ static const char *colorname[] = {
 unsigned int defaultfg = 7;
 unsigned int defaultbg = 0;
 static unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 256;
+static unsigned int defaultrcs = 257;
 unsigned int const currentBg = 6, buffSize = 2048;
 /// [Vim Browse] Colors for search results currently on screen.
 unsigned int const highlightBg = 160, highlightFg = 15;
@@ -146,28 +145,16 @@ Glyph styleSearch = {' ', ATTR_ITALIC | ATTR_BOLD_FAINT, 7, 16};
 Glyph style[] = {{' ',ATTR_ITALIC|ATTR_FAINT,15,16}, {' ',ATTR_ITALIC,232,11},
                  {' ', ATTR_ITALIC, 232, 4}, {' ', ATTR_ITALIC, 232, 12}};
 
-
-/* Colors used for selection */
-unsigned int selectionbg = 257;
-unsigned int selectionfg = 7;
-/* If 0 use selectionfg as foreground in order to have a uniform foreground-color */
-/* Else if 1 keep original foreground-color of each cell => more colors :) */
-static int ignoreselfg = 1;
-
 /*
- * https://invisible-island.net/xterm/ctlseqs/ctlseqs.html#h4-Functions-using-CSI-_-ordered-by-the-final-character-lparen-s-rparen:CSI-Ps-SP-q.1D81
-
- * Default style of cursor
- * 0: blinking block
- * 1: blinking block (default)
- * 2: steady block ("â–ˆ")
- * 3: blinking underline
- * 4: steady underline ("_")
- * 5: blinking bar
- * 6: steady bar ("|")
- * 7: Snowman ("â˜ƒ")
+ * Default shape of cursor
+ * 2: Block ("█")
+ * 4: Underline ("_")
+ * 6: Bar ("|")
+ * 7: Snowman ("☃")
  */
 static unsigned int cursorstyle = 3;
+static Rune stcursor = 0x2603; /* snowman (U+2603) */
+
 
 /*
  * Default columns and rows numbers
@@ -211,25 +198,17 @@ static MouseShortcut mshortcuts[] = {
 
 /* Internal keyboard shortcuts. */
 #define MODKEY Mod1Mask
-#define TERMMOD (Mod1Mask|ShiftMask)
+#define TERMMOD (ControlMask|ShiftMask)
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
-//	{ XK_ANY_MOD,           XK_Break,       sendbreak,      {.i =  0} },
-//	{ ControlMask,          XK_Print,       toggleprinter,  {.i =  0} },
-//	{ ShiftMask,            XK_Print,       printscreen,    {.i =  0} },
-//	{ XK_ANY_MOD,           XK_Print,       printsel,       {.i =  0} },
-	{ TERMMOD,              XK_J,           zoom,           {.f = +1} },
-	{ TERMMOD,              XK_K,           zoom,           {.f = -1} },
-	{ TERMMOD,              XK_L,           zoomreset,      {.f =  0} },
-	{ TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
-	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
-	{ TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
-	{ MODKEY,               XK_u,           kscrollup,      {.i = -1} },
-	{ MODKEY,               XK_i,           kscrolldown,    {.i = -1} },
-	{ MODKEY,               XK_y,           normalMode,     {.i =  0} },
-//	{ ShiftMask,            XK_Insert,      selpaste,       {.i =  0} },
-//	{ TERMMOD,              XK_Num_Lock,    numlock,        {.i =  0} },
+         { TERMMOD,              XK_J,           zoom,           {.f = +1} },
+         { TERMMOD,              XK_K,           zoom,           {.f = -1} },
+         { TERMMOD,              XK_L,           zoomreset,      {.f =  0} },
+         { TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
+         { MODKEY,               XK_v,           clippaste,      {.i =  0} },
+         { TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
+         { MODKEY,               XK_y,           normalMode,     {.i =  0} },
 };
 
 /*
