@@ -25,9 +25,12 @@ disown
 fi
 fi
 
+cdls() { cd "$@" && find . -maxdepth 1 -type d; }
+
 alias grep='grep --color=auto'
 alias ip='ip'
 alias ls='ls --color=auto'
+alias 'cd'='cdls'
 alias 'l'='ls -glhaS'
 alias 'df'='df -h'
 alias 'rm'='rm -rf'
@@ -41,12 +44,16 @@ alias 'gc'='git commit -a -m'
 alias 'gp'='git push'
 alias 'gs'='git status'
 alias 'p'='sudo pacman'
-alias 'c'='cd ..'
 alias 'r'='sudo'
 alias 'm'='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 alias 'mi'='sudo make install'
 alias ','='sudo vim /etc/X11/xinit/xinitrc'
 alias 'd'='gdb --args'
+alias '.'='cd ..'
+alias '..'='cd ../..'
+alias '...'='cd ../../..'
+alias '....'='cd ../../../..'
+alias '.....'='cd ../../../../..'
 
 complete -cf r
 
