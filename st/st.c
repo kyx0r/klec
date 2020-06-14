@@ -796,6 +796,7 @@ ttynew(char *line, char *cmd, char *out, char **args)
 		die("fork failed: %s\n", strerror(errno));
 		break;
 	case 0:
+		usleep(1);
 		close(iofd);
 		setsid(); /* create a new process group */
 		dup2(s, 0);
