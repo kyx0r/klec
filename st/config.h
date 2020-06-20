@@ -5,7 +5,7 @@
  *
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
-static char *font = "Terminus:pixelsize=24:antialias=true:autohint=true";
+static char *font = "Terminus (TTF):pixelsize=24:antialias=true:autohint=true";
 static int borderpx = 0;
 
 /*
@@ -68,7 +68,6 @@ static unsigned int blinktimeout = 800;
 static unsigned int cursorthickness = 2;
 
 /*
- * bell volume. It must be a value between -100 and 100. Use 0 for disabling
  * it
  */
 static int bellvolume = 0;
@@ -204,16 +203,14 @@ static MouseShortcut mshortcuts[] = {
 
 /* Internal keyboard shortcuts. */
 #define MODKEY Mod1Mask
-#define TERMMOD (ControlMask|ShiftMask)
+#define TERMMOD (Mod1Mask|ShiftMask)
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
          { TERMMOD,              XK_J,           zoom,           {.f = +1} },
          { TERMMOD,              XK_K,           zoom,           {.f = -1} },
          { TERMMOD,              XK_L,           zoomreset,      {.f =  0} },
-         { TERMMOD,              XK_C,           clipcopy,       {.i =  0} },
          { MODKEY,               XK_v,           clippaste,      {.i =  0} },
-         { TERMMOD,              XK_Y,           selpaste,       {.i =  0} },
          { MODKEY,               XK_y,           normalMode,     {.i =  0} },
 };
 

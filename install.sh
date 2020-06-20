@@ -11,6 +11,7 @@ cp dotfiles/lynx.cfg /etc
 cp dotfiles/index.theme /usr/share/icons/default/
 cp dotfiles/local.conf /etc/fonts
 cp dotfiles/grub /etc/default/
+cp -r terminus-ttf-4.47.0/ /usr/share/fonts
 cd st
 make install
 cd ../
