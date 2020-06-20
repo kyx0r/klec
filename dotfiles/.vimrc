@@ -1,10 +1,18 @@
 
 syntax on
 set encoding=utf-8
-set number
 set backupdir-=.
 set backupdir^=/tmp
 set backspace=indent,eol,start
+set number relativenumber
+set nu rnu
+set cursorline
+set cursorcolumn
+highlight Visual term=reverse cterm=reverse guibg=Grey
+highlight CursorLine term=reverse cterm=reverse guibg=Grey
+highlight CursorColumn term=reverse cterm=reverse guibg=Grey
+
+autocmd InsertEnter * norm zz
 
 function! SwitchToNextBuffer(incr)
   let help_buffer = (&filetype == 'help')
@@ -35,5 +43,6 @@ nnoremap <C-k> :w<CR>
 nnoremap <C-l> :e .<CR>
 nnoremap <C-h> :q<CR>
 nnoremap <C-j> :bdelete<CR>
+nnoremap S :%s//gI<Left><Left><Left>
 "colorscheme 256_noir
 
