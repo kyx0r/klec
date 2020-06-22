@@ -28,6 +28,7 @@ static const Rule rules[] = {
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
 	{ "Gimp",     NULL,       NULL,       0,            1,           -1 },
+	{ "Onboard",  NULL,       NULL,       0,            1,           -1 },
 //	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
@@ -80,9 +81,6 @@ static Key keys[] = {
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
 	{ MODKEY,                       XK_o, zoom,           {0} },
 	{ MODKEY,                       XK_z,      killclient,     {0} },
-//	{ MODKEY,                       XK_h,      setlayout,      {.v = &layouts[0]} },
-//	{ MODKEY,                       XK_j,      setlayout,      {.v = &layouts[1]} },
-//	{ MODKEY,                       XK_k,      setlayout,      {.v = &layouts[2]} },
 	{ MODKEY,                       XK_c,      swapfocus,      {.i = -1 } },
 	{ MODKEY,           		XK_s,      cyclelayout,    {.i = +1 } },
 	{ MODKEY,                       XK_m,      togglefullscr,  {0} },
@@ -126,10 +124,9 @@ static Button buttons[] = {
 //	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 //	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 //	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-//	{ ClkTagBar,            0,              Button1,        view,           {0} },
-//	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
+	{ ClkTagBar,            0,              Button1,        view,           {0} },
+	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 //	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 //	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
-0
 };
 
