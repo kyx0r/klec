@@ -92,7 +92,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, commandclient;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -140,6 +140,7 @@ typedef struct {
 	const char *title;
 	unsigned int tags;
 	int isfloating;
+	int commandclient;
 	int monitor;
 } Rule;
 
@@ -317,6 +318,7 @@ applyrules(Client *c)
 		{
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
+			c->commandclient = r->commandclient;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
 				c->mon = m;
@@ -462,7 +464,10 @@ buttonpress(XEvent *e)
 		else
 			click = ClkWinTitle;
 	} else if ((c = wintoclient(ev->window))) {
-		focus(c);
+		if(!c->commandclient)
+		{
+			focus(c);
+		}
 		restack(selmon);
 		XAllowEvents(dpy, ReplayPointer, CurrentTime);
 		click = ClkClientWin;
@@ -829,7 +834,10 @@ enternotify(XEvent *e)
 		selmon = m;
 	} else if (!c || c == selmon->sel)
 		return;
-	focus(c);
+	if(!c->commandclient)
+	{
+		focus(c);
+	}
 }
 
 void
