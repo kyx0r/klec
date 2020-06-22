@@ -16,6 +16,7 @@ static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
 	[SchemeSel]  = { col_gray4, col_cyan,  col_cyan  },
+	[SchemeHid]  = { col_cyan,  col_gray1, col_cyan  },
 };
 
 /* tagging */
@@ -27,7 +28,6 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Gimp",     NULL,       NULL,       0,            1,      0,    -1 },
 	{ "Onboard",  NULL,       NULL,       0,            1,      1,    -1 },
 //	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
@@ -124,8 +124,9 @@ static Button buttons[] = {
 //	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
 //	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 //	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-	{ ClkTagBar,            0,              Button1,        view,           {0} },
-	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
+//	{ ClkTagBar,            0,              Button1,        view,           {0} },
+//	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
+	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
 //	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 //	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
 };
