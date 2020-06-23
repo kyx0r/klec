@@ -93,7 +93,7 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, commandclient;
+	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, cantfocus;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -144,7 +144,7 @@ typedef struct {
 	const char *title;
 	unsigned int tags;
 	int isfloating;
-	int commandclient;
+	int cantfocus;
 	int monitor;
 } Rule;
 
@@ -316,6 +316,7 @@ applyrules(Client *c)
 	class    = ch.res_class ? ch.res_class : broken;
 	instance = ch.res_name  ? ch.res_name  : broken;
 
+	c->cantfocus = 0;
 	for (i = 0; i < LENGTH(rules); i++) {
 		r = &rules[i];
 		if ((!r->title || strstr(c->name, r->title))
@@ -324,7 +325,7 @@ applyrules(Client *c)
 		{
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
-			c->commandclient = r->commandclient;
+			c->cantfocus = r->cantfocus;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
 				c->mon = m;
@@ -490,10 +491,7 @@ buttonpress(XEvent *e)
 			}
 		}
 	} else if ((c = wintoclient(ev->window))) {
-		if(!c->commandclient)
-		{
-			focus(c);
-		}
+		focus(c);
 		restack(selmon);
 		XAllowEvents(dpy, ReplayPointer, CurrentTime);
 		click = ClkClientWin;
@@ -767,11 +765,11 @@ drawbar(Monitor *m)
 	Client *c;
 
 	/* draw status first so it can be overdrawn by tags later */
-//	if (m == selmon) { /* status is only drawn on selected monitor */
-		//drw_setscheme(drw, scheme[SchemeNorm]);
-		//tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
-		//drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
-//	}
+	if (m == selmon) { /* status is only drawn on selected monitor */
+		drw_setscheme(drw, scheme[SchemeNorm]);
+		tw = TEXTW(stext) - lrpad + 2; /* 2px right padding */
+		drw_text(drw, m->ww - tw, 0, tw, bh, 0, stext, 0);
+	}
 
 	for (c = m->clients; c; c = c->next) {
 		if (ISVISIBLE(c))
@@ -873,10 +871,7 @@ enternotify(XEvent *e)
 		selmon = m;
 	} else if (!c || c == selmon->sel)
 		return;
-	if(!c->commandclient)
-	{
-		focus(c);
-	}
+	focus(c);
 }
 
 void
@@ -892,11 +887,13 @@ expose(XEvent *e)
 void
 focus(Client *c)
 {
-	if (!c || !ISVISIBLE(c) || HIDDEN(c))
-		for (c = selmon->stack; c && (!ISVISIBLE(c) || HIDDEN(c)); c = c->snext);
+	if (!c || !ISVISIBLE(c))
+		for (c = selmon->stack; c && (!ISVISIBLE(c)); c = c->snext);
 	if (selmon->sel && selmon->sel != c)
 		unfocus(selmon->sel, 0);
 	if (c) {
+		if (c->cantfocus)
+			return;
 		if (c->mon != selmon)
 			selmon = c->mon;
 		if (c->isurgent)
@@ -972,16 +969,16 @@ focusstack(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	if (arg->i > 0) {
-		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
+		for (c = selmon->sel->next; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
 		if (!c)
-			for (c = selmon->clients; c && !ISVISIBLE(c); c = c->next);
+			for (c = selmon->clients; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
 	} else {
 		for (i = selmon->clients; i != selmon->sel; i = i->next)
-			if (ISVISIBLE(i))
+			if (ISVISIBLE(i) && !i->cantfocus)
 				c = i;
 		if (!c)
 			for (; i; i = i->next)
-				if (ISVISIBLE(i))
+				if (ISVISIBLE(i) && !i->cantfocus)
 					c = i;
 	}
 	if (c) {
@@ -2021,10 +2018,16 @@ togglewin(const Arg *arg)
 {
 	Client *c = (Client*)arg->v;
 	if (c == selmon->sel)
+	{
 		hide(c);
+		c->cantfocus = 1;
+	}
 	else {
 		if (HIDDEN(c))
+		{
+			c->cantfocus = 0;
 			show(c);
+		}
 		focus(c);
 		restack(selmon);
 	}
