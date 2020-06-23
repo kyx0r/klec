@@ -3,7 +3,7 @@
 /* appearance */
 static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
-static const int showbar            = 0;        /* 0 means no bar */
+static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 static const char *fonts[]          = {"Terminus (TTF):pixelsize=16"};
 static const char dmenufont[]       = "Terminus (TTF):pixelsize=16";
@@ -74,12 +74,12 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F2,     spawn,          {.v = lynx } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_x,      focusstack,     {.i = +1 } },
-	//{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
-	//{ MODKEY,                       XK_i,      incnmaster,     {.i = +1 } },
-	//{ MODKEY,                       XK_d,      incnmaster,     {.i = -1 } },
+	{ MODKEY|ShiftMask,             XK_x,      focusstack,     {.i = -1 } },
+	{ MODKEY|ControlMask,           XK_i,      incnmaster,     {.i = +1 } },
+	{ MODKEY|ShiftMask,             XK_i,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
 	{ MODKEY,                       XK_l,      setmfact,       {.f = +0.05} },
-	{ MODKEY,                       XK_o, zoom,           {0} },
+	{ MODKEY,                       XK_o,      zoom,           {0} },
 	{ MODKEY,                       XK_z,      killclient,     {0} },
 	{ MODKEY,                       XK_c,      swapfocus,      {.i = -1 } },
 	{ MODKEY,           		XK_s,      cyclelayout,    {.i = +1 } },
@@ -125,7 +125,7 @@ static Button buttons[] = {
 //	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
 //	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
 	{ ClkTagBar,            0,              Button1,        view,           {0} },
-	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
+//	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
 	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
 //	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
 //	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },

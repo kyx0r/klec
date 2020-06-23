@@ -215,6 +215,7 @@ static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
+static void show(Client *c);
 static void sigchld(int unused);
 static void sighup(int unused);
 static void sigterm(int unused);
@@ -887,13 +888,15 @@ expose(XEvent *e)
 void
 focus(Client *c)
 {
-	if (!c || !ISVISIBLE(c))
-		for (c = selmon->stack; c && (!ISVISIBLE(c)); c = c->snext);
+	if (!c || !ISVISIBLE(c) || HIDDEN(c))
+		for (c = selmon->stack; c && (!ISVISIBLE(c) || HIDDEN(c)); c = c->snext);
 	if (selmon->sel && selmon->sel != c)
 		unfocus(selmon->sel, 0);
 	if (c) {
 		if (c->cantfocus)
+		{
 			return;
+		}
 		if (c->mon != selmon)
 			selmon = c->mon;
 		if (c->isurgent)
@@ -912,8 +915,13 @@ focus(Client *c)
 }
 void
 hide(Client *c) {
-	if (!c || HIDDEN(c))
+	if (!c)
 		return;
+	if (HIDDEN(c))
+	{
+		show(c);
+		return;
+	}
 
 	Window w = c->win;
 	static XWindowAttributes ra, ca;
@@ -1200,12 +1208,14 @@ manage(Window w, XWindowAttributes *wa)
 	XChangeProperty(dpy, root, netatom[NetClientList], XA_WINDOW, 32, PropModeAppend,
 		(unsigned char *) &(c->win), 1);
 	XMoveResizeWindow(dpy, c->win, c->x + 2 * sw, c->y, c->w, c->h); /* some windows require this */
-	setclientstate(c, NormalState);
+	if (!HIDDEN(c))
+		setclientstate(c, NormalState);
 	if (c->mon == selmon)
 		unfocus(selmon->sel, 0);
 	c->mon->sel = c;
 	arrange(c->mon);
-	XMapWindow(dpy, c->win);
+	if (!HIDDEN(c))
+		XMapWindow(dpy, c->win);
 	focus(NULL);
 }
 
@@ -1875,9 +1885,9 @@ swapfocus(const Arg *arg)
 	}
 	else{
 		Client *c = NULL;
-		for (c = selmon->sel->next; c && !ISVISIBLE(c); c = c->next);
+		for (c = selmon->sel->next; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
 		if (!c)
-			for (c = selmon->clients; c && !ISVISIBLE(c); c = c->next);
+			for (c = selmon->clients; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
 		if (c) {
 			focus(c);
 			restack(selmon);
@@ -2023,11 +2033,8 @@ togglewin(const Arg *arg)
 		c->cantfocus = 1;
 	}
 	else {
-		if (HIDDEN(c))
-		{
-			c->cantfocus = 0;
-			show(c);
-		}
+		c->cantfocus = 0;
+		show(c);
 		focus(c);
 		restack(selmon);
 	}
