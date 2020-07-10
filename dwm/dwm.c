@@ -93,7 +93,9 @@ struct Client {
 	int basew, baseh, incw, inch, maxw, maxh, minw, minh;
 	int bw, oldbw;
 	unsigned int tags;
-	int isfixed, isfloating, isurgent, neverfocus, oldstate, isfullscreen, cantfocus;
+	int isfixed, isfloating, isurgent, 
+	    neverfocus, oldstate, isfullscreen, 
+	    cantfocus, ontop;
 	Client *next;
 	Client *snext;
 	Monitor *mon;
@@ -145,6 +147,7 @@ typedef struct {
 	unsigned int tags;
 	int isfloating;
 	int cantfocus;
+	int ontop;
 	int monitor;
 } Rule;
 
@@ -160,6 +163,7 @@ static void checkotherwm(void);
 static void cleanup(void);
 static void cleanupmon(Monitor *mon);
 static void clientmessage(XEvent *e);
+static void centeredfloatingmaster(Monitor *m);
 static void configure(Client *c);
 static void configurenotify(XEvent *e);
 static void configurerequest(XEvent *e);
@@ -171,6 +175,7 @@ static void detachstack(Client *c);
 static Monitor *dirtomon(int dir);
 static void drawbar(Monitor *m);
 static void drawbars(void);
+static void deck(Monitor *m);
 static void enternotify(XEvent *e);
 static void expose(XEvent *e);
 static void focus(Client *c);
@@ -318,6 +323,7 @@ applyrules(Client *c)
 	instance = ch.res_name  ? ch.res_name  : broken;
 
 	c->cantfocus = 0;
+	c->ontop = 0;
 	for (i = 0; i < LENGTH(rules); i++) {
 		r = &rules[i];
 		if ((!r->title || strstr(c->name, r->title))
@@ -327,6 +333,7 @@ applyrules(Client *c)
 			c->isfloating = r->isfloating;
 			c->tags |= r->tags;
 			c->cantfocus = r->cantfocus;
+			c->ontop = r->ontop;
 			for (m = mons; m && m->num != r->monitor; m = m->next);
 			if (m)
 				c->mon = m;
@@ -470,7 +477,7 @@ buttonpress(XEvent *e)
 		/* 2px right padding */
 		else if (ev->x > selmon->ww - TEXTW(stext) + lrpad - 2)
 			click = ClkStatusText;
-		else
+		else if(m->clients)
 		{
 			x += blw;
 			c = m->clients;
@@ -826,10 +833,10 @@ drawbar(Monitor *m)
 					continue;
 				tw = MIN(m->sel == c ? w : mw, TEXTW(c->name));
 
-				if (m->sel == c)
-					scm = SchemeSel;
-				else if (HIDDEN(c))
+				if (HIDDEN(c))
 					scm = SchemeHid;
+				else if (m->sel == c)
+					scm = SchemeSel;
 				else
 					scm = SchemeNorm;
 				drw_setscheme(drw, scheme[scm]);
@@ -907,12 +914,14 @@ focus(Client *c)
 		XSetWindowBorder(dpy, c->win, scheme[SchemeSel][ColBorder].pixel);
 		setfocus(c);
 	} else {
+		for (c = selmon->stack; c && !(HIDDEN(c) && ISVISIBLE(c)); c = c->snext);
 		XSetInputFocus(dpy, root, RevertToPointerRoot, CurrentTime);
 		XDeleteProperty(dpy, root, netatom[NetActiveWindow]);
 	}
 	selmon->sel = c;
 	drawbars();
 }
+
 void
 hide(Client *c) {
 	if (!c)
@@ -977,16 +986,20 @@ focusstack(const Arg *arg)
 	if (!selmon->sel)
 		return;
 	if (arg->i > 0) {
-		for (c = selmon->sel->next; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
+		for (c = selmon->sel->next; 
+		c && (!ISVISIBLE(c) || c->cantfocus || HIDDEN(c)); 
+		c = c->next);
 		if (!c)
-			for (c = selmon->clients; c && (!ISVISIBLE(c) || c->cantfocus); c = c->next);
+			for (c = selmon->clients; 
+			c && (!ISVISIBLE(c) || c->cantfocus || HIDDEN(c));
+			c = c->next);
 	} else {
 		for (i = selmon->clients; i != selmon->sel; i = i->next)
-			if (ISVISIBLE(i) && !i->cantfocus)
+			if (ISVISIBLE(i) && !i->cantfocus && !HIDDEN(i))
 				c = i;
 		if (!c)
 			for (; i; i = i->next)
-				if (ISVISIBLE(i) && !i->cantfocus)
+				if (ISVISIBLE(i) && !i->cantfocus && !HIDDEN(i))
 					c = i;
 	}
 	if (c) {
@@ -1244,6 +1257,30 @@ maprequest(XEvent *e)
 }
 
 void
+deck(Monitor *m) {
+	unsigned int i, n, h, mw, my;
+	Client *c;
+
+	for(n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if(n == 0)
+		return;
+
+	if(n > m->nmaster) {
+		mw = m->nmaster ? m->ww * m->mfact : 0;
+	}
+	else
+		mw = m->ww;
+	for(i = my = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+		if(i < m->nmaster) {
+			h = (m->wh - my) / (MIN(n, m->nmaster) - i);
+			resize(c, m->wx, m->wy + my, mw - (2*c->bw), h - (2*c->bw), False);
+			my += HEIGHT(c);
+		}
+		else
+			resize(c, m->wx + mw, m->wy, m->ww - mw - (2*c->bw), m->wh - (2*c->bw), False);
+}
+
+void
 monocle(Monitor *m)
 {
 	unsigned int n = 0;
@@ -1252,8 +1289,6 @@ monocle(Monitor *m)
 	for (c = m->clients; c; c = c->next)
 		if (ISVISIBLE(c))
 			n++;
-	if (n > 0) /* override layout symbol */
-		snprintf(m->ltsymbol, sizeof m->ltsymbol, "[%d]", n);
 	for (c = nexttiled(m->clients); c; c = nexttiled(c->next))
 		resize(c, m->wx, m->wy, m->ww - 2 * c->bw, m->wh - 2 * c->bw, 0);
 }
@@ -1565,10 +1600,27 @@ restack(Monitor *m)
 		wc.stack_mode = Below;
 		wc.sibling = m->barwin;
 		for (c = m->stack; c; c = c->snext)
+		{
 			if (!c->isfloating && ISVISIBLE(c)) {
 				XConfigureWindow(dpy, c->win, CWSibling|CWStackMode, &wc);
 				wc.sibling = c->win;
 			}
+			else if(c->ontop && ISVISIBLE(c))
+			{
+				XRaiseWindow(dpy, c->win);
+			}
+		}
+	}
+	else
+	{
+		for (c = m->stack; c; c = c->snext)
+		{
+			if(c->ontop && ISVISIBLE(c))
+			{
+				XRaiseWindow(dpy, c->win);
+			}
+		}
+
 	}
 	XSync(dpy, False);
 	while (XCheckMaskEvent(dpy, EnterWindowMask, &ev));
@@ -1814,6 +1866,7 @@ show(Client *c)
 
 	XMapWindow(dpy, c->win);
 	setclientstate(c, NormalState);
+	focus(c);
 	arrange(c->mon);
 }
 
@@ -2030,10 +2083,8 @@ togglewin(const Arg *arg)
 	if (c == selmon->sel)
 	{
 		hide(c);
-		c->cantfocus = 1;
 	}
 	else {
-		c->cantfocus = 0;
 		show(c);
 		focus(c);
 		restack(selmon);
@@ -2546,3 +2597,52 @@ bstackhoriz(Monitor *m) {
 		}
 	}
 }
+
+void
+centeredfloatingmaster(Monitor *m)
+{
+	unsigned int i, n, w, mh, mw, mx, mxo, my, myo, tx;
+	Client *c;
+
+	/* count number of clients in the selected monitor */
+	for (n = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), n++);
+	if (n == 0)
+		return;
+
+	/* initialize nmaster area */
+	if (n > m->nmaster) {
+		/* go mfact box in the center if more than nmaster clients */
+		if (m->ww > m->wh) {
+			mw = m->nmaster ? m->ww * m->mfact : 0;
+			mh = m->nmaster ? m->wh * 0.9 : 0;
+		} else {
+			mh = m->nmaster ? m->wh * m->mfact : 0;
+			mw = m->nmaster ? m->ww * 0.9 : 0;
+		}
+		mx = mxo = (m->ww - mw) / 2;
+		my = myo = (m->wh - mh) / 2;
+	} else {
+		/* go fullscreen if all clients are in the master area */
+		mh = m->wh;
+		mw = m->ww;
+		mx = mxo = 0;
+		my = myo = 0;
+	}
+
+	for(i = tx = 0, c = nexttiled(m->clients); c; c = nexttiled(c->next), i++)
+	if (i < m->nmaster) {
+		/* nmaster clients are stacked horizontally, in the center
+		 * of the screen */
+		w = (mw + mxo - mx) / (MIN(n, m->nmaster) - i);
+		resize(c, m->wx + mx, m->wy + my, w - (2*c->bw),
+		       mh - (2*c->bw), 0);
+		mx += WIDTH(c);
+	} else {
+		/* stack clients are stacked horizontally */
+		w = (m->ww - tx) / (n - i);
+		resize(c, m->wx + tx, m->wy, w - (2*c->bw),
+		       m->wh - (2*c->bw), 0);
+		tx += WIDTH(c);
+	}
+}
+

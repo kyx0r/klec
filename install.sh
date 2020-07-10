@@ -1,4 +1,6 @@
 cp ten_years__time_by_bythmark_d4dg6dz ~/
+mkdir -p /usr/share/icons/default/
+mkdir -p /etc/fonts
 cp -r GoldenShimmer /usr/share/icons
 cp dotfiles/.twmrc ~/
 cp dotfiles/.bashrc ~/
@@ -20,3 +22,13 @@ make install
 cd ../
 cd slstatus
 make install
+cd ../
+cd dmenu
+make install
+cd ../
+cd xkeyboard
+make install
+cd ../
+cd cembed
+./build.sh
+cp ./cembed /bin

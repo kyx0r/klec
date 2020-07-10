@@ -2,7 +2,8 @@
 syntax on
 set encoding=utf-8
 set backupdir-=.
-set backupdir^=/tmp
+set backupdir^=/run
+set directory^=/run
 set backspace=indent,eol,start
 set number relativenumber
 set nu rnu
@@ -11,6 +12,7 @@ set cursorcolumn
 set wildmenu
 set wildmode=longest:full,full
 set path+=**
+set mouse=i
 highlight CursorLine term=reverse cterm=reverse ctermfg=Yellow guibg=Grey
 highlight CursorColumn term=reverse cterm=reverse ctermfg=Yellow guibg=Grey
 highlight Visual term=reverse cterm=reverse guibg=Grey

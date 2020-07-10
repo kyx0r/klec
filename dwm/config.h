@@ -5,7 +5,7 @@ static const unsigned int borderpx  = 0;        /* border pixel of windows */
 static const unsigned int snap      = 32;       /* snap pixel */
 static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
-static const char *fonts[]          = {"Terminus (TTF):pixelsize=16"};
+static const char *fonts[]          = {"Terminus (TTF):pixelsize=16", "monospace:size=10"};
 static const char dmenufont[]       = "Terminus (TTF):pixelsize=16";
 static const char col_gray1[]       = "#000000";
 static const char col_gray2[]       = "#BBBBBB";
@@ -28,13 +28,13 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Onboard",  NULL,       NULL,       0,            1,      1,    -1 },
-	{ "onboard",  NULL,       NULL,       0,            1,      1,    -1 },
+	{ "Onboard",  NULL,       NULL,       0,            1,      1,  1,  -1 },
+	{ "onboard",  NULL,       NULL,       0,            1,      1,  1,  -1 },
 //	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
 /* layout(s) */
-static const float mfact     = 0.55; /* factor of master area size [0.05..0.95] */
+static const float mfact     = 0.50; /* factor of master area size [0.05..0.95] */
 static const int nmaster     = 1;    /* number of clients in master area */
 static const int resizehints = 1;    /* 1 means respect size hints in tiled resizals */
 
@@ -43,8 +43,11 @@ static const Layout layouts[] = {
 	{ "[]=",      tile },    /* first entry is default */
 	{ "><>",      NULL },    /* no layout function means floating behavior */
 	{ "[M]",      monocle },
+	{ "[D]",      deck },
 	{ "TTT",      bstack },
 	{ "===",      bstackhoriz },
+	{ ">M>",      centeredfloatingmaster},
+	{ NULL,       NULL },
 };
 
 /* key definitions */
@@ -84,6 +87,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_z,      killclient,     {0} },
 	{ MODKEY,                       XK_c,      swapfocus,      {.i = -1 } },
 	{ MODKEY,           		XK_s,      cyclelayout,    {.i = +1 } },
+	{ MODKEY|ShiftMask,           	XK_s,      cyclelayout,    {.i = -1 } },
 	{ MODKEY,                       XK_m,      togglefullscr,  {0} },
 	{ MODKEY,                       XK_n,      togglefloating, {0} },
 	{ MODKEY,                       XK_0,      view,           {.ui = ~0 } },
@@ -117,18 +121,11 @@ static Key keys[] = {
 /* button definitions */
 /* click can be ClkTagBar, ClkLtSymbol, ClkStatusText, ClkWinTitle, ClkClientWin, or ClkRootWin */
 static Button buttons[] = {
-	/* click                event mask      button          function        argument */
-//	{ ClkLtSymbol,          0,              Button1,        setlayout,      {0} },
-//	{ ClkLtSymbol,          0,              Button3,        setlayout,      {.v = &layouts[2]} },
-//	{ ClkWinTitle,          0,              Button2,        zoom,           {0} },
-//	{ ClkStatusText,        0,              Button2,        spawn,          {.v = termcmd } },
-//	{ ClkClientWin,         MODKEY,         Button1,        movemouse,      {0} },
-//	{ ClkClientWin,         MODKEY,         Button2,        togglefloating, {0} },
-//	{ ClkClientWin,         MODKEY,         Button3,        resizemouse,    {0} },
-	{ ClkTagBar,            0,              Button1,        view,           {0} },
-//	{ ClkTagBar,            0,              Button3,        toggleview,     {0} },
-	{ ClkWinTitle,          0,              Button1,        togglewin,      {0} },
-//	{ ClkTagBar,            MODKEY,         Button1,        tag,            {0} },
-//	{ ClkTagBar,            MODKEY,         Button3,        toggletag,      {0} },
+	/* click                event mask          button          function        argument */
+	{ ClkLtSymbol,          0,                  Button1,        cyclelayout,    {.i = +1} },
+	{ ClkClientWin,         MODKEY|ShiftMask,   Button1,        movemouse,      {0} },
+	{ ClkClientWin,         MODKEY|ControlMask, Button1,        resizemouse,    {0} },
+	{ ClkTagBar,            0,                  Button1,        view,           {0} },
+	{ ClkWinTitle,          0,                  Button1,        togglewin,      {0} },
 };
 

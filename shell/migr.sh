@@ -5,7 +5,7 @@
 
 mkdir -p /ramroot
 modprobe zram num_devices=1
-echo $(free -h | awk '/Mem/ { print $2 }') > /sys/block/zram0/disksize
+echo "32G" > /sys/block/zram0/disksize
 mkfs.ext4 /dev/zram0
 mount /dev/zram0 /ramroot
 #mount -o size=8G -t tmpfs tmpfs /ramroot
@@ -22,6 +22,6 @@ mount --rbind /dev /ramroot/dev
 mount --rbind /proc /ramroot/proc
 mkdir /ramroot/oldroot
 wait < <(jobs -p)
-./pivot_root /ramroot /ramroot/oldroot
+pivot_root /ramroot /ramroot/oldroot
 umount /oldroot -f -l
 cd /
