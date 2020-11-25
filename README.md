@@ -22,7 +22,7 @@ bar, and you can't switch to it when cycling windows.
 1. Not many changes here besides auto copy to system 
 clipboard, and keyboard select patch. All colors are 
 set to standard and the font used is terminus-ttf-4.47.0
-localed in this repository
+located in this repository
 
 - slstatus -
 1. The only interesting part is the config.h where
@@ -91,7 +91,7 @@ just by "ea fi" if this is a uniquely matched filename
 16. Added key to goto line 0 keybind: gg 
 17. Added key to delete everything inside (cursor outside) "" keybind: di" 
 18. Added key to delete everything inside () keybind: di) 
-19. Added key to delete everything inside (cursor outside) () keybind: di) 
+19. Added key to delete everything inside (cursor outside) () keybind: di( 
 20. Added key to change . to -> on cursor line keybind: vh
 21. Added key to change -> to . on cursor line keybind: vg
 22. Added ex command "z" it does the same thing "!" does but the shell is
