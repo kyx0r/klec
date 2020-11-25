@@ -76,6 +76,8 @@ build another utility program.
 7. Changed behavior of ^a to change search direction when no more match 
 8. Added fssearch, searches what is under the cursor 
 in every file in the opened directory keybind: ^]   
+Right now it only checks for .c and .h files as I uses this
+for code navigation between files.
 9. fssearch but going in reverse keybind: ^p
 11. Added ex command "ea" which opens file case insensitive and ignores the path,
 setting an extra number parameter after filename will skip that many matches with
@@ -91,6 +93,9 @@ just by "ea fi" if this is a uniquely matched filename
 19. Added key to delete everything inside (cursor outside) () keybind: di) 
 20. Added key to change . to -> on cursor line keybind: vh
 21. Added key to change -> to . on cursor line keybind: vg
+22. Added ex command "z" it does the same thing "!" does but the shell is
+launched in interactive mode, so stuff like aliases work. But it will cause
+vi to suspend.
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in
