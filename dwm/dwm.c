@@ -451,7 +451,8 @@ attachstack(Client *c)
 void
 buttonpress(XEvent *e)
 {
-	unsigned int i, x, click;
+	unsigned int i, x, click, ii = 0, 
+		     realtag = 0, occ = 0;
 	Arg arg = {0};
 	Client *c;
 	Monitor *m;
@@ -470,8 +471,18 @@ buttonpress(XEvent *e)
 			x += TEXTW(tags[i]);
 		while (ev->x >= x && ++i < m->tags_alive);
 		if (i < m->tags_alive) {
+			for (Client *cc = m->clients; cc; cc = cc->next)
+				occ |= cc->tags;
+			for (; ii < LENGTH(tags); ii++) {
+				if(occ & 1 << ii || m->tagset[m->seltags] & 1 << ii)
+				{
+					if(realtag == i)
+						break;						
+					realtag++;
+				}
+			}
 			click = ClkTagBar;
-			arg.ui = 1 << i;
+			arg.ui = 1 << ii;
 		} else if (ev->x < x + blw)
 			click = ClkLtSymbol;
 		/* 2px right padding */
@@ -2128,6 +2139,7 @@ unmanage(Client *c, int destroyed)
 	focus(NULL);
 	updateclientlist();
 	arrange(m);
+	selmon->pertag->prevclient[selmon->pertag->curtag] = NULL;
 }
 
 void

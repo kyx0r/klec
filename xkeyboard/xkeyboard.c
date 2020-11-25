@@ -1,8 +1,9 @@
 /* xkeyboard.c 
  *
- * Copyright (C) 1999-2000 Transmeta Corporation
+ * Copyright (C) 1999-2020 
  *
- * written by Nathan Laredo <nlaredo@transmeta.com>
+ * original written by Nathan Laredo <nlaredo@transmeta.com>
+ * improved by Kyryl Melekhin <https://kyryl.tk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +22,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/time.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/keysym.h>
-#include <X11/Intrinsic.h>
 #include <X11/cursorfont.h>
-#include <X11/Xmd.h>
-#include <X11/Xmu/WinUtil.h>
 #include <X11/extensions/XTest.h>
-#include <X11/extensions/xtestext1.h>
 #include "xkeyboard.h"
 #ifdef NO_GRAPHICS
 #include "nullkeycaps.h"
@@ -50,13 +48,12 @@ int modindex[8];
 Display *dpy;
 
 Window mywindow, mykey[MAX_KEYS], 
-ctrlwin, lockwin, closewindow,
-movewin, root, lbcornerwin, modewin;
+zoomwin, closewindow,
+movewin, root, lbcornerwin, modewin, mousewin;
 
 Window myborder[NUM_BORDERS];
 XWindowAttributes attribs;
-int keyboard_active;
-GC mygc, mygcled, myact;
+GC mygc, mygcled, mygcred, myact;
 XGCValues gcvals;
 XEvent myevent;
 int myscreen;
@@ -75,6 +72,9 @@ int sendkey;
 Pixmap mykc[NUM_KEYCAPS];
 Pixmap cpgm[NUM_CONSTPGM];
 enum { NORMAL, CLOSING } closingstate;
+int xkeyoffs, ykeyoffs;
+#define p(...) fprintf(stderr, __VA_ARGS__); \
+fprintf(stderr, "\n"); \
 
 static int handle_error(Display *d, XErrorEvent *event)
 {
@@ -111,14 +111,10 @@ void init_display(int argc, char **argv)
 	root = DefaultRootWindow(dpy);
 	mybackground = BlackPixel(dpy, myscreen);
 	myforeground = WhitePixel(dpy, myscreen);
-	myhint.width = 800;
-	myhint.height = 240;
-	myhint.max_width = 800;
-	myhint.max_height = 240;
-	myhint.min_width = 800;
-	myhint.min_width = 240;
-	myhint.x = 16-800;
-	myhint.y = screenheight-16;
+	myhint.width = 16;
+	myhint.height = 16;
+	myhint.x = 0;
+	myhint.y = screenheight - 16;
 	myhint.flags = PSize | PMinSize | PMaxSize | PPosition;
 	myattribs.event_mask = ButtonPressMask | VisibilityChangeMask |
 		EnterWindowMask;
@@ -133,24 +129,20 @@ void init_display(int argc, char **argv)
 		EnterWindowMask;
 	XSetStandardProperties(dpy, mywindow, tmpbuf, tmpbuf, None,
 	       argv, argc, &myhint);
-	myhint.x = myhint.y = 0;
-	myhint.width = myhint.height = 32;
-	myhint.min_width = myhint.min_height = 32;
-	myhint.flags = PSize | PMinSize | PPosition;
 	gcvals.foreground = mybackground;
 	gcvals.background = myforeground;
 	mygc = XCreateGC(dpy, mywindow, GCForeground | GCBackground,
 		&gcvals);
 	font_struct = XLoadQueryFont(dpy,
-		"-*-helvetica-medium-r-*-*-*-100-*-*-*-*-*-*");
+		"-*-*-medium-r-*-*-*-100-*-*-*-*-*-*");
 	if(!font_struct)
 	{
-		fprintf(stderr, "Missing helvatica font.\n");
+		fprintf(stderr, "Missing fonts.\n");
 		exit(1);
 	}
 	XSetFont(dpy, mygc, font_struct->fid);
-	mycolor.red = 65535;
-	mycolor.green = 65535;
+	mycolor.red = 0xFFFF;
+	mycolor.green = 0xFFFF;
 	mycolor.blue = 0;
 	mycolor.flags = DoRed | DoGreen | DoBlue;
 	XAllocColor(dpy, DefaultColormap(dpy, myscreen), &mycolor);
@@ -158,6 +150,13 @@ void init_display(int argc, char **argv)
 	mygcled = XCreateGC(dpy, mywindow, GCForeground |
 		GCBackground, &gcvals);
 	XSetFont(dpy, mygcled, font_struct->fid);
+	mycolor.green = 0;
+	XAllocColor(dpy, DefaultColormap(dpy, myscreen), &mycolor);
+	gcvals.foreground = mycolor.pixel;
+	mygcred = XCreateGC(dpy, mywindow, GCForeground |
+		GCBackground, &gcvals);
+	XSetFont(dpy, mygcred, font_struct->fid);
+
 	gcvals.foreground = mybackground;
 	XMapRaised(dpy, mywindow);
 }
@@ -241,7 +240,7 @@ void create_pixmaps(void)
 	else
 	{
 		for (i = 0; i < NUM_CONSTPGM; i++) {
-			if(mykclist[i].pgm)
+			if(cpgmlist[i].pgm)
 			{
 				cpgm[i] = scale_pic(
 						&cpgmlist[i], 
@@ -262,6 +261,66 @@ void create_pixmaps(void)
 		}
 	}
 	initialized = 1;
+}
+
+void move_constkeys()
+{
+	XMoveWindow(dpy, zoomwin, myhint.width - 45, 16);
+	XMoveWindow(dpy, modewin, myhint.width - 85, 16);
+	XMoveWindow(dpy, movewin, myhint.width - 125, 16);
+	XMoveWindow(dpy, mousewin, myhint.width - 165, 16);
+	XMoveWindow(dpy, lbcornerwin, myhint.width - 16, myhint.height - 16);
+	XMoveWindow(dpy, closewindow, 0, myhint.height - closewindow_uppgm.height);
+}
+
+void create_constkeys()
+{
+	zoomwin = XCreateSimpleWindow(dpy, mywindow,
+		myhint.width - 45, 16, 40, 40, 1, mybackground, myforeground);
+	modewin = XCreateSimpleWindow(dpy, mywindow,
+		myhint.width - 85, 16, 40, 40, 1, mybackground, myforeground);
+	movewin = XCreateSimpleWindow(dpy, mywindow,
+		myhint.width - 125, 16, 40, 40, 1, mybackground, myforeground);
+	mousewin = XCreateSimpleWindow(dpy, mywindow,
+		myhint.width - 165, 16, 40, 40, 1, mybackground, myforeground);
+
+	lbcornerwin = XCreateSimpleWindow(dpy, mywindow,
+		myhint.width-16, myhint.height-16, 16, 16, 0, mybackground, myforeground);
+	closewindow = XCreateSimpleWindow(dpy, mywindow,
+		0, myhint.height - closewindow_uppgm.height, 16, 16, 0, mybackground, myforeground);
+
+	XSetWindowBackgroundPixmap(dpy, mywindow, cpgm[NUM_CONSTPGM - 1]);
+	XClearWindow(dpy, mywindow);
+
+	XSetWindowBackgroundPixmap(dpy, zoomwin, cpgm[NUM_CONSTPGM - 3]);
+	XClearWindow(dpy, zoomwin);
+	XSelectInput(dpy, zoomwin, ButtonPressMask | ButtonReleaseMask);
+	XMapRaised(dpy, zoomwin);
+
+	XSetWindowBackgroundPixmap(dpy, modewin, cpgm[NUM_CONSTPGM - 12]);
+	XClearWindow(dpy, modewin);
+	XSelectInput(dpy, modewin, ButtonPressMask | ButtonReleaseMask);
+	XMapRaised(dpy, modewin);
+
+	XSetWindowBackgroundPixmap(dpy, mousewin, cpgm[NUM_CONSTPGM - 14]);
+	XClearWindow(dpy, mousewin);
+	XSelectInput(dpy, mousewin, ButtonPressMask | ButtonReleaseMask);
+	XMapRaised(dpy, mousewin);
+
+	XSetWindowBackgroundPixmap(dpy, movewin, cpgm[NUM_CONSTPGM - 9]);
+	XClearWindow(dpy, movewin);
+	XSelectInput(dpy, movewin, ButtonPressMask | ButtonReleaseMask);
+	XMapRaised(dpy, movewin);
+
+	XSetWindowBackgroundPixmap(dpy, lbcornerwin, cpgm[NUM_CONSTPGM - 11]);
+	XClearWindow(dpy, lbcornerwin);
+	XSelectInput(dpy, lbcornerwin, ButtonPressMask | ButtonReleaseMask);
+	XMapRaised(dpy, lbcornerwin);
+
+	XSetWindowBackgroundPixmap(dpy, closewindow, cpgm[NUM_CONSTPGM - 5]);
+	XClearWindow(dpy, closewindow);
+	XSelectInput(dpy, closewindow, ButtonPressMask);
+	XMapRaised(dpy, closewindow);
 }
 
 void create_keys(void)
@@ -298,53 +357,7 @@ void create_keys(void)
 			scanname[j][i] = NULL;
 		modindex[j] = 0;
 	}
-	ctrlwin =  XCreateSimpleWindow(dpy, mywindow,
-		730, 16, 40, 40, 1, mybackground, myforeground);
-	movewin = XCreateSimpleWindow(dpy, mywindow,
-		650, 16, 40, 40, 1, mybackground, myforeground);
-	modewin = XCreateSimpleWindow(dpy, mywindow,
-		690, 16, 40, 40, 1, mybackground, myforeground);
-	lbcornerwin = XCreateSimpleWindow(dpy, mywindow,
-		800-16, 240-16, 16, 16, 0, mybackground, myforeground);
-	closewindow = XCreateSimpleWindow(dpy, mywindow,
-		800 - closewindow_uppgm.width, 0,
-		closewindow_uppgm.width, closewindow_uppgm.height, 0,
-		mybackground, mybackground);
-	lockwin =  XCreateSimpleWindow(dpy, mywindow,
-		800-24, 36, 20, 20, 1, mybackground, myforeground);
-
-	XSetWindowBackgroundPixmap(dpy, mywindow, cpgm[NUM_CONSTPGM - 1]);
-	XClearWindow(dpy, mywindow);
-
-	XSetWindowBackgroundPixmap(dpy, ctrlwin, cpgm[NUM_CONSTPGM - 3]);
-	XClearWindow(dpy, ctrlwin);
-	XSelectInput(dpy, ctrlwin, ButtonPressMask | ButtonReleaseMask);
-	XMapRaised(dpy, ctrlwin);
-
-	XSetWindowBackgroundPixmap(dpy, lockwin, cpgm[NUM_CONSTPGM - 8]);
-	XClearWindow(dpy, lockwin);
-	XSelectInput(dpy, lockwin, ButtonPressMask);
-	XMapRaised(dpy, lockwin);
-
-	XSetWindowBackgroundPixmap(dpy, modewin, cpgm[NUM_CONSTPGM - 12]);
-	XClearWindow(dpy, modewin);
-	XSelectInput(dpy, modewin, ButtonPressMask | ButtonReleaseMask);
-	XMapRaised(dpy, modewin);
-
-	XSetWindowBackgroundPixmap(dpy, movewin, cpgm[NUM_CONSTPGM - 9]);
-	XClearWindow(dpy, movewin);
-	XSelectInput(dpy, movewin, ButtonPressMask | ButtonReleaseMask);
-	XMapRaised(dpy, movewin);
-
-	XSetWindowBackgroundPixmap(dpy, lbcornerwin, cpgm[NUM_CONSTPGM - 11]);
-	XClearWindow(dpy, lbcornerwin);
-	XSelectInput(dpy, lbcornerwin, ButtonPressMask | ButtonReleaseMask);
-	XMapRaised(dpy, lbcornerwin);
-
-	XSetWindowBackgroundPixmap(dpy, closewindow, cpgm[NUM_CONSTPGM - 5]);
-	XClearWindow(dpy, closewindow);
-	XSelectInput(dpy, closewindow, ButtonPressMask);
-	XMapRaised(dpy, closewindow);
+	create_constkeys();
 }
 
 int get_keyboard_mapping(void)
@@ -459,7 +472,7 @@ void redraw_window(Window exposed)
 redo:
 			XQueryTextExtents(dpy, font_struct->fid, name, len,
 					&dummy[0], &dummy[1], &dummy[2], &schar);
-			if(schar.width > xk[i].w)
+			if(schar.width > xk[i].w * sn / sd)
 			{
 				len--;
 				goto redo;
@@ -497,40 +510,63 @@ void resize_keys(void)
 			(ox + mb[i].x) * sn / sd, (oy + mb[i].y) * sn / sd,
 			w, h);
 	}
-	XSetWindowBackgroundPixmap(dpy, ctrlwin, cpgm[NUM_CONSTPGM - 3]);
+	XSetWindowBackgroundPixmap(dpy, zoomwin, cpgm[NUM_CONSTPGM - 3]);
 	XSetWindowBackgroundPixmap(dpy, mywindow, cpgm[NUM_CONSTPGM - 1]);
 	XClearWindow(dpy, mywindow);
-	XClearWindow(dpy, ctrlwin);
+	XClearWindow(dpy, zoomwin);
 }
 
 void do_control(void)
 {
-	zoom++;
+	XFontStruct *font;
 	zoom &= 3;
 
-	XFreeFont(dpy, font_struct);
 	if (zoom == 0) {
+		font = XLoadQueryFont(dpy,
+			"-*-*-medium-r-*-*-*-100-*-*-*-*-*-*");
+		if(!font)
+		{
+			return;
+		}
 		ox = 32; oy = 16; sn = 1; sd = 1;
-		font_struct = XLoadQueryFont(dpy,
-			"-*-helvetica-medium-r-*-*-*-100-*-*-*-*-*-*");
+		XFreeFont(dpy, font_struct);
+		font_struct = font;
 		XSetFont(dpy, mygc, font_struct->fid);
 		XSetFont(dpy, mygcled, font_struct->fid);
 	} else if (zoom == 1) {
+		font = XLoadQueryFont(dpy,
+			"-*-*-medium-r-*-*-*-120-*-*-*-*-*-*");
+		if(!font)
+		{
+			return;
+		}
 		ox = 0; oy = -48; sn = 3; sd = 2;
-		font_struct = XLoadQueryFont(dpy,
-			"-*-helvetica-medium-r-*-*-*-120-*-*-*-*-*-*");
+		XFreeFont(dpy, font_struct);
+		font_struct = font;
 		XSetFont(dpy, mygc, font_struct->fid);
 		XSetFont(dpy, mygcled, font_struct->fid);
 	} else if (zoom == 3) {
+		font = XLoadQueryFont(dpy,
+			"-*-*-medium-r-*-*-*-180-*-*-*-*-*-*");
+		if(!font)
+		{
+			return;
+		}
 		ox = -48; oy = -64; sn = 2; sd = 1;
-		font_struct = XLoadQueryFont(dpy,
-			"-*-helvetica-medium-r-*-*-*-180-*-*-*-*-*-*");
+		XFreeFont(dpy, font_struct);
+		font_struct = font;
 		XSetFont(dpy, mygc, font_struct->fid);
 		XSetFont(dpy, mygcled, font_struct->fid);
 	} else if (zoom == 2) {
+		font = XLoadQueryFont(dpy,
+			"-*-*-medium-r-*-*-*-120-*-*-*-*-*-*");
+		if(!font)
+		{
+			return;
+		}
 		ox = -12; oy = -64; sn = 7; sd = 4;
-		font_struct = XLoadQueryFont(dpy,
-			"-*-helvetica-medium-r-*-*-*-120-*-*-*-*-*-*");
+		XFreeFont(dpy, font_struct);
+		font_struct = font;
 		XSetFont(dpy, mygc, font_struct->fid);
 		XSetFont(dpy, mygcled, font_struct->fid);
 	}
@@ -542,7 +578,10 @@ void do_button_event(void)
 	int i, j, mod, sc, lockmap = 0;
 	char *name;
 	static Window lastkeywin = 0;
+	static Window lastmodkeywin = 0;
 	Window win = myevent.xbutton.window;
+	static Time laststamp = 0;
+	Time stamp = myevent.xbutton.time;
 
 	if (lastkeywin && myevent.type == ButtonRelease) {
 		XSetWindowBorderWidth(dpy, lastkeywin, BORDER);
@@ -576,27 +615,48 @@ void do_button_event(void)
 	if (j < 8) {
 		if (myevent.type == ButtonRelease)
 			return;
+		if(win == lastmodkeywin && stamp - laststamp < 500)
+		{
+			lockmod = !lockmod ? 1 : 0;
+			GC tmp = mygcled;
+			mygcled = mygcred;
+			mygcred = tmp;
+			if(lockmod)
+			{
+				name = scanname[0][sc];
+				if(name)
+					XDrawString(dpy, mykey[i], mygcled,
+							8 * sn / sd, 26 * sn / sd,
+							name, strlen(name));
+			}
+			do_control();
+			return;
+		} 
+		laststamp = stamp;
+		lastmodkeywin = mykey[i];
 		mod = (1 << j);
 		if (keystate & mod) {
-			keystate &= ~mod;
-			lockmap |= mod;
-			myevent.type = ButtonRelease;
-			i = modindex[j];
-			sc = xk[i].scancode;
-			name = scanname[0][sc];
-			if (name)
-				XDrawString(dpy, mykey[i], mygc,
-					8 * sn / sd, 26 * sn / sd,
-					name, strlen(name));
-		} else {
-			keystate |= mod;
+                       keystate &= ~mod;
+                       lockmap |= mod;
+                       myevent.type = ButtonRelease;
+                       i = modindex[j];
+                       sc = xk[i].scancode;
+                       name = scanname[0][sc];
+                       if (name)
+                               XDrawString(dpy, mykey[i], mygc,
+                                       8 * sn / sd, 26 * sn / sd,
+                                       name, strlen(name));
+		} else { 
+			keystate |= mod; 
 			lockmap |= mod;
 			modindex[j] = i;
 			name = scanname[0][sc];
 			if (name)
+			{
 				XDrawString(dpy, mykey[i], mygcled,
-					8 * sn / sd, 26 * sn / sd,
-					name, strlen(name));
+						8 * sn / sd, 26 * sn / sd,
+						name, strlen(name));
+			}
 		}
 	}
 	if (myevent.type == ButtonPress) {
@@ -717,27 +777,20 @@ void do_button_event(void)
 	return;
 }
 
-void activate_keyboard(int state)
+void hide()
 {
-	int i;
-	if (state) {
-		for (i = 16-800; i < 0; i += 64) {
-			XMoveWindow(dpy, mywindow, i,
-				    screenheight - 240);
-		}
-		XMoveWindow(dpy, mywindow, 0, screenheight - 240);
-	} else {
-		for (i = -16; i > 16-800; i -= 64) {
-			XMoveWindow(dpy, mywindow, i,
-				    screenheight - 16);
-		}
-		XMoveWindow(dpy, mywindow, 16-800, screenheight - 16);
-		//set zoom to default.
-		while(zoom != 0)
-		{
-			do_control();
-		}
+	XMoveWindow(dpy, closewindow, 0, 0);
+	XMoveResizeWindow(dpy, mywindow, 0, screenheight-16, 16, 16);
+}
+
+void show()
+{
+	if(myhint.y + myhint.height > screenheight)
+	{
+		myhint.y -= myhint.height-closewindow_uppgm.height;
 	}
+	XMoveResizeWindow(dpy, mywindow, myhint.x, myhint.y, myhint.width, myhint.height);
+	move_constkeys();
 }
 
 int
@@ -746,6 +799,7 @@ getrootptr(int *x, int *y)
 	int di;
 	unsigned int dui;
 	Window dummy;
+
 	return XQueryPointer(dpy, root, &dummy, &dummy, x, y, &di, &di, &dui);
 }
 
@@ -753,7 +807,7 @@ getrootptr(int *x, int *y)
 void
 movebutton(int xpos, int ypos)
 {
-	int x, y, nx, ny;
+	int x, y, nx = 0, ny = 0;
 	XEvent ev;
 	Time lasttime = 0;
 
@@ -784,16 +838,220 @@ movebutton(int xpos, int ypos)
 			break;
 		}
 	} while (ev.type != ButtonRelease);
+	myhint.x = nx-xpos;
+	myhint.y = ny-ypos;
 	XSetWindowBackgroundPixmap(dpy,
 			movewin,
 			cpgm[NUM_CONSTPGM - 9]);
 	XClearWindow(dpy, movewin);
+	do_control(); //redraw the fonts
 	XUngrabPointer(dpy, CurrentTime);
+}
+
+void resize_win()
+{
+	int x, y, nx, ny = 0; 
+	XEvent ev;
+	Time lasttime = 0;
+
+	if (XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
+		None, None, CurrentTime) != GrabSuccess)
+	if (!getrootptr(&x, &y))
+		return;
+	do {
+		XMaskEvent(dpy, MOUSEMASK|ExposureMask|SubstructureRedirectMask, &ev);
+		switch(ev.type) {
+		case ConfigureRequest:
+		case Expose:
+		case MapRequest:
+			break;
+		case MotionNotify:
+			if ((ev.xmotion.time - lasttime) <= (1000 / 60))
+				continue;
+			lasttime = ev.xmotion.time;
+			nx = ev.xmotion.x;
+			ny = ev.xmotion.y;
+			myhint.width = nx - myhint.x;
+			myhint.height = ny - myhint.y;
+			XMoveResizeWindow(dpy, mywindow, myhint.x, myhint.y, myhint.width, myhint.height);
+			move_constkeys();
+			break;
+		}
+	} while (ev.type != ButtonRelease);
+	do_control(); //redraw the fonts
+	XUngrabPointer(dpy, CurrentTime);
+}
+
+void reset_keyspos()
+{
+	int i;
+	for (i = 0; i < MAX_KEYS; i++) {
+		xk[i].x -= xkeyoffs; 
+		xk[i].y -= ykeyoffs;
+	}
+	for (i = 0; i < NUM_BORDERS; i++) {
+		mb[i].x	-= xkeyoffs;
+		mb[i].y -= ykeyoffs;	
+	}
+	xkeyoffs = 0;
+	ykeyoffs = 0;
+}
+
+void move_keys()
+{
+	int x, y, nx = 0, ny = 0, i; 
+	XEvent ev;
+	Time lasttime = 0;
+
+	if (XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
+		None, None, CurrentTime) != GrabSuccess)
+		return;
+	if (!getrootptr(&x, &y))
+		return;
+	do {
+		XMaskEvent(dpy, MOUSEMASK|ExposureMask|SubstructureRedirectMask, &ev);
+		switch(ev.type) {
+		case ConfigureRequest:
+		case Expose:
+		case MapRequest:
+			break;
+		case MotionNotify:
+			if ((ev.xmotion.time - lasttime) <= (1000 / 60))
+				continue;
+			lasttime = ev.xmotion.time;
+			nx = (ev.xmotion.x - x);
+			ny = (ev.xmotion.y - y);
+
+			for (i = 0; i < MAX_KEYS; i++) {
+				XMoveWindow(dpy, mykey[i], 
+				(ox+(xk[i].x+nx))*sn/sd, (oy+(xk[i].y+ny))*sn/sd); 
+			}
+			for (i = 0; i < NUM_BORDERS; i++) {
+				XMoveWindow(dpy, myborder[i],
+				(ox+(mb[i].x+nx))*sn/sd, (oy+(mb[i].y+ny))*sn/sd); 
+			}
+			break;
+		}
+	} while (ev.type != ButtonRelease);
+	XUngrabPointer(dpy, CurrentTime);
+	xkeyoffs += nx;
+	ykeyoffs += ny;
+	for (i = 0; i < MAX_KEYS; i++) {
+		xk[i].x += nx;
+		xk[i].y += ny;
+	}
+	for (i = 0; i < NUM_BORDERS; i++) {
+		mb[i].x	+= nx;
+		mb[i].y += ny;	
+	}
+	do_control(); 
+	return;
+}
+
+void wait_btn_press()
+{
+	XEvent ev;
+	if (XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
+		None, None, CurrentTime) != GrabSuccess)
+		return;
+	do {
+		XMaskEvent(dpy, MOUSEMASK|ExposureMask|SubstructureRedirectMask, &ev);
+	} while (ev.type != ButtonPress);
+	XUngrabPointer(dpy, CurrentTime);
+}
+
+void wait_btn_release()
+{
+	XEvent ev;
+	if (XGrabPointer(dpy, root, False, MOUSEMASK, GrabModeAsync, GrabModeAsync,
+		None, None, CurrentTime) != GrabSuccess)
+		return;
+	do {
+		XMaskEvent(dpy, MOUSEMASK|ExposureMask|SubstructureRedirectMask, &ev);
+	} while (ev.type != ButtonRelease);
+	XUngrabPointer(dpy, CurrentTime);
+}
+
+int doubleclick(unsigned int ms)
+{
+	static Time laststamp = 0;
+	Time stamp = myevent.xbutton.time;
+	if(stamp - laststamp < ms)
+	{
+		return 1;
+	} 
+	laststamp = stamp;
+	return 0;
+}
+
+void btn_press(Display *display, int button)
+{
+	// Create and setting up the event
+	XEvent event;
+	memset (&event, 0, sizeof (event));
+	event.xbutton.button = button;
+	event.xbutton.same_screen = True;
+	event.xbutton.subwindow = DefaultRootWindow (display);
+	while (event.xbutton.subwindow)
+	{
+		event.xbutton.window = event.xbutton.subwindow;
+		XQueryPointer (display, event.xbutton.window,
+				&event.xbutton.root, &event.xbutton.subwindow,
+				&event.xbutton.x_root, &event.xbutton.y_root,
+				&event.xbutton.x, &event.xbutton.y,
+				&event.xbutton.state);
+	}
+	// Press
+	if(event.xbutton.window != mousewin)
+	{
+		if(sendkey)
+		{
+			event.type = ButtonPress;
+			if (XSendEvent (display, PointerWindow, True, ButtonPressMask, &event) == 0)
+				fprintf (stderr, "Error to send the event!\n");
+			XFlush (display);
+		} else {
+			XTestFakeButtonEvent(dpy, button, True, CurrentTime);
+		}
+	}
+}
+
+void btn_release(Display *display, int button)
+{
+	// Create and setting up the event
+	XEvent event;
+	memset (&event, 0, sizeof (event));
+	event.xbutton.button = button;
+	event.xbutton.same_screen = True;
+	event.xbutton.subwindow = DefaultRootWindow (display);
+	while (event.xbutton.subwindow)
+	{
+		event.xbutton.window = event.xbutton.subwindow;
+		XQueryPointer (display, event.xbutton.window,
+				&event.xbutton.root, &event.xbutton.subwindow,
+				&event.xbutton.x_root, &event.xbutton.y_root,
+				&event.xbutton.x, &event.xbutton.y,
+				&event.xbutton.state);
+	}
+	if(event.xbutton.window != mousewin)
+	{
+		if(sendkey)
+		{
+			event.type = ButtonRelease;
+			if (XSendEvent (display, PointerWindow, True, ButtonReleaseMask, &event) == 0)
+				fprintf (stderr, "Error to send the event!\n");
+			XFlush (display);
+		} else {
+			XTestFakeButtonEvent(dpy, button, False, CurrentTime);
+		}
+	}
 }
 
 int main(int argc, char **argv)
 {
 	int done = 0;
+	int keyboard_active = 0;
+	int rightclick = 0;
 
 	init_display(argc, argv);
 	ox = 32; oy = 16; sn = 1; sd = 1;
@@ -810,39 +1068,43 @@ int main(int argc, char **argv)
 			case EnterNotify:
 				break;
 			case ButtonPress:
+				if(myevent.xbutton.window == mywindow)
+				{
+					if(doubleclick(500))
+					{
+						keyboard_active ^= keyboard_active;
+						hide();
+						break;
+					}
+					move_keys();
+					break;
+				}
 				if (myevent.xbutton.window == closewindow) {
-					keyboard_active = 1 - keyboard_active;
-					activate_keyboard(keyboard_active);
+					if(keyboard_active)
+					{
+						myhint.width = 800;
+						myhint.height = 240;
+						myhint.x = 0;
+						myhint.y = screenheight - 240;
+						reset_keyspos();
+						zoom ^= zoom; do_control();//set zoom to default.
+					}
+					keyboard_active = 1;
+					show();
 					break;
 				}
-				if (myevent.xbutton.window == ctrlwin) {
-					/* "press" magnifying glass */
+				if (myevent.xbutton.window == zoomwin) {
 					XSetWindowBackgroundPixmap(dpy,
-						ctrlwin,
+						zoomwin,
 						cpgm[NUM_CONSTPGM - 4]);
-					XClearWindow(dpy, ctrlwin);
-					break;
-				}
-				if (myevent.xbutton.window == lockwin) {
-					/* "press" lock */
-					if(!lockmod)
-					{
-						XSetWindowBackgroundPixmap(dpy,
-								lockwin,
-								cpgm[NUM_CONSTPGM - 7]);
-						lockmod = 1;
-					}
-					else
-					{
-						XSetWindowBackgroundPixmap(dpy,
-								lockwin,
-								cpgm[NUM_CONSTPGM - 8]);
-						lockmod = 0;
-					}
-					XClearWindow(dpy, lockwin);
+					XClearWindow(dpy, zoomwin);
 					break;
 				}
 				if (myevent.xbutton.window == modewin) {
+					if(doubleclick(500))
+					{
+						rightclick = !rightclick;
+					}
 					if(!sendkey)
 					{
 						XSetWindowBackgroundPixmap(dpy,
@@ -860,15 +1122,34 @@ int main(int argc, char **argv)
 					XClearWindow(dpy, modewin);
 					break;	
 				}
-					/* "press" lock */
 				if (myevent.xbutton.window == movewin) {
 					int mx = myevent.xbutton.x;
 					int my = myevent.xbutton.y;
-					movebutton(650+mx, 16 + my);
+					movebutton((myhint.width - 125)+mx, 16 + my);
+					break;
+				}
+				if (myevent.xbutton.window == mousewin) {
+					XSetWindowBackgroundPixmap(dpy,
+							mousewin,
+							cpgm[NUM_CONSTPGM - 15]);
+					XClearWindow(dpy, mousewin);
+					wait_btn_press();
+					btn_press(dpy, rightclick ? Button3 : Button1);
+					wait_btn_release();
+					btn_release(dpy, rightclick ? Button3 : Button1);
+					XSetWindowBackgroundPixmap(dpy,
+							mousewin,
+							cpgm[NUM_CONSTPGM - 14]);
+					XClearWindow(dpy, mousewin);
+					break;
+				}
+				if (myevent.xbutton.window == lbcornerwin) {
+				 	resize_win();	
 					break;
 				}
 			case ButtonRelease:
-				if (myevent.xbutton.window == ctrlwin) {
+				if (myevent.xbutton.window == zoomwin) {
+					zoom++;
 					do_control();
 					break;
 				}

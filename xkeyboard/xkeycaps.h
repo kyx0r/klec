@@ -48,6 +48,8 @@
 #include "lbcorner.h"
 #include "fmode.h"
 #include "gmode.h"
+#include "mouse_up.h"
+#include "mouse_down.h"
 
 struct scaledata
 {
@@ -73,6 +75,8 @@ struct scaledata mykclist[] = {
 #define NUM_KEYCAPS	(sizeof (mykclist) / sizeof(struct scaledata))
 
 struct scaledata cpgmlist[] = {
+	{40, 40, &mousedownpgm},	
+	{40, 40, &mouseuppgm},	
 	{40, 40, &fmodepgm},	
 	{40, 40, &gmodepgm},	
 	{16, 16, &lbcornerpgm},

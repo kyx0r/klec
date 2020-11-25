@@ -1,0 +1,82 @@
+NEATVI
+======
+
+Neatvi is a vi/ex editor.  It can edit bidirectional UTF-8 text.
+
+CONFIGURATION
+-------------
+
+Edit conf.h to adjust syntax highlighting rules and text direction
+patterns.  To define a new keymap, create a new array in kmap.h, like
+kmap_fa, and add it to kmaps array in the same header (the first entry
+of the new array specifies its name).  The current keymap may be
+changed with :cm ex command.  When in input mode, ^e activates the
+English kaymap and ^f switches to the alternate keymap (the last
+keymap specified with :cm).
+
+COMMANDS
+--------
+
+Commands not available in ex(1):
+
+:cm[ap][!] [kmap]
+  Without kmap, prints the current keymap name.
+  When kmap is specified, sets the alternate keymap to
+  kmap and, unless ! is given, switches to this keymap.
+:ft [filetype]
+  Without filetype, prints the current file type.
+  When filetype is specified, sets the file type of the
+  current ex buffer.
+
+New key mappings:
+^a in normal mode: searches for the word under the cursor.
+^p in insert mode: inserts the contents of the default yank buffer.
+zL, zl, zr, and zR in normal mode: change the value of td option.
+^e and ^f in insert mode: switch to the English and alternate keymap.
+ze and zf in normal mode: switch to the English and alternate keymap.
+gu, gU, and g~ in normal mode: switch character case.
+^l in normal mode: updates terminal dimensions (after resizing it).
+
+OPTIONS
+-------
+
+To improve neatvi's performance, shaping, character reordering, and
+syntax highlighting can be disabled by defining the EXINIT environment
+variable as "set noshape | set noorder | set nohl | set td=+2".
+
+Options supported in neatvi:
+
+td, textdirection
+  Current direction context.  The following values are meaningful:
+  * +2: always left-to-right.
+  * +1: follow conf.h's dircontexts[]; left-to-right for others.
+  * -1: follow conf.h's dircontexts[]; right-to-left for others.
+  * -2: always right-to-left.
+shape
+  If set (default), performs Arabic/Farsi letter shaping.
+order
+  If set, reorder characters based on the rules defined
+  in conf.h.
+hl, highlight
+  If set (default), text will be highlighted based on syntax
+  highlighting rules in conf.h.
+hll, highlightline
+  If set, highlight current line.
+ai, autoindent
+  As in vi(1).
+aw, autowrite
+  As in vi(1).
+ic, ignorecase
+  As in vi(1).
+
+MARKS AND BUFFERS
+-----------------
+
+Special marks:
+* the position of the previous change
+[ the first line of the previous change
+] the last line of the previous change
+
+Special yank buffers:
+/ the previous search keyword
+: the previous ex command

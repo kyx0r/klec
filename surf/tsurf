@@ -1,0 +1,16 @@
+#!/bin/sh
+
+getxid() {
+  ps aux | grep -o 'surf -[e] \(0x\)\?[0-9]\+' | sed 1q | cut -d ' ' -f3
+}
+
+xid=$(getxid)
+
+if [ -z "${xid}" ]; then
+  tabbed surf -e &
+  while [ -z "${xid}" ]; do
+    xid=$(getxid)
+    sleep 0.1
+  done
+fi
+exec surf -e ${xid} "$@"

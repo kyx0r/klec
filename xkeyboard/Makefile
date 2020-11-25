@@ -16,7 +16,7 @@
 # Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
 override CFLAGS		+= -Wall -I./keypics -g
-override LDFLAGS	+= -L$(TOOLS)/usr/X11R6/lib -lXmu -lXtst -lXext -lX11
+override LDFLAGS	+= -L$(TOOLS)/usr/X11R6/lib -lXtst -lXext -lX11
 
 xkeyboard: xkeyboard.o
 
@@ -25,4 +25,4 @@ xkeyboard.o: xkeyboard.h xkeycaps.h nullkeycaps.h
 clean::
 	$(RM) xkeyboard *.o $~ core
 install: xkeyboard
-	cp xkeyboard /bin
+	cp -f xkeyboard /bin

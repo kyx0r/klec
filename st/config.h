@@ -68,6 +68,7 @@ static unsigned int blinktimeout = 800;
 static unsigned int cursorthickness = 2;
 
 /*
+ * bell volume. It must be a value between -100 and 100. Use 0 for disabling
  * it
  */
 static int bellvolume = 0;
@@ -130,25 +131,13 @@ unsigned int defaultfg = 7;
 unsigned int defaultbg = 0;
 static unsigned int defaultcs = 256;
 static unsigned int defaultrcs = 256;
+
 /* Colors used for selection */
 unsigned int selectionbg = 257;
 unsigned int selectionfg = 7;
 /* If 0 use selectionfg as foreground in order to have a uniform foreground-color */
 /* Else if 1 keep original foreground-color of each cell => more colors :) */
 static int ignoreselfg = 1;
-unsigned int const currentBg = 14, buffSize = 2048;
-/// [Vim Browse] Colors for search results currently on screen.
-unsigned int const highlightBg = 160, highlightFg = 15;
-char const wDelS[] = "!\"#$%&'()*+,-./:;<=>?@[\\]^`{|}~", wDelL[] = " \t";
-char *nmKeys [] = {              ///< Shortcusts executed in normal mode
-  "R/Building\nN", "r/Building\n", "X/juli@machine\nN", "x/juli@machine\n",
-  "Q?[Leaving vim, starting execution]\n","F/: error:\nN", "f/: error:\n", "DQf"
-};
-unsigned int const amountNmKeys = sizeof(nmKeys) / sizeof(*nmKeys);
-/// Style of the {command, search} string shown in the right corner (y,v,V,/)
-Glyph styleSearch = {' ', ATTR_ITALIC | ATTR_BOLD_FAINT, 7, 16};
-Glyph style[] = {{' ',ATTR_ITALIC|ATTR_FAINT,15,16}, {' ',ATTR_ITALIC,232,11},
-                 {' ', ATTR_ITALIC, 232, 4}, {' ', ATTR_ITALIC, 232, 12}};
 
 /*
  * Default shape of cursor
@@ -159,7 +148,6 @@ Glyph style[] = {{' ',ATTR_ITALIC|ATTR_FAINT,15,16}, {' ',ATTR_ITALIC,232,11},
  */
 static unsigned int cursorstyle = 3;
 static Rune stcursor = 0x2603; /* snowman (U+2603) */
-
 
 /*
  * Default columns and rows numbers
@@ -207,11 +195,15 @@ static MouseShortcut mshortcuts[] = {
 
 static Shortcut shortcuts[] = {
 	/* mask                 keysym          function        argument */
-         { TERMMOD,              XK_J,           zoom,           {.f = +1} },
-         { TERMMOD,              XK_K,           zoom,           {.f = -1} },
-         { TERMMOD,              XK_L,           zoomreset,      {.f =  0} },
-         { MODKEY,               XK_v,           clippaste,      {.i =  0} },
-         { MODKEY,               XK_y,           normalMode,     {.i =  0} },
+	{ TERMMOD,              XK_J,           zoom,           {.f = +1} },
+	{ TERMMOD,              XK_K,           zoom,           {.f = -1} },
+	{ TERMMOD,              XK_L,           zoomreset,      {.f =  0} },
+	{ MODKEY,               XK_v,           clippaste,      {.i =  0} },
+	{ MODKEY,               XK_k,           kscrollup,      {.i = -1} },
+	{ MODKEY,               XK_j,           kscrolldown,    {.i = -1} },
+	{ TERMMOD,              XK_U,           kscrollup,      {.i = 1} },
+	{ TERMMOD,              XK_D,           kscrolldown,    {.i = 1} },
+	{ MODKEY,               XK_y,           keyboard_select,{.i =  0} },
 };
 
 /*

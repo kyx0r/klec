@@ -1,0 +1,55 @@
+personal fork of surf with the following features
+
+  > -l option to set the window class
+  > no default font size set (setting it causes buggy font sizing)
+  > gpu acceleration always enabled (makes browsing smoother)
+  > clicking on links calls xdg-open instead of spawning a new surf window. this allows you to
+    wrap surf in a script that sends new windows to a specific tabbed instance. see the tsurf script
+  > default config dir relocated to ~/.config/surf
+  > non-urls are recognized and searched on duckduckgo
+  > keeps track of all the url's you visit and shows them in the url menu ordered by frequency.
+    works best with my dmenu fork https://github.com/Francesco149/dmenu
+  > map MOD + SHIFT + U/Y to scroll horizontally
+  > remap MOD + U/D to page up/down
+  > copy/paste to/from clipboard, not primary selection
+
+surf - simple webkit-based browser
+==================================
+surf is a simple Web browser based on WebKit/GTK+.
+
+Requirements
+------------
+In order to build surf you need GTK+ and Webkit/GTK+ header files.
+
+In order to use the functionality of the url-bar, also install dmenu[0].
+
+Installation
+------------
+Edit config.mk to match your local setup (surf is installed into
+the /usr/local namespace by default).
+
+Afterwards enter the following command to build and install surf (if
+necessary as root):
+
+    make clean install
+
+Running surf
+------------
+run
+	surf [URI]
+
+See the manpage for further options.
+
+Running surf in tabbed
+----------------------
+For running surf in tabbed[1] there is a script included in the distribution,
+which is run like this:
+
+	surf-open.sh [URI]
+
+Further invocations of the script will run surf with the specified URI in this
+instance of tabbed.
+
+[0] http://tools.suckless.org/dmenu
+[1] http://tools.suckless.org/tabbed
+

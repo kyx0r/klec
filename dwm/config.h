@@ -68,6 +68,7 @@ static const char *termcmd[]  = { "st", NULL };
 static const char *slstatus[]  = { "slstatus", NULL };
 static const char *slkill[]  = { "pkill", "slstatus", NULL };
 static const char *lynx[]  = { "st", "lynx", NULL };
+static const char *scrot[]  = { "scrot", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
@@ -76,6 +77,7 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F1,     spawn,          {.v = slstatus } },
 	{ MODKEY|ShiftMask,             XK_F1,     spawn,          {.v = slkill } },
 	{ MODKEY,                       XK_F2,     spawn,          {.v = lynx } },
+	{ MODKEY,                       XK_F3,     spawn,          {.v = scrot } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_x,      focusstack,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_x,      focusstack,     {.i = -1 } },

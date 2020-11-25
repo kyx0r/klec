@@ -1,5 +1,6 @@
 
 
-while true; do
-x11vnc -geometry 1368x768 -solid
-done 
+for((;;))
+do
+x0vncserver --SecurityTypes=None
+done

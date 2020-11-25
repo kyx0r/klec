@@ -7,6 +7,8 @@ cp dotfiles/.bashrc ~/
 cp dotfiles/.bash_profile ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/
+mkdir -p ~/.vim/colors
+cp dotfiles/256_noir.vim ~/.vim/colors
 cp dotfiles/.gitconfig ~/
 cp dotfiles/keynavrc /etc
 cp dotfiles/lynx.cfg /etc
@@ -16,19 +18,20 @@ cp dotfiles/grub /etc/default/
 cp -r terminus-ttf-4.47.0/ /usr/share/fonts
 cd st
 make install
-cd ../
-cd dwm
+cd ../dwm
 make install
-cd ../
-cd slstatus
+cd ../slstatus
 make install
-cd ../
-cd dmenu
+cd ../xkeyboard
 make install
-cd ../
-cd xkeyboard
-make install
-cd ../
-cd cembed
+cd ../utils 
 ./build.sh
-cp ./cembed /bin
+cp -f ./cembed /bin
+cd ../neatvi
+make install
+cd ../hund
+make install
+cd ../fastcd
+make install
+cd ../grabc
+make install-bin
