@@ -76,8 +76,8 @@ build another utility program.
 7. Changed behavior of ^a to change search direction when no more match 
 8. Added fssearch, searches what is under the cursor 
 in every file in the opened directory keybind: ^]   
-Right now it only checks for .c and .h files as I uses this
-for code navigation between files.
+Right now it only checks for .c and .h files as I use this
+for code navigation between files, jump to definitions / etc.
 9. fssearch but going in reverse keybind: ^p
 10. Added ex command "ea" which opens file case insensitive and ignores the path,
 setting an extra number parameter after filename will skip that many matches with
