@@ -79,21 +79,21 @@ in every file in the opened directory keybind: ^]
 Right now it only checks for .c and .h files as I uses this
 for code navigation between files.
 9. fssearch but going in reverse keybind: ^p
-11. Added ex command "ea" which opens file case insensitive and ignores the path,
+10. Added ex command "ea" which opens file case insensitive and ignores the path,
 setting an extra number parameter after filename will skip that many matches with
 similar path. So for example file might be named "file123.c" but you can open it
 just by "ea fi" if this is a uniquely matched filename
-12. Added ex command "dir" to set the directory for fssearch or "ea" ex command
-13. Added numbered buffers to vi, max 8 and ex "b" command to switch
-14. Added key to show buffers and switch buffer keybind: ^s 
-15. Added key to exit vi keybind: qq 
-16. Added key to goto line 0 keybind: gg 
-17. Added key to delete everything inside (cursor outside) "" keybind: di" 
-18. Added key to delete everything inside () keybind: di) 
-19. Added key to delete everything inside (cursor outside) () keybind: di) 
-20. Added key to change . to -> on cursor line keybind: vh
-21. Added key to change -> to . on cursor line keybind: vg
-22. Added ex command "z" it does the same thing "!" does but the shell is
+11. Added ex command "dir" to set the directory for fssearch or "ea" ex command
+12. Added numbered buffers to vi, max 8 and ex "b" command to switch
+13. Added key to show buffers and switch buffer keybind: ^s 
+14. Added key to exit vi keybind: qq 
+15. Added key to goto line 0 keybind: gg 
+16. Added key to delete everything inside (cursor outside) "" keybind: di" 
+17. Added key to delete everything inside () keybind: di) 
+18. Added key to delete everything inside (cursor outside) () keybind: di) 
+19. Added key to change . to -> on cursor line keybind: vh
+20. Added key to change -> to . on cursor line keybind: vg
+21. Added ex command "z" it does the same thing "!" does but the shell is
 launched in interactive mode, so stuff like aliases work. But it will cause
 vi to suspend.
 
