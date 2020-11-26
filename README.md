@@ -99,6 +99,8 @@ launched in interactive mode, so stuff like aliases work. But it will cause
 vi to suspend.
 23. Changed the colors for C language in conf.h to be sane
 24. Added extra highlight keywords for C
+25. Added key that splits the line (opposite of J) keybind: K
+26. Added key line wraps text to 80 line limit keybind: gq 
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in

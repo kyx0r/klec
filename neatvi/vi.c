@@ -464,7 +464,7 @@ char *substr(const char *s1, const char *s2)
 {
 	int len1 = strlen(s1);
 	int len2 = strlen(s2);
-	if(len2 > len1)
+	if (len2 > len1)
 		return strstr(s2, s1);	
 	return strstr(s1, s2);	
 }
@@ -481,22 +481,19 @@ static void file_calc(char *path, char *basePath)
 
 	while ((dp = readdir(dir)) != NULL)
 	{
-		if (strcmp(dp->d_name, ".") != 0 && strcmp(dp->d_name, "..") != 0)
+		if (dp->d_type == DT_REG && (substr(dp->d_name, ".c")
+			|| substr(dp->d_name, ".h")))
 		{
-			if (dp->d_type == DT_REG && (substr(dp->d_name, ".c")
-				|| substr(dp->d_name, ".h")))
-			{
-				len1 = strlen(dp->d_name)+1;
-				path[pathlen] = '/';
-				memcpy(&path[pathlen+1], dp->d_name, len1);
-				len = pathlen + len1 + 1;
-				_len = len + sizeof(int);
-				fslink = realloc(fslink, _len+fstlen);
-				*(int*)((char*)fslink+fstlen) = len;
-				memcpy(fslink+fstlen+sizeof(int), path, len);
-				fstlen += _len;
-				fscount++;
-			}
+			len1 = strlen(dp->d_name)+1;
+			path[pathlen] = '/';
+			memcpy(&path[pathlen+1], dp->d_name, len1);
+			len = pathlen + len1 + 1;
+			_len = len + sizeof(int);
+			fslink = realloc(fslink, _len+fstlen);
+			*(int*)((char*)fslink+fstlen) = len;
+			memcpy(fslink+fstlen+sizeof(int), path, len);
+			fstlen += _len;
+			fscount++;
 		}
 	}
 	path[pathlen] = 0;
@@ -535,11 +532,11 @@ static int fs_search(char *ex_path, char* cs, int cnt, int *row, int *off)
 	int again = 0;
 	*row = 0; *off = 0;
 	redo:
-	for(;fspos < fstlen;)
+	for (;fspos < fstlen;)
 	{
 		path = &fslink[fspos+sizeof(int)];
 		fspos += *(int*)((char*)fslink+fspos) + sizeof(int);
-		if(!substr(path, ex_path))
+		if (!substr(path, ex_path))
 		{
 			ex_edit(path);
 			ex_kwdset(cs, +1);
@@ -547,7 +544,7 @@ static int fs_search(char *ex_path, char* cs, int cnt, int *row, int *off)
 				return 1;
 		}
 	}
-	if(fspos == fstlen && !again)
+	if (fspos == fstlen && !again)
 	{
 		again = 1;
 		fspos = 0;
@@ -564,17 +561,17 @@ static int fs_searchback(char *ex_path, char* cs, int cnt, int *row, int *off)
 	int count = fscount;
 	char *paths[count];
 	*row = 0; *off = 0;
-	for(; tlen < fspos;)
+	for (; tlen < fspos;)
 	{
 		path = &fslink[tlen+sizeof(int)];
 		tlen += *(int*)((char*)fslink+tlen) + sizeof(int);
 		paths[--count] = path;
 	}
-	for(int i = count; i < fscount; i++)
+	for (int i = count; i < fscount; i++)
 	{
 		path = paths[i];
 		fspos -= *(int*)((char*)path-sizeof(int))+sizeof(int);
-		if(!substr(ex_path, path))
+		if (!substr(ex_path, path))
 		{
 			ex_edit(path);
 			ex_kwdset(cs, +1);
@@ -597,7 +594,7 @@ static int vi_motion(int *row, int *off)
 	static char ex[1024];
 	static char savepath[1024];
 	char path[1024];
-	char *cs; 
+	char *cs;
 	int mv, i;
 	static int _row, _off, srow, soff;
 
@@ -891,6 +888,34 @@ static void vi_delete(int r1, int o1, int r2, int o2, int lnmode)
 	free(post);
 }
 
+static void vi_splitln(int row, int linepos, int nextln)
+{
+	char *s, *part;
+	int len, crow;
+	int c = !vi_arg1 ? 1 : vi_arg1;
+	for (int i = 0; i < c; i++)
+	{
+		crow = row + i;
+		s = lbuf_get(xb, crow);
+		if (!s)
+			return;
+		len = strlen(s);
+		if (len > linepos)
+		{
+			part = uc_sub(s, linepos, len);
+			char buf[linepos+2];
+			memcpy(buf, s, linepos+2);
+			buf[linepos] = '\n';
+			buf[linepos+1] = 0;
+			//needed to make operation undoable
+			lbuf_edit(xb, buf, crow, crow+1);
+			lbuf_edit(xb, part, crow+1, crow+1);
+			free(part);
+			if (nextln)
+				c++;
+		}
+	}
+}
 static int linecount(char *s)
 {
 	int n;
@@ -1560,6 +1585,10 @@ static void vi(void)
 				if (!vc_join())
 					mod = 1;
 				break;
+			case 'K':
+				vi_splitln(xrow, xcol+1, 0);
+				mod = 1;
+				break;
 			case TK_CTL('l'):
 				term_done();
 				term_init();
@@ -1609,6 +1638,11 @@ static void vi(void)
 					xrow = 0;
 				else if (k == 'a')
 					vc_charinfo();
+				else if (k == 'q')
+				{
+					vi_splitln(xrow, 80, 1);
+					mod = 1;
+				}
 				else if (k == '~' || k == 'u' || k == 'U')
 					if (!vc_motion(k))
 						mod = 2;
