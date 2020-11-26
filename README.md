@@ -97,6 +97,8 @@ just by "ea fi" if this is a uniquely matched filename
 22. Added ex command "z" it does the same thing "!" does but the shell is
 launched in interactive mode, so stuff like aliases work. But it will cause
 vi to suspend.
+23. Changed the colors for C language in conf.h to be sane
+24. Added extra highlight keywords for C
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in
