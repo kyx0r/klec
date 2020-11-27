@@ -103,12 +103,16 @@ vi to suspend.
 26. Added key that line wraps text to 80 line limit keybind: gq 
 27. Added key that deletes relative line 
 without moving the cursor (down) keybind: arg+I (up) keybind arg+R
-28. Added abiity to view the numbers for arguments that keys e,w,E,W,b,B
+28. Added ability to view the numbers for arguments that keys e,w,E,W,b,B
 may take. keybind: ^v Pressing again will change the key mode, specifying
 any arguments will exit the mode. This is a major step up to how navigation
 works in vi, it makes it so much easier to use because now you can see where 
 you are going. If not anything else I suggest you to try out this distro
 just to see it in action.
+29. Added ability to change highlight dynamically.
+30. New ex option "hww" which highlights every instance of word under the
+cursor when enabled. Useful for when studying source code, currently only
+works in C files, but can be made to work in other places too.
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in

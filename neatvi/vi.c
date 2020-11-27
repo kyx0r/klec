@@ -35,6 +35,7 @@ static int vi_pcol;		/* the column requested by | command */
 static int vi_printed;		/* ex_print() calls since the last command */
 static int vi_scroll;		/* scroll amount for ^f and ^d*/
 static int vi_soset, vi_so;	/* search offset; 1 in "/kw/1" */
+static char *vi_curword(struct lbuf *lb, int row, int off);
 
 void reverse(char s[])
 {
@@ -142,6 +143,15 @@ static void vi_drawrow(int row)
 	char *s = lbuf_get(xb, row-movedown);
 	if (xhll && row == xrow)
 		syn_context(conf_hlline());
+	if (xhww && row == xtop)
+	{
+		if ((c = vi_curword(xb, xrow, xoff)))
+		{
+			conf_changereg(0, c);
+			free(c);
+		}
+	}
+
 	if (!s) {
 		led_print(row ? "~" : "", row - xtop, ex_filetype());
 		return;
@@ -1473,8 +1483,8 @@ static void vi(void)
 			vi_lnnum = 0;
 			mod = 1;
 		}
-		if (*vi_word)
-			mod = 1;
+		if (*vi_word || xhww)
+		 	mod = 1;	
 		if (!vi_ybuf)
 			vi_ybuf = vi_yankbuf();
 		mv = vi_motion(&nrow, &noff);

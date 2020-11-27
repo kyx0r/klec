@@ -114,7 +114,11 @@ void syn_done(void)
 {
 	int i;
 	for (i = 0; i < LEN(ftmap); i++)
+	{
 		if (ftmap[i].rs)
 			rset_free(ftmap[i].rs);
+		ftmap[i].rs = NULL;
+		memset(&ftmap[i].ft, 0, 32);
+	}
 	rset_free(syn_ftrs);
 }

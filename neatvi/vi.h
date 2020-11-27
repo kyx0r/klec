@@ -194,6 +194,7 @@ int conf_mode(void);
 char **conf_kmap(int id);
 int conf_kmapfind(char *name);
 char *conf_digraph(int c1, int c2);
+void conf_changereg(int i, char *reg);
 
 /* file system */
 void dir_calc(char *cur_dir);
@@ -213,6 +214,7 @@ extern int xshape;
 extern int xorder;
 extern int xhl;
 extern int xhll;
+extern int xhww;
 extern int xkmap;
 extern int xkmap_alt;
 extern int intershell;

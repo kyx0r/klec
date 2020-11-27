@@ -25,6 +25,7 @@ static struct highlight {
 	char *pat;		/* regular expression */
 	int end;		/* the group ending this pattern */
 } highlights[] = {
+	{"c", {9}, NULL},
 	{"c", {10}, "\\<(signed|unsigned|char|short|int|long|float|double|void|\
 		|enum|union|typedef|static|extern|register|struct|f32|u32|s32|u8|\
 		|u64|s64|f64|u8|u16|s16|b32|int32_t|uint32_t|bool|const|size_t)\\>"},
@@ -37,6 +38,7 @@ static struct highlight {
 	{"c", {5}, "\"([^\"]|\\\\\")*\""},
 	{"c", {5}, "'([^\\]|\\\\.)'"},
 	{"c", {9}, "[-+]?\\<(0[xX][0-9a-fA-F]+|[0-9]+)\\>"},
+
 
 	{"roff", {4, 0, 5 | SYN_BD, 4 | SYN_BD, 5 | SYN_BD, 4 | SYN_BD},
 		"^[.'][ \t]*((SH.*)|(de) (.*)|([^ \t\\]{2,}))?.*$", 1},
@@ -99,7 +101,7 @@ static struct highlight {
 };
 
 /* how to hightlight current line (hll option) */
-#define SYN_LINE		(SYN_BGMK(11))
+#define SYN_LINE		12
 
 /* how to hightlight text in the reverse direction */
 #define SYN_REVDIR		(SYN_BGMK(7))
