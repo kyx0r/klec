@@ -100,7 +100,15 @@ vi to suspend.
 23. Changed the colors for C language in conf.h to be sane
 24. Added extra highlight keywords for C
 25. Added key that splits the line (opposite of J) keybind: K
-26. Added key line wraps text to 80 line limit keybind: gq 
+26. Added key that line wraps text to 80 line limit keybind: gq 
+27. Added key that deletes relative line 
+without moving the cursor (down) keybind: arg+I (up) keybind arg+R
+28. Added abiity to view the numbers for arguments that keys e,w,E,W,b,B
+may take. keybind: ^v Pressing again will change the key mode, specifying
+any arguments will exit the mode. This is a major step up to how navigation
+works in vi, it makes it so much easier to use because now you can see where 
+you are going. If not anything else I suggest you to try out this distro
+just to see it in action.
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in

@@ -25,6 +25,7 @@
 
 int vi_lnnum;			/* line numbers */
 int vi_hidch;			/* show hidden chars*/
+char *vi_word = "\0eEwW0";	/* line word navigation*/
 static int vi_arg1, vi_arg2;	/* the first and second arguments */
 static char vi_msg[EXLEN];	/* current message */
 static char vi_charlast[8];	/* the last character searched via f, t, F, or T */
@@ -39,7 +40,6 @@ void reverse(char s[])
 {
 	int i, j;
 	char c;
-
 	for (i = 0, j = strlen(s)-1; i<j; i++, j--) {
 		c = s[i];
 		s[i] = s[j];
@@ -82,11 +82,64 @@ static void vi_drawmsg(void)
 	xleft = oleft;
 }
 
+int isescape(char ch)
+{
+	switch (ch)
+	{
+	case '\n':
+	case '\r':
+	case '\t':
+	case '\v':
+	case '\f':
+	case '\b':
+	case '\a':
+	case '\0':
+		return 1;
+	}
+	return 0;
+}
+
+static void vi_drawwordnumend(int skip, int dir, char* tmp, int nrow, int noff)
+{
+	int l, i = 0;
+	char *c;
+	char snum[10];
+	for (int k = nrow; k == nrow; i++)
+	{
+		l = isescape(tmp[noff]);
+		c = itoa(i, snum);
+		//check if in 1-9, don't change indentation chars
+		if (c - snum == 1 && !l && i > 0)
+			tmp[noff] = *snum;
+		if (lbuf_wordend(xb, skip, dir, &nrow, &noff))
+			break;
+	}
+}
+
+static void vi_drawwordnumbeg(int skip, int dir, char* tmp, int nrow, int noff)
+{
+	int l, i = 0;
+	char *c;
+	char snum[10];
+	for (int k = nrow; k == nrow; i++)
+	{
+		l = isescape(tmp[noff]);
+		c = itoa(i, snum);
+		//check if in 1-9, don't change indentation chars
+		if (c - snum == 1 && !l && i > 0)
+			tmp[noff] = *snum;
+		if (lbuf_wordbeg(xb, skip, dir, &nrow, &noff))
+			break;
+	}
+}
+
+
 static void vi_drawrow(int row)
 {
 	int l1, l2;
+	static int movedown;
 	char *c;
-	char *s = lbuf_get(xb, row);
+	char *s = lbuf_get(xb, row-movedown);
 	if (xhll && row == xrow)
 		syn_context(conf_hlline());
 	if (!s) {
@@ -104,8 +157,45 @@ static void vi_drawrow(int row)
 		*c++ = ' ';
 		memcpy(c, s, l1+l2);
 		led_print(tmp, row - xtop, ex_filetype());
+	} else if (*vi_word && row == xrow+1) {
+		int i;
+		int noff = xoff;
+		int nrow = xrow;
+		s = lbuf_get(xb, xrow);
+		l1 = strlen(s)+1;
+		char tmp[l1];
+		memcpy(tmp, s, l1);
+		for (i = 0; i < l1; i++)
+		{
+			if (!isescape(tmp[i]))
+				tmp[i] = ' ';
+		}
+		i = 0;
+		if (!isescape(tmp[noff]))
+			tmp[noff] = *vi_word;
+		switch (*vi_word)
+		{
+		case 'e':
+			vi_drawwordnumend(0, +1, tmp, nrow, noff);
+			vi_drawwordnumend(0, -1, tmp, nrow, noff);
+			break;
+		case 'E':
+			vi_drawwordnumend(1, +1, tmp, nrow, noff);
+			vi_drawwordnumend(1, -1, tmp, nrow, noff);
+			break;
+		case 'w':
+			vi_drawwordnumbeg(0, +1, tmp, nrow, noff);
+			break;
+		case 'W':
+			vi_drawwordnumbeg(1, +1, tmp, nrow, noff);
+			break;
+		}
+		movedown = 1;
+		led_print(tmp, row - xtop, ex_filetype());
 	} else
 		led_print(s, row - xtop, ex_filetype());
+	if (row+1 == MIN(xtop + xrows, lbuf_len(xb) - 1))
+		movedown = 0;
 	syn_context(0);
 }
 
@@ -864,7 +954,7 @@ static void vi_yank(int r1, int o1, int r2, int o2, int lnmode)
 	xoff = lnmode ? xoff : o1;
 }
 
-static void vi_delete(int r1, int o1, int r2, int o2, int lnmode)
+static void vi_delete(int r1, int o1, int r2, int o2, int lnmode, int move)
 {
 	char *pref, *post;
 	char *region;
@@ -882,8 +972,11 @@ static void vi_delete(int r1, int o1, int r2, int o2, int lnmode)
 	} else {
 		lbuf_edit(xb, NULL, r1, r2 + 1);
 	}
-	xrow = r1;
-	xoff = lnmode ? lbuf_indents(xb, xrow) : o1;
+	if (move)
+	{
+		xrow = r1;
+		xoff = lnmode ? lbuf_indents(xb, xrow) : o1;
+	}
 	free(pref);
 	free(post);
 }
@@ -1122,7 +1215,7 @@ static int vc_motion(int cmd)
 	if (cmd == 'y')
 		vi_yank(r1, o1, r2, o2, lnmode);
 	if (cmd == 'd')
-		vi_delete(r1, o1, r2, o2, lnmode);
+		vi_delete(r1, o1, r2, o2, lnmode, 1);
 	if (cmd == 'c')
 		vi_change(r1, o1, r2, o2, lnmode);
 	if (cmd == '~' || cmd == 'u' || cmd == 'U')
@@ -1380,6 +1473,8 @@ static void vi(void)
 			vi_lnnum = 0;
 			mod = 1;
 		}
+		if (*vi_word)
+			mod = 1;
 		if (!vi_ybuf)
 			vi_ybuf = vi_yankbuf();
 		mv = vi_motion(&nrow, &noff);
@@ -1525,6 +1620,12 @@ static void vi(void)
 				mod = 1;
 				break;
 			case TK_CTL('v'):
+				vi_word++;
+				if (*vi_word == '0')
+					vi_word -= 5;	
+				if (vi_arg1)
+					while (*vi_word) vi_word--;
+				mod = 1;
 				break;
 			case ':':
 				ln = vi_prompt(":", &kmap);
@@ -1572,8 +1673,15 @@ static void vi(void)
 				if (!vc_motion(c))
 					mod = 1;
 				break;
-			case 'i':
 			case 'I':
+				vi_delete(vi_arg1+xrow, 0, vi_arg1+xrow, 0, 1, 0);
+				mod = 1;
+				break;
+			case 'R':
+				vi_delete(abs(vi_arg1-xrow), 0, abs(vi_arg1-xrow), 0, 1, 0);
+				mod = 1;
+				break;
+			case 'i':
 			case 'a':
 			case 'A':
 			case 'o':
@@ -1586,7 +1694,7 @@ static void vi(void)
 					mod = 1;
 				break;
 			case 'K':
-				vi_splitln(xrow, xcol+1, 0);
+				vi_splitln(xrow, xoff+1, 0);
 				mod = 1;
 				break;
 			case TK_CTL('l'):
