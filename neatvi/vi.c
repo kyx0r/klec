@@ -1866,7 +1866,7 @@ static void vi(void)
 	term_pos(xrows, 0);
 	term_kill();
 }
-
+void test_se(); 
 int main(int argc, char *argv[])
 {
 	int i;

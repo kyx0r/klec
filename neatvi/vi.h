@@ -4,6 +4,7 @@
 #define LEN(a)		(sizeof(a) / sizeof((a)[0]))
 #define MIN(a, b)	((a) < (b) ? (a) : (b))
 #define MAX(a, b)	((a) < (b) ? (b) : (a))
+int isescape(char ch);
 char *substr(const char *s1, const char *s2);
 
 /* line buffer, managing a number of lines */
@@ -41,6 +42,7 @@ char *sbuf_done(struct sbuf *sb);
 char *sbuf_buf(struct sbuf *sb);
 void sbuf_chr(struct sbuf *sb, int c);
 void sbuf_str(struct sbuf *sb, char *s);
+char *sbuf_s(struct sbuf *sb);
 void sbuf_mem(struct sbuf *sb, char *s, int len);
 void sbuf_printf(struct sbuf *sbuf, char *s, ...);
 int sbuf_len(struct sbuf *sb);
