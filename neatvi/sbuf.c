@@ -32,11 +32,6 @@ struct sbuf *sbuf_make(void)
 	return sb;
 }
 
-char *sbuf_s(struct sbuf *sb)
-{
-	return sb->s;
-}
-
 char *sbuf_buf(struct sbuf *sb)
 {
 	if (!sb->s)
