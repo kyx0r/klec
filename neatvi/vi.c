@@ -171,10 +171,15 @@ static void vi_drawrow(int row)
 		int i;
 		int noff = xoff;
 		int nrow = xrow;
-		s = lbuf_get(xb, xrow);
-		l1 = strlen(s)+1;
+		c = lbuf_get(xb, xrow);
+		if (*c == '\n')
+		{
+			led_print(s, row - xtop, ex_filetype());
+			return;
+		}
+		l1 = strlen(c)+1;
 		char tmp[l1];
-		memcpy(tmp, s, l1);
+		memcpy(tmp, c, l1);
 		for (i = 0; i < l1; i++)
 		{
 			if (!isescape(tmp[i]))
@@ -204,7 +209,7 @@ static void vi_drawrow(int row)
 		led_print(tmp, row - xtop, ex_filetype());
 	} else
 		led_print(s, row - xtop, ex_filetype());
-	if (row+1 == MIN(xtop + xrows, lbuf_len(xb) - 1))
+	if (row+1 == MIN(xtop + xrows, lbuf_len(xb)-1+movedown))
 		movedown = 0;
 	syn_context(0);
 }
