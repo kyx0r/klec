@@ -180,9 +180,16 @@ void add_line(char* line)
 	insert_node(line, ROOT);
 }
 
+int dstrlen (const char *s, char delim)
+{
+        register const char* i;
+        for(i=s; *i && *i != delim; ++i);
+        return (i-s);
+}
+
 void file_ternary(char *path)
 {
-	char delim[] = "\t\n ;,.<>^%$#@*!+-|/=\\{}[]&()'\"";
+	char delim[] = "\t\n ;:,`.<>^%$#@*!?+-|/=\\{}[]&()'\"";
 	char* line = NULL;
 	char* ptr;
 	int len;
@@ -202,9 +209,17 @@ void file_ternary(char *path)
 			len = strlen(ptr);
 			if (len > 1)
 			{
-				if (search(ptr, len, ROOT) != -1 && !suggestlen)	
+				if (search(ptr, len, ROOT) != -1)	
+				{
+					if (suggestlen)
+					{
+						if (dstrlen(suggestbuf, '\n') == len)
+							goto skip;
+					}
 					add_line(ptr);
+				}
 			}
+			skip:
 			ptr = strtok(NULL, delim);
 		}
 	}
@@ -544,10 +559,10 @@ static char *led_line(char *pref, char *post, char *ai,
 			if (reg_get(0, &lnmode))
 				sbuf_str(sb, reg_get(0, &lnmode));
 			break;
-		case TK_CTL('n'):
+		case TK_CTL('g'):
 			file_ternary(ex_path());		
 			break;
-		case TK_CTL('g'):
+		case TK_CTL('n'):
 			if (_sug)
 			{
 				_sug = strchr(sug, '\n');
@@ -598,7 +613,7 @@ _default:
 			if ((cs = led_readchar(c, *kmap)))
 				sbuf_str(sb, cs);
 		}
-		if (c != TK_CTL('g'))
+		if (c != TK_CTL('n'))
 		{
 			sug = suggestbuf;
 			_sug = 0;
