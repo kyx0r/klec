@@ -809,7 +809,7 @@ static int vi_motion(int *row, int *off)
 			if (lbuf_sectionbeg(xb, +1, row, off))
 				break;
 		break;
-	case TK_CTL(']'):;
+	case TK_CTL(']'):
 		if (!(cs = vi_curword(xb, *row, *off)))
 			return -1;
 		if(!fslink)
@@ -828,13 +828,8 @@ static int vi_motion(int *row, int *off)
 		if(!fs_search(ex, cs, cnt, row, off))
 		{
 			*row = _row; *off = _off;
-			free(cs);
-			return -1;
 		}
 		free(cs);
-		xtop = MAX(0, xrow - xrows / 2);
-		vi_back(TK_CTL('g'));
-		vi_back(TK_CTL('l'));
 		break;
 	case TK_CTL('p'):
 		if (!(cs = vi_curword(xb, *row, *off)) || !fslink)
@@ -853,9 +848,6 @@ static int vi_motion(int *row, int *off)
 			}
 		}
 		free(cs);
-		xtop = MAX(0, xrow - xrows / 2);
-		vi_back(TK_CTL('g'));
-		vi_back(TK_CTL('l'));
 		break;
 	case TK_CTL('t'):
 		i = strlen(ex_path())+1;
@@ -925,6 +917,12 @@ static int vi_motion(int *row, int *off)
 	case '%':
 		if (lbuf_pair(xb, row, off))
 			return -1;
+		break;
+	case '\\':
+		if (!(cs = vi_curword(xb, *row, *off)))
+			return -1;
+		vi_prompt(cs, &xkmap);
+		free(cs);
 		break;
 	default:
 		vi_back(mv);
@@ -1509,6 +1507,12 @@ static void vi(void)
 				xcol = vi_off2col(xb, xrow, xoff);
 			if (mv == '|')
 				xcol = vi_pcol;
+			if (mv == TK_CTL(']') || mv == TK_CTL('p'))
+			{
+				xtop = MAX(0, xrow - xrows / 2);
+				vc_status();
+				mod = 1;
+			}
 		} else if (mv == 0) {
 			char *cmd;
 			int c = vi_read();

@@ -21,17 +21,17 @@ static int suggestlen;
 static char suggestbuf[SUGGESTMAX];
 
 //creats a tern_t, allocates memory, and initializes it.
-tern_t* create_node (char w, enum ntype t);
+static tern_t* create_node (char w, enum ntype t);
 //inserts a null-terminated word into the tree.
-tern_t* insert_node(const char* string, tern_t* node);
+static tern_t* insert_node(const char* string, tern_t* node);
 //finds the node where the given prefix ends. Helper function for 'search'
-tern_t* find_node(const char* string, int l, tern_t* node);
+static tern_t* find_node(const char* string, int l, tern_t* node);
 //frees allocated memory. Note: Does not free the root node of the tree.
-void delete(tern_t* root, tern_t* node);
+static void delete(tern_t* root, tern_t* node);
 //finds the words with prefix 'pattern' and prints out the results to 'out'.
-int search(const char* pattern, int l, tern_t* node);
+static int search(const char* pattern, int l, tern_t* node);
 
-tern_t* create_node (char w, enum ntype t)
+static tern_t* create_node (char w, enum ntype t)
 {
 	tern_t *node = (tern_t*)malloc(sizeof (tern_t));
 	if (node == NULL) {
@@ -46,7 +46,7 @@ tern_t* create_node (char w, enum ntype t)
 	return node;
 }
 
-tern_t* insert_node (const char* string, tern_t* node)
+static tern_t* insert_node (const char* string, tern_t* node)
 {
 	int i = strlen(string);
 
@@ -70,7 +70,7 @@ tern_t* insert_node (const char* string, tern_t* node)
 	return node;
 }
 
-tern_t* find_node(const char* string, int l, tern_t* node)
+static tern_t* find_node(const char* string, int l, tern_t* node)
 {
 	int i = 0;
 	tern_t* currentNode = node;
@@ -95,7 +95,7 @@ tern_t* find_node(const char* string, int l, tern_t* node)
 	return NULL;
 }
 
-void deep_search(const char* pattern, tern_t* start)
+static void deep_search(const char* pattern, tern_t* start)
 {
 	//printf("%s\n", pattern);
 	if(start->type != NO)
@@ -124,7 +124,7 @@ void deep_search(const char* pattern, tern_t* start)
 	}
 }
 
-int search(const char* pattern, int l, tern_t* node)
+static int search(const char* pattern, int l, tern_t* node)
 {
 	suggestlen = 0;
 	//finds the node where the prefix ends.
@@ -143,7 +143,7 @@ int search(const char* pattern, int l, tern_t* node)
 	return -1;
 }
 
-void delete(tern_t* root, tern_t* node)
+static void delete(tern_t* root, tern_t* node)
 {
 	if (node != NULL) {
 		if (node->lChild != NULL) {
@@ -167,7 +167,7 @@ void delete(tern_t* root, tern_t* node)
 	}
 }
 
-void add_line(char* line)
+static void add_line(char* line)
 {
 	int i;
 	//getting rid of all the newline characters.
@@ -180,14 +180,14 @@ void add_line(char* line)
 	insert_node(line, ROOT);
 }
 
-int dstrlen (const char *s, char delim)
+static int dstrlen (const char *s, char delim)
 {
         register const char* i;
         for(i=s; *i && *i != delim; ++i);
         return (i-s);
 }
 
-void file_ternary(char *path)
+static void file_ternary(char *path)
 {
 	char delim[] = "\t\n ;:,`.<>^%$#@*!?+-|/=\\{}[]&()'\"";
 	char* line = NULL;
@@ -642,6 +642,8 @@ char *led_prompt(char *pref, char *post, int *kmap, char *syn)
 			sbuf_str(sb, post);
 		free(s);
 		return sbuf_done(sb);
+	} else if (key == TK_ESC) {
+	
 	}
 	free(s);
 	return NULL;

@@ -113,8 +113,8 @@ just to see it in action.
 30. New ex option "hww" which highlights every instance of word under the
 cursor when enabled. Useful for when studying source code, currently only
 works in C files, but can be made to work in other places too.
-31. Added autocomplete in insert mode. Press ^n to index the current opened
-file. Then you can press ^g to cycle though the options, results are based on
+31. Added autocomplete in insert mode. Press ^g to index the current opened
+file. Then you can press ^n to cycle though the options, results are based on
 the contents of the file and the closest match to what you typed.
 
 - surf -

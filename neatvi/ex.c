@@ -407,12 +407,8 @@ int ex_edit(char *path)
 {
 	char msg[128];
 	int fd;
-/*
-	bufs[0].row = xrow;
-	bufs[0].off = xoff;
-	bufs[0].top = xtop;
-	bufs[0].td = xtd;
-*/
+	if (path[0] == '.' && path[1] == '/')
+		path += 2;
 	if (path[0] && bufs_find(path) >= 0) {
 		bufs_switch(bufs_find(path));
 		return 0;
