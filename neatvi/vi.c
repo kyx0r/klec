@@ -596,16 +596,14 @@ static void file_calc(char *path, char *basePath)
 			{
 				*s = '\0';
 				if (substr(dp->d_name, sprev))
-				{
-					*s = ' ';
 					break;
-				}
 				*s = ' ';
 				s++;
 				sprev = s;
 			}
 			if (!s)
 				continue;
+			*s = ' ';
 			len1 = strlen(dp->d_name)+1;
 			path[pathlen] = '/';
 			memcpy(&path[pathlen+1], dp->d_name, len1);
