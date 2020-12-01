@@ -1035,9 +1035,8 @@ static int ec_set(char *ec)
 static int ec_setdir(char *ec)
 {
 	char arg[1024];
-	char *s = arg;
 	ex_arg(ec, arg);
-	if (*s)
+	if (*arg)
 	{
 		if (fslink)
 		{
@@ -1047,7 +1046,24 @@ static int ec_setdir(char *ec)
 			fspos = 0;
 			fscount = 0;
 		}
-		dir_calc(s);
+		dir_calc(arg);
+	}
+	return 0;
+}
+
+static int ec_setincl(char *ec)
+{
+	int l = strlen(&ec[4]);
+	memcpy(fsincl, &ec[4], l);
+	fsincl[l] = ' ';
+	fsincl[l+1] = '\0';
+	if (fslink)
+	{
+		free(fslink);
+		fslink = NULL;
+		fstlen = 0;
+		fspos = 0;
+		fscount = 0;
 	}
 	return 0;
 }
@@ -1093,6 +1109,7 @@ static struct excmd {
 	{"cm", "cmap", ec_cmap},
 	{"cm!", "cmap!", ec_cmap},
 	{"dir", "dir", ec_setdir},
+	{"inc", "inc", ec_setincl},
 	{"", "", ec_null},
 };
 

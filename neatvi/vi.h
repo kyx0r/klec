@@ -221,6 +221,7 @@ extern int xkmap;
 extern int xkmap_alt;
 extern int intershell;
 extern char* fslink;
+extern char fsincl[128];
 extern int fstlen;
 extern int fspos;
 extern int fscount;

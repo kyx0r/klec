@@ -561,6 +561,7 @@ static char *vi_curword(struct lbuf *lb, int row, int off)
 }
 
 char *fslink;
+char fsincl[128] = ".c .h ";
 int fstlen;
 int fspos;
 int fscount;
@@ -577,6 +578,7 @@ char *substr(const char *s1, const char *s2)
 static void file_calc(char *path, char *basePath)
 {
 	struct dirent *dp;
+	char *s, *sprev;
 	int len, _len, len1;
 	DIR *dir = opendir(basePath);
 	int pathlen = strlen(path);
@@ -586,9 +588,24 @@ static void file_calc(char *path, char *basePath)
 
 	while ((dp = readdir(dir)) != NULL)
 	{
-		if (dp->d_type == DT_REG && (substr(dp->d_name, ".c")
-			|| substr(dp->d_name, ".h")))
+		if (dp->d_type == DT_REG) 
 		{
+			s = fsincl;
+			sprev = s;
+			while ((s = strchr(s, ' ')))
+			{
+				*s = '\0';
+				if (substr(dp->d_name, sprev))
+				{
+					*s = ' ';
+					break;
+				}
+				*s = ' ';
+				s++;
+				sprev = s;
+			}
+			if (!s)
+				continue;
 			len1 = strlen(dp->d_name)+1;
 			path[pathlen] = '/';
 			memcpy(&path[pathlen+1], dp->d_name, len1);

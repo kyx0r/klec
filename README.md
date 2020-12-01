@@ -76,7 +76,7 @@ build another utility program.
 7. Changed behavior of ^a to change search direction when no more match 
 8. Added fssearch, searches what is under the cursor 
 in every file in the opened directory keybind: ^]   
-Right now it only checks for .c and .h files as I use this
+By default it only checks for .c and .h files. 
 for code navigation between files, jump to definitions / etc.
 9. fssearch but going in reverse keybind: ^p
 10. Added key to change the mark origin which ^p will return to keybind: ^t
@@ -116,6 +116,8 @@ works in C files, but can be made to work in other places too.
 31. Added autocomplete in insert mode. Press ^g to index the current opened
 file. Then you can press ^n to cycle though the options, results are based on
 the contents of the file and the closest match to what you typed.
+32. Added ex command "inc" which sets the filename filter for the feature
+mentioned in (8.)
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in
