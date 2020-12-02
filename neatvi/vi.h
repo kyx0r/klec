@@ -7,6 +7,9 @@
 int isescape(char ch);
 char *substr(const char *s1, const char *s2);
 
+/* hund file manager */
+int hundmain(int argc, char* argv[]);
+
 /* line buffer, managing a number of lines */
 struct lbuf *lbuf_make(void);
 void lbuf_free(struct lbuf *lbuf);
@@ -163,6 +166,7 @@ void ec_bufferi(int *id);
 /* process management */
 char *cmd_pipe(char *cmd, char *s, int iproc, int oproc);
 int cmd_exec(char *cmd);
+char* xgetenv(char* q[]); 
 
 /* syntax highlighting */
 #define SYN_BD		0x010000

@@ -118,6 +118,7 @@ file. Then you can press ^n to cycle though the options, results are based on
 the contents of the file and the closest match to what you typed.
 32. Added ex command "inc" which sets the filename filter for the feature
 mentioned in (8.)
+33. Added hund file manager (hund.c) keybind: \
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in

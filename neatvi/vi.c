@@ -588,7 +588,7 @@ static void file_calc(char *path, char *basePath)
 
 	while ((dp = readdir(dir)) != NULL)
 	{
-		if (dp->d_type == DT_REG) 
+		if (dp->d_type == DT_REG)
 		{
 			s = fsincl;
 			sprev = s;
@@ -934,10 +934,7 @@ static int vi_motion(int *row, int *off)
 			return -1;
 		break;
 	case '\\':
-		if (!(cs = vi_curword(xb, *row, *off)))
-			return -1;
-		vi_prompt(cs, &xkmap);
-		free(cs);
+		hundmain(1, NULL);
 		break;
 	default:
 		vi_back(mv);
@@ -1522,7 +1519,8 @@ static void vi(void)
 				xcol = vi_off2col(xb, xrow, xoff);
 			if (mv == '|')
 				xcol = vi_pcol;
-			if (mv == TK_CTL(']') || mv == TK_CTL('p'))
+			if (mv == TK_CTL(']') || mv == TK_CTL('p')
+				|| mv == '\\')
 			{
 				xtop = MAX(0, xrow - xrows / 2);
 				vc_status();

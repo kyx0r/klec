@@ -29,8 +29,6 @@ cd ../utils
 cp -f ./cembed /bin
 cd ../neatvi
 make install
-cd ../hund
-make install
 cd ../fastcd
 make install
 cd ../grabc
