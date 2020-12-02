@@ -47,13 +47,7 @@ useful to not include
 download pics from pixiv.com using pixivpy
 
 - xkeyboard -
-1. This is a onscreen keyboard program heavily modified by me
-to be usable with touchscreens.
-2. Added font support
-3. Added move, resize, hide buttons.
-4. Added two different input modes, one via XTest extension
-and the other via SendEvent. Different programs usually respond
-differently to those.
+(see submodule readme)
 
 - utils -
 1. tinycc.c is a special version of tcc that tries to almaginate 
@@ -67,58 +61,7 @@ don't use it, I keep it just as a template code for when I want to
 build another utility program.
 
 - neatvi -
-1. Added unindent keybind: ^q 
-2. Added quickexit to insert mode keybind: kj   
-3. Added linenumbers, keybind: # 
-4. Added invisible character view, keybind: V   
-5. Added regex for changing spaces to tabs, keybind: ^i   
-6. Added regex for removing /r in dos files, keybind: ^ii 
-7. Changed behavior of ^a to change search direction when no more match 
-8. Added fssearch, searches what is under the cursor 
-in every file in the opened directory keybind: ^]   
-By default it only checks for .c and .h files. 
-for code navigation between files, jump to definitions / etc.
-9. fssearch but going in reverse keybind: ^p
-10. Added key to change the mark origin which ^p will return to keybind: ^t
-11. Added ex command "ea" which opens file case insensitive and ignores the path,
-setting an extra number parameter after filename will skip that many matches with
-similar path. So for example file might be named "file123.c" but you can open it
-just by "ea fi" if this is a uniquely matched filename
-12. Added ex command "dir" to set the directory for fssearch or "ea" ex command
-13. Added numbered buffers to vi, max 8 and ex "b" command to switch
-14. Added key to show buffers and switch buffer keybind: ^s 
-15. Added key to exit vi keybind: qq 
-16. Added key to goto line 0 keybind: gg 
-17. Added key to delete everything inside (cursor outside) "" keybind: di" 
-18. Added key to delete everything inside () keybind: di) 
-19. Added key to delete everything inside (cursor outside) () keybind: di( 
-20. Added key to change . to -> on cursor line keybind: vh
-21. Added key to change -> to . on cursor line keybind: vg
-22. Added ex command "z" it does the same thing "!" does but the shell is
-launched in interactive mode, so stuff like aliases work. But it will cause
-vi to suspend.
-23. Changed the colors for C language in conf.h to be sane
-24. Added extra highlight keywords for C
-25. Added key that splits the line (opposite of J) keybind: K
-26. Added key that line wraps text to 80 line limit keybind: gq 
-27. Added key that deletes relative line 
-without moving the cursor (down) keybind: arg+I (up) keybind arg+R
-28. Added ability to view the numbers for arguments that keys e,w,E,W,b,B
-may take. keybind: ^v Pressing again will change the key mode, specifying
-any arguments will exit the mode. This is a major step up to how navigation
-works in vi, it makes it so much easier to use because now you can see where 
-you are going. If not anything else I suggest you to try out this distro
-just to see it in action.
-29. Added ability to change highlight dynamically.
-30. New ex option "hww" which highlights every instance of word under the
-cursor when enabled. Useful for when studying source code, currently only
-works in C files, but can be made to work in other places too.
-31. Added autocomplete in insert mode. Press ^g to index the current opened
-file. Then you can press ^n to cycle though the options, results are based on
-the contents of the file and the closest match to what you typed.
-32. Added ex command "inc" which sets the filename filter for the feature
-mentioned in (8.)
-33. Added hund file manager (hund.c) keybind: \
+(see submodule readme)
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in
