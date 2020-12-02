@@ -1,3 +1,6 @@
 [submodule "neatvi"]
 	path = neatvi
 	url = https://github.com/kyx0r/neatvi.git
+[submodule "xkeyboard"]
+	path = xkeyboard
+	url = https://github.com/kyx0r/xkeyboard.git
