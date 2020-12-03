@@ -264,6 +264,7 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 	FcPattern *match;
 	XftResult result;
 	int charexists = 0;
+	int giveup = 0;
 
 	if (!drw || (render && !drw->scheme) || !text || !drw->fonts)
 		return 0;
@@ -338,6 +339,8 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 			/* Regardless of whether or not a fallback font is found, the
 			 * character must be drawn. */
 			charexists = 1;
+			if (giveup)
+				continue;
 
 			fccharset = FcCharSetCreate();
 			FcCharSetAddChar(fccharset, utf8codepoint);
@@ -368,13 +371,13 @@ drw_text(Drw *drw, int x, int y, unsigned int w, unsigned int h, unsigned int lp
 				} else {
 					xfont_free(usedfont);
 					usedfont = drw->fonts;
+					giveup = 1;
 				}
 			}
 		}
 	}
 	if (d)
 		XftDrawDestroy(d);
-
 	return x + (render ? w : 0);
 }
 

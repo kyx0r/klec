@@ -788,6 +788,8 @@ dirtomon(int dir)
 void
 drawbar(Monitor *m)
 {
+	if (!m->showbar)
+		return;
 	int x, w, tw = 0, mw, ew = 0;
 	int scm;
 	int boxs = drw->fonts->h / 9;
@@ -814,9 +816,7 @@ drawbar(Monitor *m)
 	for (i = 0; i < LENGTH(tags); i++) {
 		/* do not draw vacant tags */
 		if (!(occ & 1 << i || m->tagset[m->seltags] & 1 << i))
-		{
 			continue;
-		}
 		w = TEXTW(tags[i]);
 		drw_setscheme(drw, scheme[m->tagset[m->seltags] & 1 << i ? SchemeSel : SchemeNorm]);
 		drw_text(drw, x, 0, w, bh, lrpad / 2, tags[i], urg & 1 << i);
