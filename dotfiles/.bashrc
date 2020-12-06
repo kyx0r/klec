@@ -62,6 +62,7 @@ alias 'fu'='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080 --max-dim
 alias 'g'='git'
 alias 'ga'='git add .'
 alias 'gc'='git commit -a -m'
+alias 'gcr'='git clone --recursive'
 alias 'gp'='git push'
 alias 'gl'='git pull'
 alias 'gs'='git status'
