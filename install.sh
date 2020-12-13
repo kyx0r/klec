@@ -33,3 +33,5 @@ cd ../fastcd
 make install
 cd ../grabc
 make install-bin
+cd ../dmenu
+make install
