@@ -24071,7 +24071,7 @@ add_char:
 
 /* skip block of text until #else, #elif or #endif. skip also pairs of
    if*/
-static void preprocess_skip(int skip, int ig)
+static int preprocess_skip(int skip, int ig)
 {
 	int a, start_of_line, c, in_warn_or_error;
 	uint8_t *p;
@@ -24146,8 +24146,8 @@ redo_no_start:
 				//preprocess(tok_flags & TOK_FLAG_BOF);
 				next_nomacro();
 				p = file->buf_ptr;
-				if(skip && tok == TOK_INCLUDE_NEXT)
-					return;
+				if(skip && tok == TOK_INCLUDE || tok == TOK_INCLUDE_NEXT)
+					return 1;
 				if (a == 0 &&
 				    (tok == TOK_ELSE || tok == TOK_ELIF || tok == TOK_ENDIF))
 					goto the_end;
@@ -24181,6 +24181,7 @@ _default:
 the_end:
 	;
 	file->buf_ptr = p;
+	return 0;
 }
 
 #if 0
@@ -24889,6 +24890,7 @@ ST_FUNC void preprocess(int is_bof)
 	int tlen = 0;
 	int ig = 1;
 	static int eob;
+	int inblock;
 
 	saved_parse_flags = parse_flags;
 	parse_flags = PARSE_FLAG_PREPROCESS
@@ -25130,7 +25132,8 @@ test_else:
 			file->ifndef_macro = 0;
 test_skip:
 		if (!(c & 1)) {
-			preprocess_skip(tok != file->ifndef_macro, ig);
+real_skip:
+			inblock = preprocess_skip(tok != file->ifndef_macro, ig);
 			is_bof = 0; ig = 1;
 			goto redo;
 		}
@@ -25138,7 +25141,15 @@ test_skip:
 		break;
 	case TOK_ENDIF:
 		if (s1->ifdef_stack_ptr <= file->ifdef_stack_ptr)
-			tcc_error("#endif without matching #if");
+		{
+			if (!inblock)
+				tcc_error("#endif without matching #if");
+			else
+			{
+				s1->ifdef_stack_ptr++;
+				inblock = 0;
+			}
+		}
 		s1->ifdef_stack_ptr--;
 		/* '#ifndef macro' was at the start of file. Now we check if
 		   an '#endif' is exactly at the end of file */
