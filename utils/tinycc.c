@@ -24070,7 +24070,7 @@ add_char:
 }
 
 /* skip block of text until #else, #elif or #endif. skip also pairs of
-   #if/#endif */
+   if*/
 static void preprocess_skip(int skip, int ig)
 {
 	int a, start_of_line, c, in_warn_or_error;
@@ -24146,7 +24146,7 @@ redo_no_start:
 				//preprocess(tok_flags & TOK_FLAG_BOF);
 				next_nomacro();
 				p = file->buf_ptr;
-				if(skip && tok == TOK_INCLUDE || tok == TOK_INCLUDE_NEXT)
+				if(skip && tok == TOK_INCLUDE_NEXT)
 					return;
 				if (a == 0 &&
 				    (tok == TOK_ELSE || tok == TOK_ELIF || tok == TOK_ENDIF))
@@ -25035,7 +25035,7 @@ read_name:
 			ch = file->buf_ptr[0];
 			goto the_end;
 		}
-		tcc_error("include file '%s' not found", buf);
+		//tcc_error("include file '%s' not found", buf);
 include_done:
 		--s1->include_stack_ptr;
 		break;
