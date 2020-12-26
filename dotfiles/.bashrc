@@ -94,6 +94,7 @@ alias 'chromium'='chromium --no-sandbox'
 complete -cf r
 
 ki() { kiss b "$1" && kiss i "$1"; }
+loc() { find . -name "$@" | xargs wc -l; }
 cdls() { cd "$@" && l; }
 alias 'cd'='cdls'
 mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
