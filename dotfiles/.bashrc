@@ -5,15 +5,16 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
+export KISS_SU=su
 export KISS_PATH=$HOME/repo/core:$HOME/repo/extra:$HOME/repo/xorg:$HOME/community/community
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
 export PS1="\[\e[35m\]\w\[\e[m\] "
-export CFLAGS="-O3"                              
+export CFLAGS="-Os"                              
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"                                            
 export KCPPFLAGS="$CFLAGS"                                            
-export MAKEFLAGS="-j8"                                               
+export MAKEFLAGS="-j$(nproc)"
     
 set -o vi
 bind -m vi-insert "\C-l":clear-screen
@@ -54,7 +55,7 @@ alias ls='ls --color=auto'
 alias 'l'='ls -glhaS'
 alias 'df'='df -h'
 alias 'rm'='rm -rf'
-alias 'v'='vim'
+alias 'v'='vi'
 alias 'i'='vi'
 alias 's'='su root'
 alias 'f'='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080 -p'
@@ -70,17 +71,17 @@ alias 'gcls'='git clean -fx'
 alias 'gr'='git restore'
 alias 'grh'='git reset --hard'
 alias 'gch'='git checkout'
-alias 'p'='sudo pacman'
+alias 'p'='pacman'
 alias 'pc'='rm /var/lib/pacman/db.lck'
 alias 'm'='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
-alias 'mi'='sudo make install'
+alias 'mi'='make install'
 alias 'xq'='xbps-query -R -s'
 alias 'xi'='xbps-install'
 alias 'xr'='xbps-remove'
 alias 'x'='. fastcd.sh'
-alias ','='sudo vim /etc/X11/xinit/xinitrc'
-alias ',,'='sudo vim ~/.bashrc'
-alias ',,,'='sudo vim ~/.vimrc'
+alias ','='vi /etc/X11/xinit/xinitrc'
+alias ',,'='vi ~/.bashrc'
+alias ',,,'='vim ~/.vimrc'
 alias 'd'='gdb --args'
 alias 'c'='cd ..'
 alias '..'='cd ../..'
