@@ -65,5 +65,10 @@ build another utility program.
 
 - surf -
 1. I took a fork from Francesco as a base, see the Readme in
-surf directory. This will get updated if I decide to change anything.
+surf directory. I have removed the dependency on gcrt which is
+bloated certificate library, but in exchange now it's much easier
+to build surf, only webkitgtk2 is needed.
+
+- mailx -
+1. Custom build, not no significat changed as of yet.
 

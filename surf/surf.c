@@ -5,7 +5,6 @@
 #include <sys/file.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#include <glib.h>
 #include <libgen.h>
 #include <limits.h>
 #include <pwd.h>
@@ -22,15 +21,62 @@
 #include <glib/gstdio.h>
 #include <gtk/gtk.h>
 #include <gtk/gtkx.h>
-#include <gcr/gcr.h>
 #include <JavaScriptCore/JavaScript.h>
 #include <webkit2/webkit2.h>
 #include <X11/X.h>
 #include <X11/Xatom.h>
-#include <glib.h>
 
-#include "arg.h"
-#include "common.h"
+
+/* use main(int argc, char *argv[]) */
+#define ARGBEGIN	for (argv0 = *argv, argv++, argc--;\
+					argv[0] && argv[0][0] == '-'\
+					&& argv[0][1];\
+					argc--, argv++) {\
+				char argc_;\
+				char **argv_;\
+				int brk_;\
+				if (argv[0][1] == '-' && argv[0][2] == '\0') {\
+					argv++;\
+					argc--;\
+					break;\
+				}\
+				for (brk_ = 0, argv[0]++, argv_ = argv;\
+						argv[0][0] && !brk_;\
+						argv[0]++) {\
+					if (argv_ != argv)\
+						break;\
+					argc_ = argv[0][0];\
+					switch (argc_)
+#define ARGEND			}\
+			}
+
+#define ARGC()		argc_
+
+#define EARGF(x)	((argv[0][1] == '\0' && argv[1] == NULL)?\
+				((x), abort(), (char *)0) :\
+				(brk_ = 1, (argv[0][1] != '\0')?\
+					(&argv[0][1]) :\
+					(argc--, argv++, argv[0])))
+
+#define ARGF()		((argv[0][1] == '\0' && argv[1] == NULL)?\
+				(char *)0 :\
+				(brk_ = 1, (argv[0][1] != '\0')?\
+					(&argv[0][1]) :\
+					(argc--, argv++, argv[0])))
+
+#define MSGBUFSZ 8
+
+void
+die(const char *errstr, ...)
+{
+	va_list ap;
+
+	va_start(ap, errstr);
+	vfprintf(stderr, errstr, ap);
+	va_end(ap);
+	exit(1);
+}
+
 
 #define LENGTH(x)               (sizeof(x) / sizeof(x[0]))
 #define CLEANMASK(mask)         (mask & (MODKEY|GDK_SHIFT_MASK))
@@ -1789,30 +1835,6 @@ print(Client *c, const Arg *a)
 {
 	webkit_print_operation_run_dialog(webkit_print_operation_new(c->view),
 	                                  GTK_WINDOW(c->win));
-}
-
-void
-showcert(Client *c, const Arg *a)
-{
-	GTlsCertificate *cert = c->failedcert ? c->failedcert : c->cert;
-	GcrCertificate *gcrt;
-	GByteArray *crt;
-	GtkWidget *win;
-	GcrCertificateWidget *wcert;
-
-	if (!cert)
-		return;
-
-	g_object_get(cert, "certificate", &crt, NULL);
-	gcrt = gcr_simple_certificate_new(crt->data, crt->len);
-	g_byte_array_unref(crt);
-
-	win = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	wcert = gcr_certificate_widget_new(gcrt);
-	g_object_unref(gcrt);
-
-	gtk_container_add(GTK_CONTAINER(win), GTK_WIDGET(wcert));
-	gtk_widget_show_all(win);
 }
 
 void
