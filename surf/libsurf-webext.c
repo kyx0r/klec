@@ -8,7 +8,8 @@
 #include <webkitdom/webkitdom.h>
 #include <webkitdom/WebKitDOMDOMWindowUnstable.h>
 
-#include "common.h"
+#define MSGBUFSZ 8
+void die(const char *errstr, ...);
 
 #define LENGTH(x)   (sizeof(x) / sizeof(x[0]))
 

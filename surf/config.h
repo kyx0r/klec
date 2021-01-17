@@ -7,7 +7,7 @@ static char *certdir        = "~/.config/surf/certificates/";
 static char *cachedir       = "~/.config/surf/cache/";
 static char *cookiefile     = "~/.config/surf/cookies.txt";
 #define HISTORY_FILE          "~/.config/surf/history"
-static char *searchengine   = "https://duckduckgo.com/?q=";
+static char *searchengine   = "https://lite.duckduckgo.com/lite/?q=";
 
 /* Webkit default features */
 /* Highest priority value will be used.

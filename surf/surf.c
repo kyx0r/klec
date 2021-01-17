@@ -65,9 +65,7 @@
 					(argc--, argv++, argv[0])))
 
 #define MSGBUFSZ 8
-
-void
-die(const char *errstr, ...)
+void die(const char *errstr, ...)
 {
 	va_list ap;
 
