@@ -1,0 +1,6 @@
+*.o
+*.a
+mailx
+LIBS
+config.h
+config.log
