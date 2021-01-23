@@ -1,6 +1,16 @@
-#
 #!/bin/bash
-#Migrates root file system to RAM
+# Migrates root file system to RAM
+# --- Needs busybox version of pivot_root ---
+# run it like so . migr.sh the "." is does the shell sourcing
+# or make sure to run cd / yourself. It needs to become aware of
+# the new root by changing shell wd.
+# The /sys/block/zram0/disksize does not really matter what size
+# it's just a limiter, so set to anything except below the amount
+# of your ram. The kernel does not do deallocations when you remove
+# files from the zram block, to reset it run "echo 1 > /sys/block/zram0/reset"
+# ignore the busy error, it works either way. 
+# You may need to adjust the script directories, but the most
+# essential ones are alredy here to have a working system.
 #
 
 mkdir -p /ramroot
