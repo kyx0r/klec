@@ -11,7 +11,7 @@ mount /dev/zram0 /ramroot
 #mount -o size=8G -t tmpfs tmpfs /ramroot
 cp -a /{bin,etc,sbin,lib64,lib32,lib} /ramroot
 mkdir /ramroot/usr
-cp -a /usr/{bin,sbin,lib32,lib64,lib,share,include,local} /ramroot/usr &
+cp -a /usr/{bin,sbin,lib32,lib64,lib,share,include,local,libexec} /ramroot/usr &
 cp -a /{root,home,var} /ramroot &
 umount /boot
 mkdir /ramroot/{dev,proc,sys,run,tmp}

@@ -6,7 +6,8 @@
 [[ $- != *i* ]] && return
 
 export KISS_SU=su
-export KISS_PATH=$HOME/repo/core:$HOME/repo/extra:$HOME/repo/xorg:$HOME/community/community
+export KISS_PATH=$HOME/repo-main/core:$HOME/repo-main/extra:$HOME/repo-main/xorg:$HOME/repo-community/community\
+:$HOME/repo-vulkan
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
 export PS1="\[\e[35m\]\w\[\e[m\] "
