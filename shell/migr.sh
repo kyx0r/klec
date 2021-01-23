@@ -12,6 +12,11 @@
 # You may need to adjust the script directories, but the most
 # essential ones are alredy here to have a working system.
 #
+# You can also do this onto tmpfs instead of zram,
+# just uncomment the line with tmpfs and comment the 
+# mkfs.ext4 and the zram stuff
+# If you have /tmp as a mounted point uncomment the 
+# mount --rbind /tmp /ramroot/tmp bellow
 
 mkdir -p /ramroot
 modprobe zram num_devices=1
@@ -27,7 +32,7 @@ umount /boot
 mkdir /ramroot/{dev,proc,sys,run,tmp}
 mount --rbind /sys /ramroot/sys
 mount --rbind /run /ramroot/run
-mount --rbind /tmp /ramroot/tmp
+#mount --rbind /tmp /ramroot/tmp
 mount --rbind /dev /ramroot/dev
 mount --rbind /proc /ramroot/proc
 mkdir /ramroot/oldroot
