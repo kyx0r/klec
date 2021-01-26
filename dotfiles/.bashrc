@@ -85,6 +85,7 @@ alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 alias m='make'
 alias mi='make install'
 alias mc='make clean'
+alias mu='make uninstall'
 
 # random progs
 alias grep='grep --color=auto'
