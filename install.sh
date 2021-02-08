@@ -7,9 +7,8 @@ cp dotfiles/.bashrc ~/
 cp dotfiles/.bash_profile ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/
-mkdir -p ~/.vim/colors
-cp dotfiles/256_noir.vim ~/.vim/colors
 cp dotfiles/.gitconfig ~/
+cp dotfiles/.mailrc ~/
 cp dotfiles/keynavrc /etc
 cp dotfiles/lynx.cfg /etc
 cp dotfiles/index.theme /usr/share/icons/default/

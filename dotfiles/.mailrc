@@ -1,0 +1,12 @@
+account gmail {
+    set smtp-use-starttls
+    set ssl-verify=ignore
+    set smtp-auth=login
+    set smtp=smtp://smtp.gmail.com:587
+    set from="k.melekhin@gmail.com(Kyryl Melekhin)"
+    set smtp-auth-user=k.melekhin@gmail.com
+    set ssl-verify=ignore
+    set imap-keepalive=240
+    set folder=imaps://k.melekhin@gmail.com@imap.gmail.com:993
+}
+

@@ -70,6 +70,8 @@ alias gsh='git stash'
 alias grh='git reset --hard'
 alias gr='git restore'
 alias gcls='git clean -fx'
+alias gf='git fetch'
+alias gfv='git fetch -v'
 
 # void linux
 alias xq='xbps-query -R -s'
@@ -114,7 +116,6 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
 alias 'cd'='cdls'
-mkfile() { mkdir -p "$(dirname "$1")" && touch "$1" ;  }
 
 #disable ^s lock
 stty -ixon 

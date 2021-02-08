@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 # Migrates root file system to RAM
 # --- Needs busybox version of pivot_root ---
 # run it like so . migr.sh the "." is does the shell sourcing
@@ -30,7 +30,7 @@ umount /boot
 mkdir /ramroot/{dev,proc,sys,run,tmp}
 mount --rbind /sys /ramroot/sys
 mount --rbind /run /ramroot/run
-mount --rbind /tmp /ramroot/tmp
+#mount --rbind /tmp /ramroot/tmp
 mount --rbind /dev /ramroot/dev
 mount --rbind /proc /ramroot/proc
 mkdir /ramroot/oldroot
