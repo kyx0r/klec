@@ -4,7 +4,7 @@ static char *fulluseragent  = ""; /* Or override the whole user agent string */
 static char *scriptfile     = "~/.config/surf/script.js";
 static char *styledir       = "~/.config/surf/styles/";
 static char *certdir        = "~/.config/surf/certificates/";
-static char *cachedir       = "~/.config/surf/cache/";
+static char *cachedir       = "~/.cache/surf/cache/";
 static char *cookiefile     = "~/.config/surf/cookies.txt";
 #define HISTORY_FILE          "~/.config/surf/history"
 static char *searchengine   = "https://lite.duckduckgo.com/lite/?q=";
