@@ -72,6 +72,7 @@ alias gr='git restore'
 alias gcls='git clean -fx'
 alias gf='git fetch'
 alias gfv='git fetch -v'
+gfork() { git remote add fork "$1" && git fetch fork && git merge fork/master; }
 
 # void linux
 alias xq='xbps-query -R -s'
