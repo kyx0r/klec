@@ -27,7 +27,7 @@ mkdir /ramroot/usr
 cp -a /usr/{bin,sbin,lib32,lib64,lib,share,include,local,libexec} /ramroot/usr &
 cp -a /{root,home,var} /ramroot &
 umount /boot
-mkdir /ramroot/{dev,proc,sys,run,tmp}
+mkdir /ramroot/{dev,proc,sys,run,tmp,cache}
 mount --rbind /sys /ramroot/sys
 mount --rbind /run /ramroot/run
 #mount --rbind /tmp /ramroot/tmp
