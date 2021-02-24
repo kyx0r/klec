@@ -5,8 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-if [ -f ~/.rc ]; then
-	. ~/.rc
+if [ -f ~/.profile ]; then
+	. ~/.profile
 fi
 
 set -o vi
