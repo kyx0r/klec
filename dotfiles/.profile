@@ -2,8 +2,27 @@
 
 export ENV=~/.profile
 export KISS_SU=su
-export KISS_PATH=$HOME/repo-main/core:$HOME/repo-main/extra:$HOME/repo-main/xorg:$HOME/repo-community/community\
-:$HOME/repo-vulkan:$HOME/grepo/bin:$HOME/grepo/core:$HOME/grepo/extra:$HOME/grepo/xorg
+export KISS_PATH=
+if [ -d "$HOME/kiss/repo-main" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/core"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/extra"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/xorg"
+fi
+if [ -d "$HOME/kiss/repo-community" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-community/community"
+fi
+if [ -d "$HOME/kiss/repo-vulkan" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-vulkan"
+fi
+if [ -d "$HOME/kiss/grepo" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/bin"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/core"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/extra"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/xorg"
+fi
+if [ -d "$HOME/kiss/gcommunity" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/gcommunity/community"
+fi
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
 export PS1="\[\e[35m\]\w\[\e[m\] "
