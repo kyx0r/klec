@@ -4,6 +4,7 @@ mkdir -p /etc/fonts
 cp -r GoldenShimmer /usr/share/icons
 cp dotfiles/.twmrc ~/
 cp dotfiles/.bashrc ~/
+cp dotfiles/.profile ~/
 cp dotfiles/.bash_profile ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/

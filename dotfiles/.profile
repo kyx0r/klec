@@ -1,42 +1,14 @@
-#
-# ~/.bashrc
-#
-
-# If not running interactively, don't do anything
-[[ $- != *i* ]] && return
-
 export KISS_SU=su
 export KISS_PATH=$HOME/repo-main/core:$HOME/repo-main/extra:$HOME/repo-main/xorg:$HOME/repo-community/community\
-:$HOME/repo-vulkan
+:$HOME/repo-vulkan:$HOME/grepo/bin:$HOME/grepo/core:$HOME/grepo/extra:$HOME/grepo/xorg
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
 export PS1="\[\e[35m\]\w\[\e[m\] "
-export CFLAGS="-O2"                              
+export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
-export CXXFLAGS="$CFLAGS"                                            
-export KCPPFLAGS="$CFLAGS"                                            
+export CXXFLAGS="$CFLAGS"
+export KCPPFLAGS="$CFLAGS"
 export MAKEFLAGS="-j$(nproc)"
-    
-set -o vi
-bind -m vi-insert "\C-l":clear-screen
-bind '"kj":vi-movement-mode'
-
-# SET THE MODE STRING AND CURSOR TO INDICATE THE VIM MODE
-#   FOR THE NUMBER AFTER `\e[`:
-#     0: blinking block
-#     1: blinking block (default)
-#     2: steady block
-#     3: blinking underline
-#     4: steady underline
-#     5: blinking bar (xterm)
-#     6: steady bar (xterm)
-bind 'set show-mode-in-prompt on'
-bind 'set vi-ins-mode-string \1\e[3 q\2'
-bind 'set vi-cmd-mode-string \1\e[4 q\2'
-# ignore duplicate commands, ignore commands starting with a space
-export HISTCONTROL=erasedups:ignorespace
-export HISTSIZE=50000
-shopt -s histappend
 
 if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
 if [[ ! -z "${DISPLAY}" ]]; then
@@ -46,7 +18,7 @@ fi
 fi
 
 if type setxkbmap >/dev/null 2>&1; then
-        setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
+setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
 fi
 
 # git
@@ -112,49 +84,43 @@ alias c='cd ..'
 alias fnd='find . -name'
 alias chromium='chromium --no-sandbox'
 
-complete -cf r
-
 ki() { kiss b "$1" && kiss i "$1"; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
 alias 'cd'='cdls'
 
-#disable ^s lock
-stty -ixon 
-shopt -s autocd
-
 compr() {
     FILE=$1
     shift
     case $FILE in
-        *.tar.bz2) tar cjf $FILE $*  ;;
-        *.tar.gz)  tar czf $FILE $*  ;;
-        *.tgz)     tar czf $FILE $*  ;;
-        *.zip)     zip $FILE $*      ;;
-        *.rar)     rar $FILE $*      ;;
-        *)         echo "Filetype not recognized" ;;
+	*.tar.bz2) tar cjf $FILE $*  ;;
+	*.tar.gz)  tar czf $FILE $*  ;;
+	*.tgz)     tar czf $FILE $*  ;;
+	*.zip)     zip $FILE $*      ;;
+	*.rar)     rar $FILE $*      ;;
+	*)         echo "Filetype not recognized" ;;
    esac
 }
 
 ## EXTRACT FUNCTION ##
 extr () {
     if [ -f $1 ] ; then
-        case $1 in
-            *.tar.bz2)   tar xjf $1     ;;
-            *.tar.gz)    tar xzf $1     ;;
-            *.bz2)       bunzip2 $1     ;;
-            *.rar)       unrar e $1     ;;
-            *.gz)        gunzip $1      ;;
-            *.tar)       tar xf $1      ;;
-            *.tbz2)      tar xjf $1     ;;
-            *.tgz)       tar xzf $1     ;;
-            *.zip)       unzip $1       ;;
-            *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;;
-            *)     echo "'$1' cannot be extracted via extract()" ;;
-        esac
+	case $1 in
+	    *.tar.bz2)   tar xjf $1     ;;
+	    *.tar.gz)    tar xzf $1     ;;
+	    *.bz2)       bunzip2 $1     ;;
+	    *.rar)       unrar e $1     ;;
+	    *.gz)        gunzip $1      ;;
+	    *.tar)       tar xf $1      ;;
+	    *.tbz2)      tar xjf $1     ;;
+	    *.tgz)       tar xzf $1     ;;
+	    *.zip)       unzip $1       ;;
+	    *.Z)         uncompress $1  ;;
+	    *.7z)        7z x $1        ;;
+	    *)     echo "'$1' cannot be extracted via extract()" ;;
+	esac
     else
-        echo "'$1' is not a valid file"
+	echo "'$1' is not a valid file"
     fi
 }
