@@ -5,8 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-if [ -f ~/.profile ]; then
-	. ~/.profile
+if [ -f ~/.rc ]; then
+	. ~/.rc
 fi
 
 set -o vi
@@ -35,4 +35,3 @@ complete -cf r
 #disable ^s lock
 stty -ixon 
 shopt -s autocd
-

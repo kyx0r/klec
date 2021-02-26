@@ -5,6 +5,7 @@ cp -r GoldenShimmer /usr/share/icons
 cp dotfiles/.twmrc ~/
 cp dotfiles/.bashrc ~/
 cp dotfiles/.profile ~/
+cp dotfiles/.rc ~/
 cp dotfiles/.gdbinit ~/
 cp dotfiles/.vimrc ~/
 cp dotfiles/.gitconfig ~/

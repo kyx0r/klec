@@ -1,0 +1,146 @@
+#!/bin/sh
+
+export KISS_SU=su
+export KISS_PATH=
+if [ -d "$HOME/kiss/repo-main" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/core"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/extra"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/xorg"
+fi
+if [ -d "$HOME/kiss/repo-community" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-community/community"
+fi
+if [ -d "$HOME/kiss/repo-vulkan" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo-vulkan"
+fi
+if [ -d "$HOME/kiss/grepo" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/bin"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/core"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/extra"
+KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/xorg"
+fi
+if [ -d "$HOME/kiss/gcommunity" ]; then
+KISS_PATH="$KISS_PATH:$HOME/kiss/gcommunity/community"
+fi
+export PATH=/root/klec/shell:$PATH
+export EDITOR=vi
+export PS1="\[\e[35m\]\w\[\e[m\] "
+export CFLAGS="-O2"
+export KCFLAGS="$CFLAGS"
+export CXXFLAGS="$CFLAGS"
+export KCPPFLAGS="$CFLAGS"
+export MAKEFLAGS="-j$(nproc)"
+
+if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
+if [[ ! -z "${DISPLAY}" ]]; then
+sh -c 'feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz &'
+fi
+fi
+
+if type setxkbmap >/dev/null 2>&1; then
+setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
+fi
+
+# git
+alias g='git'
+alias ga='git add'
+alias gal='git add .'
+alias gap='git add --patch'
+alias gb='git branch --all'
+alias gc='git commit'
+alias gcm='git commit -m'
+alias gcr='git clone --recursive'
+alias gco='git checkout'
+alias gd='git diff'
+alias gds='git diff --staged'
+alias gf='git fetch'
+alias gl='git log --graph --oneline'
+alias gp='git push'
+alias gpl='git pull'
+alias gr='git rebase'
+alias grc='git rebase --continue'
+alias gs='git status'
+alias gsh='git stash'
+alias grh='git reset --hard'
+alias gr='git restore'
+alias gcls='git clean -fx'
+alias gf='git fetch'
+alias gfv='git fetch -v'
+gfork() { git remote add fork "$1" && git fetch fork && git merge fork/master; }
+
+# void linux
+alias xq='xbps-query -R -s'
+alias xi='xbps-install'
+alias xr='xbps-remove'
+
+# arch linux
+alias p='pacman'
+alias pc='rm /var/lib/pacman/db.lck'
+alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
+
+# make
+alias m='make'
+alias mi='make install'
+alias mc='make clean'
+alias mu='make uninstall'
+
+# random progs
+alias grep='grep --color=auto'
+alias ls='ls --color=auto'
+alias l='ls -glhaS'
+alias df='df -h'
+alias rm='rm -rf'
+alias v='vi'
+alias i='vi'
+alias s='su root'
+alias f='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080 -p'
+alias fu='feh --title %f___[%wX%h]_[%u/%l] --min-dimension 1920x1080 --max-dimension 2560x1440 -p'
+alias x='. fastcd.sh'
+alias ,='vi /etc/X11/xinit/xinitrc'
+alias ,,='vi /etc/X11/xorg.conf'
+alias ,,,='vi ~/.bashrc'
+alias d='gdb --args'
+alias c='cd ..'
+alias fnd='find . -name'
+alias chromium='chromium --no-sandbox'
+
+ki() { kiss b "$1" && kiss i "$1"; }
+loc() { find . -name "$@" | xargs wc -l; }
+r() { grep -n -r "$@" . ; }
+cdls() { cd "$@" && l; }
+alias 'cd'='cdls'
+
+compr() {
+    FILE=$1
+    shift
+    case $FILE in
+	*.tar.bz2) tar cjf $FILE $*  ;;
+	*.tar.gz)  tar czf $FILE $*  ;;
+	*.tgz)     tar czf $FILE $*  ;;
+	*.zip)     zip $FILE $*      ;;
+	*.rar)     rar $FILE $*      ;;
+	*)         echo "Filetype not recognized" ;;
+   esac
+}
+
+## EXTRACT FUNCTION ##
+extr () {
+    if [ -f $1 ] ; then
+	case $1 in
+	    *.tar.bz2)   tar xjf $1     ;;
+	    *.tar.gz)    tar xzf $1     ;;
+	    *.bz2)       bunzip2 $1     ;;
+	    *.rar)       unrar e $1     ;;
+	    *.gz)        gunzip $1      ;;
+	    *.tar)       tar xf $1      ;;
+	    *.tbz2)      tar xjf $1     ;;
+	    *.tgz)       tar xzf $1     ;;
+	    *.zip)       unzip $1       ;;
+	    *.Z)         uncompress $1  ;;
+	    *.7z)        7z x $1        ;;
+	    *)     echo "'$1' cannot be extracted via extract()" ;;
+	esac
+    else
+	echo "'$1' is not a valid file"
+    fi
+}
