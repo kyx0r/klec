@@ -16,25 +16,56 @@
 # just uncomment the line with tmpfs and comment the 
 # mkfs.ext4 and the zram stuff
 
-mkdir -p /ramroot
-modprobe zram num_devices=1
-echo "32G" > /sys/block/zram0/disksize
-mkfs.ext4 /dev/zram0
-mount /dev/zram0 /ramroot
-#mount -o size=8G -t tmpfs tmpfs /ramroot
-cp -a /{bin,etc,sbin,lib64,lib32,lib} /ramroot
-mkdir /ramroot/usr
-cp -a /usr/{bin,sbin,lib32,lib64,lib,share,include,local,libexec} /ramroot/usr &
-cp -a /{root,home,var} /ramroot &
-umount /boot
-mkdir /ramroot/{dev,proc,sys,run,tmp,cache}
-mount --rbind /sys /ramroot/sys
-mount --rbind /run /ramroot/run
-#mount --rbind /tmp /ramroot/tmp
-mount --rbind /dev /ramroot/dev
-mount --rbind /proc /ramroot/proc
-mkdir /ramroot/oldroot
-wait < <(jobs -p)
-pivot_root /ramroot /ramroot/oldroot
-umount /oldroot -f -l
-cd /
+usrdirs="bin sbin lib32 lib64 lib share include local libexec"
+rootdirs="etc root home var"
+
+function copy()
+{
+	mkdir -p /ramroot
+	modprobe zram num_devices=1
+	echo "32G" > /sys/block/zram0/disksize
+	mkfs.ext4 /dev/zram0
+	mount /dev/zram0 /ramroot
+	#mount -o size=8G -t tmpfs tmpfs /ramroot
+	cp -a /bin /ramroot
+	cp -a /sbin /ramroot
+	cp -a /lib64 /ramroot
+	cp -a /lib32 /ramroot
+	cp -a /lib /ramroot
+	mkdir /ramroot/usr
+	echo "$usrdirs" | tr ' ' '\n' | while read item; do
+		cp -a /usr/$item /ramroot/usr &
+	done
+	echo "$rootdirs" | tr ' ' '\n' | while read item; do
+		cp -a /$item /ramroot/ &
+	done
+	mkdir /ramroot/dev /ramroot/proc /ramroot/sys \
+	/ramroot/run /ramroot/tmp /ramroot/cache /ramroot/oldroot
+	echo "please wait for job completion ..."
+	exit 0
+}
+
+function pivot()
+{
+	umount /boot
+	mount --rbind /sys /ramroot/sys
+	mount --rbind /run /ramroot/run
+	#mount --rbind /tmp /ramroot/tmp
+	mount --rbind /dev /ramroot/dev
+	mount --rbind /proc /ramroot/proc
+	pivot_root /ramroot /ramroot/oldroot
+	umount /oldroot -f -l
+	cd /
+	exit 0
+}
+
+function help()
+{
+	echo " "
+        echo "=====Command Line Options====="
+        echo "* copy            copy rootfs system to ram"
+        echo "* pivot           pivot rootfs"
+}
+
+"$@"
+help
