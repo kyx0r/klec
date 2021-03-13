@@ -38,7 +38,7 @@ function tcopy()
 {
 	mkdir -p /ramroot
 	mount -o size=32G -t tmpfs tmpfs /ramroot
-	copy()
+	copy
 }
 
 function zcopy()
@@ -48,7 +48,7 @@ function zcopy()
 	echo "32G" > /sys/block/zram0/disksize
 	mkfs.ext4 /dev/zram0
 	mount /dev/zram0 /ramroot
-	copy()
+	copy
 }
 
 function ztrim()
