@@ -51,6 +51,12 @@ function zcopy()
 	copy()
 }
 
+function ztrim()
+{
+	fstrim /
+	exit 0
+}
+
 function pivot()
 {
 	umount /boot
@@ -70,6 +76,7 @@ function help()
 	echo " "
         echo "=====Command Line Options====="
         echo "* zcopy           copy rootfs system to ram (zram0)"
+        echo "* ztrim           deallocate pages on unused data on zram from ext4"
         echo "* tcopy           copy rootfs system to ram (tmpfs)"
         echo "* pivot           pivot rootfs"
 }
