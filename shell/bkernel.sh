@@ -1,6 +1,4 @@
-make -j 4
-make INSTALL_MOD_STRIP=1 modules_install
 make install
-
-mv /boot/vmlinuz /boot/vmlinuz-5.8.13
-mv /boot/System.map /boot/System.map-5.8.13
+make INSTALL_MOD_STRIP=1 modules_install
+mv /boot/vmlinuz /boot/vmlinuz-$(awk 'FNR == 3 {print $3}' .config)
+mv /boot/System.map /boot/System.map-$(awk 'FNR == 3 {print $3}' .config)
