@@ -52,6 +52,16 @@ function zcopy()
 	copy
 }
 
+function zbtcopy()
+{
+	mkdir -p $ramroot
+	modprobe zram num_devices=1
+	echo "32G" > /sys/block/zram0/disksize
+	mkfs.btrfs /dev/zram0
+	mount -o autodefrag,noatime -t btrfs /dev/zram0 $ramroot
+	copy
+}
+
 function ztrim()
 {
 	fstrim /
