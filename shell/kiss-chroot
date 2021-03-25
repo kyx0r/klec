@@ -66,5 +66,6 @@ log Entering chroot; {
         CFLAGS="${CFLAGS:--march=x86-64 -mtune=generic -pipe -Os}" \
         CXXFLAGS="${CXXFLAGS:--march=x86-64 -mtune=generic -pipe -Os}" \
         MAKEFLAGS="${MAKEFLAGS:--j$(nproc 2>/dev/null || echo 1)}" \
+        DISPLAY="$DISPLAY" \
         /bin/sh -l
 }
