@@ -3,6 +3,7 @@
  * To understand surf, start reading main().
  */
 #include <sys/file.h>
+#include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <libgen.h>
@@ -14,6 +15,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <inttypes.h>
 
 #include <gdk/gdk.h>
 #include <gdk/gdkkeysyms.h>
@@ -149,7 +151,7 @@ typedef struct Client {
 	GTlsCertificate *cert, *failedcert;
 	GTlsCertificateFlags tlserr;
 	Window xid;
-	unsigned long pageid;
+	guint64 pageid;
 	int progress, fullscreen, https, insecure, errorpage;
 	const char *title, *overtitle, *targeturi;
 	const char *needle;
@@ -225,38 +227,38 @@ static void cleanup(void);
 static WebKitWebView *newview(Client *c, WebKitWebView *rv);
 static void initwebextensions(WebKitWebContext *wc, Client *c);
 static GtkWidget *createview(WebKitWebView *v, WebKitNavigationAction *a,
-                             Client *c);
+			     Client *c);
 static gboolean buttonreleased(GtkWidget *w, GdkEvent *e, Client *c);
 static GdkFilterReturn processx(GdkXEvent *xevent, GdkEvent *event,
-                                gpointer d);
+				gpointer d);
 static gboolean winevent(GtkWidget *w, GdkEvent *e, Client *c);
-static gboolean readpipe(GIOChannel *s, GIOCondition ioc, gpointer unused);
+static gboolean readsock(GIOChannel *s, GIOCondition ioc, gpointer unused);
 static void showview(WebKitWebView *v, Client *c);
 static GtkWidget *createwindow(Client *c);
 static gboolean loadfailedtls(WebKitWebView *v, gchar *uri,
-                              GTlsCertificate *cert,
-                              GTlsCertificateFlags err, Client *c);
+			      GTlsCertificate *cert,
+			      GTlsCertificateFlags err, Client *c);
 static void loadchanged(WebKitWebView *v, WebKitLoadEvent e, Client *c);
 static void progresschanged(WebKitWebView *v, GParamSpec *ps, Client *c);
 static void titlechanged(WebKitWebView *view, GParamSpec *ps, Client *c);
 static void mousetargetchanged(WebKitWebView *v, WebKitHitTestResult *h,
-                               guint modifiers, Client *c);
+			       guint modifiers, Client *c);
 static gboolean permissionrequested(WebKitWebView *v,
-                                    WebKitPermissionRequest *r, Client *c);
+				    WebKitPermissionRequest *r, Client *c);
 static gboolean decidepolicy(WebKitWebView *v, WebKitPolicyDecision *d,
-                             WebKitPolicyDecisionType dt, Client *c);
+			     WebKitPolicyDecisionType dt, Client *c);
 static void decidenavigation(WebKitPolicyDecision *d, Client *c);
 static void decidenewwindow(WebKitPolicyDecision *d, Client *c);
 static void decideresource(WebKitPolicyDecision *d, Client *c);
 static void insecurecontent(WebKitWebView *v, WebKitInsecureContentEvent e,
-                            Client *c);
+			    Client *c);
 static void downloadstarted(WebKitWebContext *wc, WebKitDownload *d,
-                            Client *c);
+			    Client *c);
 static void responsereceived(WebKitDownload *d, GParamSpec *ps, Client *c);
 static void download(Client *c, WebKitURIResponse *r);
 static void webprocessterminated(WebKitWebView *v,
-                                 WebKitWebProcessTerminationReason r,
-                                 Client *c);
+				 WebKitWebProcessTerminationReason r,
+				 Client *c);
 static void closeview(WebKitWebView *v, Client *c);
 static void destroywin(GtkWidget* w, Client *c);
 
@@ -296,7 +298,7 @@ static char *stylefile;
 static const char *useragent;
 static Parameter *curconfig;
 static int modparams[ParameterLast];
-static int pipein[2], pipeout[2];
+static int spair[2];
 static char *windowclass = "Surf";
 static char *historyfile;
 char *argv0;
@@ -391,15 +393,17 @@ setup(void)
 
 	gdkkb = gdk_seat_get_keyboard(gdk_display_get_default_seat(gdpy));
 
-	if (pipe(pipeout) < 0 || pipe(pipein) < 0) {
-		fputs("Unable to create pipes\n", stderr);
+	if (socketpair(AF_UNIX, SOCK_DGRAM, 0, spair) < 0) {
+		fputs("Unable to create sockets\n", stderr);
+		spair[0] = spair[1] = -1;
 	} else {
-		gchanin = g_io_channel_unix_new(pipein[0]);
+		gchanin = g_io_channel_unix_new(spair[0]);
 		g_io_channel_set_encoding(gchanin, NULL, NULL);
+		g_io_channel_set_flags(gchanin, g_io_channel_get_flags(gchanin)
+				       | G_IO_FLAG_NONBLOCK, NULL);
 		g_io_channel_set_close_on_unref(gchanin, TRUE);
-		g_io_add_watch(gchanin, G_IO_IN, readpipe, NULL);
+		g_io_add_watch(gchanin, G_IO_IN, readsock, NULL);
 	}
-
 
 	for (i = 0; i < LENGTH(certs); ++i) {
 		if (!regcomp(&(certs[i].re), certs[i].regex, REG_EXTENDED)) {
@@ -551,16 +555,16 @@ untildepath(const char *path)
        const char *homedir;
 
        if (path[1] == '/' || path[1] == '\0') {
-               p = (char *)&path[1];
-               homedir = getcurrentuserhomedir();
+	       p = (char *)&path[1];
+	       homedir = getcurrentuserhomedir();
        } else {
-               if ((p = strchr(path, '/')))
-                       name = g_strndup(&path[1], p - (path + 1));
-               else
-                       name = g_strdup(&path[1]);
+	       if ((p = strchr(path, '/')))
+		       name = g_strndup(&path[1], p - (path + 1));
+	       else
+		       name = g_strdup(&path[1]);
 
-               homedir = getuserhomedir(name);
-               g_free(name);
+	       homedir = getuserhomedir(name);
+	       g_free(name);
        }
        apath = g_build_filename(homedir, p, NULL);
        return apath;
@@ -1083,8 +1087,8 @@ spawn(Client *c, const Arg *a)
 	if (fork() == 0) {
 		if (dpy)
 			close(ConnectionNumber(dpy));
-		close(pipein[0]);
-		close(pipeout[1]);
+		close(spair[0]);
+		close(spair[1]);
 		setsid();
 		execvp(((char **)a->v)[0], (char **)a->v);
 		fprintf(stderr, "%s: execvp %s", argv0, ((char **)a->v)[0]);
@@ -1118,8 +1122,8 @@ cleanup(void)
 	while (clients)
 		destroyclient(clients);
 
-	close(pipein[0]);
-	close(pipeout[1]);
+	close(spair[0]);
+	close(spair[1]);
 	g_free(cookiefile);
 	g_free(scriptfile);
 	g_free(stylefile);
@@ -1252,28 +1256,24 @@ newview(Client *c, WebKitWebView *rv)
 }
 
 static gboolean
-readpipe(GIOChannel *s, GIOCondition ioc, gpointer unused)
+readsock(GIOChannel *s, GIOCondition ioc, gpointer unused)
 {
-	static char msg[MSGBUFSZ], msgsz;
+	static char msg[MSGBUFSZ];
 	GError *gerr = NULL;
+	gsize msgsz;
 
-	if (g_io_channel_read_chars(s, msg, sizeof(msg), NULL, &gerr) !=
+	if (g_io_channel_read_chars(s, msg, sizeof(msg), &msgsz, &gerr) !=
 	    G_IO_STATUS_NORMAL) {
-		fprintf(stderr, "surf: error reading pipe: %s\n",
-		        gerr->message);
-		g_error_free(gerr);
+		if (gerr) {
+			fprintf(stderr, "surf: error reading socket: %s\n",
+				gerr->message);
+			g_error_free(gerr);
+		}
 		return TRUE;
 	}
-	if ((msgsz = msg[0]) < 3) {
+	if (msgsz < 2) {
 		fprintf(stderr, "surf: message too short: %d\n", msgsz);
 		return TRUE;
-	}
-
-	switch (msg[2]) {
-	case 'i':
-		close(pipein[1]);
-		close(pipeout[0]);
-		break;
 	}
 
 	return TRUE;
@@ -1284,10 +1284,10 @@ initwebextensions(WebKitWebContext *wc, Client *c)
 {
 	GVariant *gv;
 
-	if (!pipeout[0] || !pipein[1])
+	if (spair[1] < 0)
 		return;
 
-	gv = g_variant_new("(ii)", pipeout[0], pipein[1]);
+	gv = g_variant_new("i", spair[1]);
 
 	webkit_web_context_set_web_extensions_initialization_user_data(wc, gv);
 	webkit_web_context_set_web_extensions_directory(wc, WEBEXTDIR);
@@ -1466,7 +1466,7 @@ createwindow(Client *c)
 		gtk_window_set_wmclass(GTK_WINDOW(w), wmstr, windowclass);
 		g_free(wmstr);
 
-		wmstr = g_strdup_printf("%s[%lu]", "Surf", c->pageid);
+		wmstr = g_strdup_printf("%s[%"PRIu64"]", "Surf", c->pageid);
 		gtk_window_set_role(GTK_WINDOW(w), wmstr);
 		g_free(wmstr);
 
@@ -1489,7 +1489,7 @@ createwindow(Client *c)
 
 gboolean
 loadfailedtls(WebKitWebView *v, gchar *uri, GTlsCertificate *cert,
-              GTlsCertificateFlags err, Client *c)
+	      GTlsCertificateFlags err, Client *c)
 {
 	GString *errmsg = g_string_new(NULL);
 	gchar *html, *pem;
@@ -1558,6 +1558,8 @@ loadchanged(WebKitWebView *v, WebKitLoadEvent e, Client *c)
 		seturiparameters(c, uri, loadtransient);
 		break;
 	case WEBKIT_LOAD_COMMITTED:
+		setatom(c, AtomUri, uri);
+		c->title = uri;
 		seturiparameters(c, uri, loadcommitted);
 		c->https = webkit_web_view_get_tls_info(c->view, &c->cert,
 		                                        &c->tlserr);
@@ -1790,7 +1792,7 @@ download(Client *c, WebKitURIResponse *r)
 
 void
 webprocessterminated(WebKitWebView *v, WebKitWebProcessTerminationReason r,
-                     Client *c)
+		     Client *c)
 {
 	fprintf(stderr, "web process terminated: %s\n",
 	        r == WEBKIT_WEB_PROCESS_CRASHED ? "crashed" : "no memory");
@@ -1870,15 +1872,18 @@ msgext(Client *c, char type, const Arg *a)
 	static char msg[MSGBUFSZ];
 	int ret;
 
-	if ((ret = snprintf(msg, sizeof(msg), "%c%c%c%c",
-	                    4, c->pageid, type, a->i))
+	if (spair[0] < 0)
+		return;
+
+	if ((ret = snprintf(msg, sizeof(msg), "%c%c%c", c->pageid, type, a->i))
 	    >= sizeof(msg)) {
 		fprintf(stderr, "surf: message too long: %d\n", ret);
 		return;
 	}
 
-	if (pipeout[1] && write(pipeout[1], msg, sizeof(msg)) < 0)
-		fprintf(stderr, "surf: error sending: %.*s\n", ret-2, msg+2);
+	if (send(spair[0], msg, ret, 0) != ret)
+		fprintf(stderr, "surf: error sending: %u%c%d (%d)\n",
+			c->pageid, type, a->i, ret);
 }
 
 void
