@@ -1,7 +1,9 @@
-cp ten_years__time_by_bythmark_d4dg6dz ~/
 mkdir -p /usr/share/icons/default/
 mkdir -p /etc/fonts
-cp -r GoldenShimmer /usr/share/icons
+cp cgi/ten_years__time_by_bythmark_d4dg6dz ~/
+cp -r cgi/GoldenShimmer /usr/share/icons
+cp -r cgi/terminus-ttf-4.47.0/ /usr/share/fonts
+
 cp dotfiles/.twmrc ~/
 cp dotfiles/.bashrc ~/
 cp dotfiles/.profile ~/
@@ -15,7 +17,8 @@ cp dotfiles/lynx.cfg /etc
 cp dotfiles/index.theme /usr/share/icons/default/
 cp dotfiles/local.conf /etc/fonts
 cp dotfiles/grub /etc/default/
-cp -r terminus-ttf-4.47.0/ /usr/share/fonts
+
+cd cprogs
 cd st
 make install
 cd ../dwm

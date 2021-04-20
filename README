@@ -4,8 +4,36 @@ KLEK: Kyryl's Linux Configuration Kit
 A bunch of personal config settings, feel free
 to copy the idea / settings / etc 
 
+DOTFILES
+--------
+Configuration
 
-Forks and custom changes overview:
+- .rc -
+Aliases and varibles
+
+- * -
+Everything else is either you know it or you dont.
+
+SHELL
+-----
+Mostly posix utils
+
+CGI
+---
+Computer generated graphics
+
+- GoldenShimmer -
+This is a custom animated X11 cursor.
+
+- terminus-ttf-4.47.0 -
+Font
+
+- ten_years__time_by_bythmark_d4dg6dz -
+Background image
+
+CPROGS
+------
+Programs written in C.
 
 - dwm - 
 1. Added lots of cutom key bindings that do not
@@ -28,23 +56,9 @@ located in this repository
 1. The only interesting part is the config.h where
 I chose to display only the useful info
 
-- GoldenShimmer -
-1. This is a custom X11 cursor that is animated 
-using bitmaps that I think looks amazing
-
-- fastcd -
-1. A server-client program, I only fixed some buggy
-code that made it break when there are too many dirs
-2. I also have a custom invoking script in ./scripts 
-called x.sh
-
 - grabc - 
 1. No differences to original program, but it's too
 useful to not include
-
-- ./scripts -
-1. Right now contains python scripts that I used to
-download pics from pixiv.com using pixivpy
 
 - xkeyboard -
 (see submodule readme)
