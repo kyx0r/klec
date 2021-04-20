@@ -29,8 +29,6 @@ cd ../utils
 cp -f ./cembed /bin
 cd ../neatvi
 make install
-cd ../fastcd
-make install
 cd ../grabc
 make install-bin
 cd ../dmenu
