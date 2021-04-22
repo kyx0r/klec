@@ -1,0 +1,195 @@
+Release history for lariza
+
+v21.01  2021-01-22
+  [Changed]
+  - The file "adblock.black" has been renamed to "adblock".
+
+v20.08  2020-08-29
+  [Fixed]
+  - Middle-click to open in a new tab has been improved. In certain
+    conditions, the user's intention to open a new tab has been ignored
+    and URLs haven been opened in the current tab.
+  - When new tabs are opened in the background, the web view is now
+    focused by default.
+
+v20.07  2020-07-19
+  [Fixed]
+  - Build no longer depends on GNU sed.
+
+v20.05  2020-05-15
+  [Changed]
+  - lariza now uses native GTK tabs instead of relying on suckless
+    tabbed. See also:
+    https://www.uninformativ.de/blog/postings/2020-04-26/0/POSTING-en.html
+  - Keyword searches have been removed, as these code paths were
+    unmaintained. See also:
+    https://www.uninformativ.de/blog/postings/2020-05-01/0/POSTING-en.html
+  - The "external URI handler" has been removed, as these code paths
+    were unmaintained. See also:
+    https://www.uninformativ.de/blog/postings/2020-05-01/0/POSTING-en.html
+  - WebKit sandboxing is now enabled. While considered stable, it is a
+    rather new feature. Please report breakages. This also requires you
+    to run at least WebKitGTK 2.26 (released 2019-09-09). See also:
+    https://blogs.gnome.org/mcatanzaro/2020/03/31/sandboxing-webkitgtk-apps/
+    https://www.uninformativ.de/blog/postings/2020-05-04/0/POSTING-en.html
+
+  [Added]
+  - Allow webkit:// in URLs.
+
+v20.04  2020-04-22
+  [Fixed]
+  - Minor fixes to manpages.
+
+v20.03  2020-03-28
+  [Changed]
+  - Makefile: Web extensions and user scripts will be installed.
+  - "enable-developer-extras" is now always set to "TRUE". This enables
+    the Web Inspector.
+  - WebGL is enabled in WebKit by default these days. lariza's
+    environment variable $LARIZA_ENABLE_EXPERIMENTAL_WEBGL is gone.
+
+  [Added]
+  - User-supplied JavaScript files can be put into
+    ~/.config/lariza/user-scripts. "hints.js" is one such script, it's
+    bundled with the main application, but must be activated manually by
+    copying or linking it to said directory.
+
+v19.05  2019-05-05
+  [Fixed]
+  - We no longer use WebKit's deprecated JavaScript API.
+
+v18.07  2018-07-29
+  [Added]
+  - The input bar now shows an indicator for web feeds.
+
+    The icon used for this purpose is the stock icon called
+    "application-rss+xml-symbolic". It is somewhat "non-standard", i.e.
+    not defined by [0], but appears to be present in many icon themes.
+    Let me know if it doesn't work for you.
+
+    [0]: https://standards.freedesktop.org/icon-naming-spec/icon-naming-spec-latest.html
+
+v18.06  2018-06-24
+  - This is a maintenance release, due to the project moving away from
+    GitHub. No code changes.
+
+v18.03  2018-03-17
+  [Fixed]
+  - Accidentally opening a context menu and then issuing a middle click
+    to open a new tab no longer changes the location of the original tab
+    (fixes #56). (This only happened under certain circumstances.)
+
+v18.01  2018-01-27
+  [Fixed]
+  - Compilation warnings regarding deprecated API calls (GtkAction) have
+    been addressed. Thanks to @jun7 on GitHub!
+
+v17.11  2017-11-16
+  [Added]
+  - You can now set the following environment variable to have console
+    output printed to STDOUT: LARIZA_ENABLE_CONSOLE_TO_STDOUT.
+
+v17.10  2017-10-18
+  [LICENSING]
+  - The project has been relicensed under the MIT license (more
+    precisely called "Expat License", but everyone calls it "MIT
+    license" these days).
+
+v17.07  2017-07-02
+  [Fixed]
+  - User input is now properly escaped when used for keyword based
+    searching (fixes #47).
+
+v17.05  2017-05-21
+  [Fixed]
+  - Automatically adding the "file://" prefix didn't work (reliably) if
+    a message was sent to an already running instance.
+
+  [Changed]
+  - Autoreloading of crashed web processes has been removed. It doesn't
+    make sense anymore since the switch to webkit's multi-process model.
+    Instead, we now simply announce the crash in the location bar.
+  - Refuse to quit if there are active downloads. The user has to cancel
+    them explicitly. (To improve workflow a little bit, the download
+    manager now also knows a "Mod1 + q" hotkey.)
+
+  [Added]
+  - WebGL can now be enabled by setting an environment variable. This is
+    an experimental feature, though.
+
+v17.02  2017-02-16
+  [Fixed]
+  - As requested by WebKit's API documentation, we now wait for the
+    "ready-to-show" signal after a "create" signal. This fixes crashes
+    after you chose "Open link in new window" from a context menu.
+
+  [Changed]
+  - The "search prefix" has been changed from "/" to ":/". This means,
+    in order to search for text in a web page, you now have to enter
+    something like ":/your search term" into the input box.
+  - Lariza now uses WebKit's multi-process model. This means that (most)
+    tabs run as independent processes. If one tab crashes, it should not
+    affect the others.
+  - The GtkLevelBar to show page loading progress has been removed.
+    Instead, we now use the progress bar which is already included in
+    GtkEntry (the input box). This is mostly a cosmetic change, but it
+    also eliminates some GTK warnings.
+
+  [Added]
+  - An external user-supplied program can be called for the current URI
+    or for hyperlinks/images/videos/audio files.
+  - Lariza will now automatically add a "file://" prefix for local
+    files.
+  - Hotkeys have been unified. It is now largely irrelevant whether the
+    location bar or the web view has focus.
+  - Lariza can be instructed to write each visited URI to a file.
+
+v16.12  2016-12-24
+  [Fixed]
+  - Lariza no longer reports download progress below 0% or above 100%.
+    (Workaround for what appears to be a WebKit2GTK+ bug.)
+
+  [Changed]
+  - We no longer explicitly set the X11 window's class and name. Let
+    GTK+ do this job. The actual class and name should be unchanged,
+    though (WM_CLASS(STRING) = "lariza", "Lariza").
+
+    This does not affect tabbed which is still run with "-n lariza".
+
+    This change fixes a GTK+ deprecation warning.
+
+v16.09  2016-09-03
+  [Changed]
+  - Web extensions are now looked for in ~/.config/lariza/web_extensions.
+
+v16.06  2016-06-26
+  [Fixed]
+  - Gtk warnings.
+
+  [Changed]
+  - Except for the default window size, there are no hardcoded pixel
+    values anymore. Should make it a little easier to run lariza on
+    HiDPI screens. (Sorry, not tested, I don't have one.)
+
+  [Added]
+  - New key bindings F2 and F3: Go backward and forward, just like the
+    existing mouse key binds do.
+
+v16.01  2016-01-05
+  [Fixed]
+  - Issue #14: "Keypad enter" now registers as "commit", i.e. "start
+    loading the URL" or "begin searching for search term".
+  - Issue #15: lariza no longer tries to create local file names with
+    directory separators in them when downloading files.
+  - lariza no longer sets the window title to an empty string.
+
+  [Changed]
+  - For the sake of consistency, $LARIZA_WEB_EXTENSIONS_DIR has been
+    removed.
+
+  [Added]
+  - Manpages are now available.
+
+v15.09 and earlier releases
+  - Sorry, the CHANGES file did not exist back then. Please refer to the
+    Git log.

@@ -1,0 +1,15 @@
+Links sometimes do not open in a new tab
+========================================
+
+We select for "mouse-target-changed" events: When the pointer is being
+moved, WebKit tells us if it's now being positioned over a link or not.
+
+However, when a new link pops into existence right below the mouse
+pointer (without the pointer being moved), we don't get this event. When
+the user now issues a middle-click, we open the link in the same tab.
+This is wrong.
+
+Ideally, we could access a hit test result while processing the click
+event, but that doesn't appear to be possible?
+
+This bug is also present in suckless surf and GNOME Epiphany.
