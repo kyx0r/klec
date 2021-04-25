@@ -19,7 +19,6 @@ clean() {
     }
 
     log Cleaning leftover host files; {
-        rm -f "$1/root/.ash_history"
         rm -f "$1/etc/resolv.conf"
     }
 }
