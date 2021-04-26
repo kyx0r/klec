@@ -92,6 +92,7 @@ alias c='cd ..'
 alias fnd='find . -name'
 alias chromium='chromium --no-sandbox'
 alias thw='hwclock --systohc'
+alias cp='cp -r'
 
 ki() { kiss b "$1" && kiss i "$1"; }
 loc() { find . -name "$@" | xargs wc -l; }
