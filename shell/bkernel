@@ -1,3 +1,4 @@
+make
 make install
 make INSTALL_MOD_STRIP=1 modules_install
 mv /boot/vmlinuz /boot/vmlinuz-$(awk 'FNR == 3 {print $3}' .config)
