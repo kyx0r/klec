@@ -1,6 +1,7 @@
 #!/bin/sh
 
 export KISS_SU=su
+export KISS_PROMPT=0
 export KISS_PATH=
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/core"
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/extra"
