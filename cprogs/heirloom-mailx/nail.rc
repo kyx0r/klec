@@ -18,7 +18,7 @@ set append
 set ask
 
 # Assume a CRT-like terminal and invoke a pager.
-set crt
+# set crt
 
 # Messages may be terminated by a dot.
 set dot
