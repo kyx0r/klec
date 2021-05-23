@@ -94,7 +94,7 @@ alias chromium='chromium --no-sandbox'
 alias thw='hwclock --systohc'
 alias cp='cp -r'
 
-ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" unset KISS_PROMPT; }
+ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
