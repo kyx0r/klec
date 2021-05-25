@@ -134,3 +134,27 @@ extr () {
 	echo "'$1' is not a valid file"
     fi
 }
+
+o3()
+{
+	export CFLAGS="-O3 -pipe -mtune=native -march=native"
+	export KCFLAGS="$CFLAGS"
+	export CXXFLAGS="$CFLAGS"
+	export KCPPFLAGS="$CFLAGS"
+}
+
+d2()
+{
+	export CFLAGS="-O2 -g"
+	export KCFLAGS="$CFLAGS"
+	export CXXFLAGS="$CFLAGS"
+	export KCPPFLAGS="$CFLAGS"
+}
+
+d0()
+{
+	export CFLAGS="-O0 -g"
+	export KCFLAGS="$CFLAGS"
+	export CXXFLAGS="$CFLAGS"
+	export KCPPFLAGS="$CFLAGS"
+}
