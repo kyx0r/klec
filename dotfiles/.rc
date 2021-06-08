@@ -2,6 +2,7 @@
 
 export KISS_SU=su
 export KISS_PATH=
+KISS_PATH="$HOME/kiss/no-updates"
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/core"
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/extra"
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/xorg"
@@ -68,6 +69,13 @@ alias p='pacman'
 alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
+#kiss linux
+alias k='kiss'
+alias kc='kiss-chroot'
+knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
+kru() { rm -rf $HOME/kiss/no-updates/"$1"; }
+ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
+
 # make
 alias m='make'
 alias mi='make install'
@@ -79,6 +87,7 @@ alias grep='grep --color=auto'
 alias ls='ls --color=auto'
 alias l='ls -glhaS'
 alias df='df -h'
+alias cp='cp -r'
 alias rm='rm -rf'
 alias v='vi .'
 alias i='vi'
@@ -86,15 +95,12 @@ alias s='su root'
 alias f='feh --title %f___[%wX%h]_[%u/%l] -p'
 alias ,='vi /etc/X11/xinit/xinitrc'
 alias ,,='vi /etc/X11/xorg.conf'
-alias ,,,='vi ~/.bashrc'
 alias d='gdb --args'
 alias c='cd ..'
 alias fnd='find . -name'
 alias chromium='chromium --no-sandbox'
 alias thw='hwclock --systohc'
-alias cp='cp -r'
 
-ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
