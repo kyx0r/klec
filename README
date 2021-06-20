@@ -56,10 +56,6 @@ located in this repository
 1. The only interesting part is the config.h where
 I chose to display only the useful info
 
-- grabc - 
-1. No differences to original program, but it's too
-useful to not include
-
 - xkeyboard -
 (see submodule readme)
 

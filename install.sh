@@ -32,7 +32,5 @@ cd ../utils
 cp -f ./cembed /bin
 cd ../neatvi
 make install
-cd ../grabc
-make install-bin
 cd ../dmenu
 make install
