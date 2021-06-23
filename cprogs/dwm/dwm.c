@@ -2050,11 +2050,13 @@ togglefloating(const Arg *arg)
 void
 togglefullscr(const Arg *arg)
 {
-	if (selmon->showbar) {
+	if (selmon->lt[selmon->sellt] != &layouts[2]) {
 		for(last_layout = (Layout *)layouts; last_layout != selmon->lt[selmon->sellt]; last_layout++);
 		setlayout(&((Arg) { .v = &layouts[2] }));
-	} else {
+		selmon->showbar = 1;
+	} else if (!selmon->showbar) {
 		setlayout(&((Arg) { .v = last_layout }));
+		selmon->showbar = 0;
 	}
 	togglebar(arg);
 	if(selmon->sel)
