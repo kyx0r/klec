@@ -1,0 +1,7 @@
+# 16 basic ANSI colors
+e scr.color=1
+e scr.utf8=true
+# Show comments at right of disassembly if they fit in screen
+e asm.cmt.right=true
+# Theme
+eco onedark
