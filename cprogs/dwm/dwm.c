@@ -293,6 +293,7 @@ static Display *dpy;
 static Drw *drw;
 static Monitor *mons, *selmon;
 static Window root, wmcheckwin;
+static Layout *last_layout;
 
 /* configuration, allows nested code to access above variables */
 #include "config.h"
@@ -2049,8 +2050,15 @@ togglefloating(const Arg *arg)
 void
 togglefullscr(const Arg *arg)
 {
-  if(selmon->sel)
-    setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
+	if (selmon->showbar) {
+		for(last_layout = (Layout *)layouts; last_layout != selmon->lt[selmon->sellt]; last_layout++);
+		setlayout(&((Arg) { .v = &layouts[2] }));
+	} else {
+		setlayout(&((Arg) { .v = last_layout }));
+	}
+	togglebar(arg);
+	if(selmon->sel)
+		setfullscreen(selmon->sel, !selmon->sel->isfullscreen);
 }
 
 void
