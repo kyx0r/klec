@@ -4,6 +4,3 @@
 [submodule "cprogs/neatvi"]
 	path = cprogs/neatvi
 	url = https://github.com/kyx0r/neatvi.git
-[submodule "cprogs/dmenu"]
-	path = cprogs/dmenu
-	url = https://github.com/Francesco149/dmenu.git

@@ -1,0 +1,31 @@
+personal fork of dmenu with the following tweaks:
+
+  > even when there's matches, the first item will be whatever you typed
+    so you can select it. this is for cases like using dmenu for history
+    and wanting to type something new that happens to match other stuff
+  > enable color fonts (requires libxft-bgra-git)
+
+dmenu - dynamic menu
+====================
+dmenu is an efficient dynamic menu for X.
+
+
+Requirements
+------------
+In order to build dmenu you need the Xlib header files.
+
+
+Installation
+------------
+Edit config.mk to match your local setup (dmenu is installed into
+the /usr/local namespace by default).
+
+Afterwards enter the following command to build and install dmenu
+(if necessary as root):
+
+    make clean install
+
+
+Running dmenu
+-------------
+See the man page for details.

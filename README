@@ -79,6 +79,10 @@ surf directory. I have removed the dependency on gcrt which is
 bloated certificate library, but in exchange now it's much easier
 to build surf, only webkitgtk2 is needed.
 
+- dmenu -
+1. Francesco's fork https://github.com/Francesco149/dmenu
+Just changed the default font.
+
 - mailx -
 1. Custom build, not no significat changed as of yet.
 
