@@ -1,3 +1,3 @@
-#sh -c '/root/klec/shell/wlan &>/dev/null &'
+#sh -c 'sleep 3 && /root/klec/shell/wlan &>/dev/null' &
 wpa_supplicant -B -i wlan0 -D nl80211,wext -c /etc/wpa_supplicant.conf
 dhcpcd -n wlan0
