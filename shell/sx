@@ -22,7 +22,6 @@ stty=$(stty -g)
 tty=$(tty)
 tty=${tty#/dev/tty}
 
-cfgdir=${XDG_CONFIG_HOME:-$HOME/.config}/sx
 datadir=${XDG_DATA_HOME:-$HOME/.local/share}/sx
 mkdir -p -- "$cfgdir" "$datadir"
 
@@ -37,7 +36,7 @@ trap 'cleanup exit' EXIT HUP TERM QUIT
 # This is done to indicate that the server is ready to accept connections.
 # Taking advantage of this feature allows launching the client directly from a
 # USR1 signal trap which obviates the need to poll for server readiness.
-trap 'DISPLAY=:$tty exec "${@:-$cfgdir/sxrc}" & wait "$!"' USR1
+trap 'DISPLAY=:$tty exec dwm & wait "$!"' USR1
 
 (trap '' USR1 && exec Xorg :"$tty" -keeptty vt"$tty" -noreset -auth "$XAUTHORITY") & pid=$!
 wait "$pid"
