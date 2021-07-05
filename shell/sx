@@ -23,7 +23,6 @@ tty=$(tty)
 tty=${tty#/dev/tty}
 
 datadir=${XDG_DATA_HOME:-$HOME/.local/share}/sx
-mkdir -p -- "$cfgdir" "$datadir"
 
 export XAUTHORITY="${XAUTHORITY:-$datadir/xauthority}"
 touch -- "$XAUTHORITY"
