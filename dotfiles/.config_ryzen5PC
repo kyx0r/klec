@@ -1291,7 +1291,8 @@ CONFIG_PREVENT_FIRMWARE_BUILD=y
 # Firmware loader
 #
 CONFIG_FW_LOADER=y
-CONFIG_EXTRA_FIRMWARE=""
+CONFIG_EXTRA_FIRMWARE="iwlwifi-ty-a0-gf-a0-63.ucode iwlwifi-ty-a0-gf-a0.pnvm amdgpu/renoir_asd.bin amdgpu/renoir_dmcub.bin amdgpu/renoir_me.bin amdgpu/renoir_mec2.bin amdgpu/renoir_rlc.bin amdgpu/renoir_ta.bin amdgpu/renoir_ce.bin amdgpu/renoir_gpu_info.bin amdgpu/renoir_mec.bin amdgpu/renoir_pfp.bin amdgpu/renoir_sdma.bin amdgpu/renoir_vcn.bin"
+CONFIG_EXTRA_FIRMWARE_DIR="/firmware"
 # CONFIG_FW_LOADER_USER_HELPER is not set
 # CONFIG_FW_LOADER_COMPRESS is not set
 # end of Firmware loader
@@ -1771,11 +1772,10 @@ CONFIG_WLAN_VENDOR_INTEL=y
 # CONFIG_IPW2200 is not set
 # CONFIG_IWL4965 is not set
 # CONFIG_IWL3945 is not set
-CONFIG_IWLWIFI=m
+CONFIG_IWLWIFI=y
 CONFIG_IWLWIFI_LEDS=y
-CONFIG_IWLDVM=m
-CONFIG_IWLMVM=m
-CONFIG_IWLWIFI_OPMODE_MODULAR=y
+CONFIG_IWLDVM=y
+CONFIG_IWLMVM=y
 # CONFIG_IWLWIFI_BCAST_FILTERING is not set
 
 #
@@ -2611,7 +2611,7 @@ CONFIG_BCMA_POSSIBLE=y
 #
 # Multifunction device drivers
 #
-CONFIG_MFD_CORE=m
+CONFIG_MFD_CORE=y
 # CONFIG_MFD_AS3711 is not set
 # CONFIG_PMIC_ADP5520 is not set
 # CONFIG_MFD_AAT2870_CORE is not set
@@ -2874,9 +2874,9 @@ CONFIG_DRM_FBDEV_EMULATION=y
 CONFIG_DRM_FBDEV_OVERALLOC=100
 # CONFIG_DRM_LOAD_EDID_FIRMWARE is not set
 # CONFIG_DRM_DP_CEC is not set
-CONFIG_DRM_TTM=m
-CONFIG_DRM_TTM_HELPER=m
-CONFIG_DRM_SCHED=m
+CONFIG_DRM_TTM=y
+CONFIG_DRM_TTM_HELPER=y
+CONFIG_DRM_SCHED=y
 
 #
 # I2C encoder or helper chips
@@ -2893,7 +2893,7 @@ CONFIG_DRM_SCHED=m
 # end of ARM devices
 
 # CONFIG_DRM_RADEON is not set
-CONFIG_DRM_AMDGPU=m
+CONFIG_DRM_AMDGPU=y
 # CONFIG_DRM_AMDGPU_SI is not set
 # CONFIG_DRM_AMDGPU_CIK is not set
 CONFIG_DRM_AMDGPU_USERPTR=y
