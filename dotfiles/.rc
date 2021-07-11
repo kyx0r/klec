@@ -13,6 +13,7 @@ KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/core"
 KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/extra"
 KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/xorg"
 KISS_PATH="$KISS_PATH:$HOME/kiss/gcommunity/community"
+export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
 export PS1="\[\e[35m\]\w\[\e[m\] "
@@ -77,7 +78,7 @@ alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 alias k='kiss'
 alias kc='kiss-chroot'
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
-kru() { rm -rf $HOME/kiss/no-updates/"$1"; }
+kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
 
 # make
