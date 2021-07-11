@@ -188,6 +188,7 @@ static long getstate(Window w);
 static int gettextprop(Window w, Atom atom, char *text, unsigned int size);
 static void grabbuttons(Client *c, int focused);
 static void grabkeys(void);
+static void ignorekeys(const Arg *arg);
 static void incnmaster(const Arg *arg);
 static void keypress(XEvent *e);
 static void killclient(const Arg *arg);
@@ -1160,6 +1161,22 @@ isuniquegeom(XineramaScreenInfo *unique, size_t n, XineramaScreenInfo *info)
 	return 1;
 }
 #endif /* XINERAMA */
+
+static int ignorewmkeys;
+
+void
+ignorekeys(const Arg *arg)
+{
+	ignorewmkeys = !ignorewmkeys;	
+	if (ignorewmkeys) {
+		unsigned int modifiers[] = { 0, LockMask, numlockmask, numlockmask|LockMask };
+		XUngrabKey(dpy, AnyKey, AnyModifier, root);
+		for (int j = 0; j < LENGTH(modifiers); j++)
+			XGrabKey(dpy, XKeysymToKeycode(dpy, keys[arg->i].keysym),
+				keys[arg->i].mod | modifiers[j], root, True, GrabModeAsync, GrabModeAsync);
+	} else
+		grabkeys();
+}
 
 void
 keypress(XEvent *e)

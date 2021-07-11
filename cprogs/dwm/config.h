@@ -28,8 +28,7 @@ static const Rule rules[] = {
 	 *	WM_NAME(STRING) = title
 	 */
 	/* class      instance    title       tags mask     isfloating   monitor */
-	{ "Onboard",  NULL,       NULL,       0,            1,      1,  1,  -1 },
-	{ "onboard",  NULL,       NULL,       0,            1,      1,  1,  -1 },
+	0
 //	{ "firefox",  NULL,       NULL,       1 << 8,       0,           -1 },
 };
 
@@ -78,6 +77,7 @@ static Key keys[] = {
 	{ MODKEY|ShiftMask,             XK_F1,     spawn,          {.v = slkill } },
 	{ MODKEY,                       XK_F2,     spawn,          {.v = lynx } },
 	{ MODKEY,                       XK_F3,     spawn,          {.v = scrot } },
+	{ MODKEY|ShiftMask,             XK_t,      ignorekeys,     {.i = 6 } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
 	{ MODKEY,                       XK_x,      focusstack,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_x,      focusstack,     {.i = -1 } },
