@@ -12,22 +12,18 @@
 # You can also do this onto tmpfs instead of zram
 
 usrdirs="bin sbin lib32 lib64 lib share include local libexec"
-rootdirs="etc root home var"
+rootdirs="bin sbin lib64 lib32 lib etc root home var"
 ramroot="/ramroot"
+rootfs="/"
 
 function copy()
 {
-	cp -a /bin $ramroot
-	cp -a /sbin $ramroot
-	cp -a /lib64 $ramroot
-	cp -a /lib32 $ramroot
-	cp -a /lib $ramroot
 	mkdir $ramroot/usr
 	echo "$usrdirs" | tr ' ' '\n' | while read item; do
-		cp -a /usr/$item $ramroot/usr &
+		cp -a "$rootfs"usr/$item $ramroot/usr &
 	done
 	echo "$rootdirs" | tr ' ' '\n' | while read item; do
-		cp -a /$item $ramroot/ &
+		cp -a "$rootfs"$item $ramroot/ &
 	done
 	mkdir $ramroot/dev $ramroot/proc $ramroot/sys \
 	$ramroot/run $ramroot/tmp $ramroot/cache $ramroot/oldroot
