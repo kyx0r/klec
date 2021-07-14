@@ -106,6 +106,7 @@ alias fnd='find . -name'
 alias chromium='chromium --no-sandbox'
 alias thw='hwclock --systohc'
 
+fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
