@@ -13,6 +13,7 @@ cp dotfiles/.vimrc ~/
 cp dotfiles/.gitconfig ~/
 cp dotfiles/.mailrc ~/
 cp dotfiles/.radare2rc ~/
+cp dotfiles/lynx_bookmarks.html ~/
 cp dotfiles/keynavrc /etc
 cp dotfiles/lynx.cfg /etc
 cp dotfiles/index.theme /usr/share/icons/default/
