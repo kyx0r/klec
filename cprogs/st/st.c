@@ -1953,13 +1953,8 @@ strhandle(void)
 					return; /* color reset without parameter */
 				fprintf(stderr, "erresc: invalid color j=%d, p=%s\n",
 				        j, p ? p : "(null)");
-			} else {
-				/*
-				 * TODO if defaultbg color is changed, borders
-				 * are dirty
-				 */
-				redraw();
-			}
+			} else
+				cresize(0, 0);
 			return;
 		}
 		break;
