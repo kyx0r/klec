@@ -718,7 +718,7 @@ updatehistory(Client *c, const char *uri)
 {
 	const char *name = c->overtitle ? c->overtitle :
 	                   c->title ? c->title : "";
-	GError *error;
+	GError *error = NULL;
 	GFile *file = g_file_new_for_path(historyfile);
 	GFileOutputStream *stream = g_file_append_to(file, G_FILE_CREATE_NONE, 0, &error);
 	if (!g_checkerr(&error)) {

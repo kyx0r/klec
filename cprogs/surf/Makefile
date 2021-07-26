@@ -63,6 +63,7 @@ install: all
 	mkdir -p $(DESTDIR)$(MANPREFIX)/man1
 	sed "s/VERSION/$(VERSION)/g" < surf.1 > $(DESTDIR)$(MANPREFIX)/man1/surf.1
 	chmod 644 $(DESTDIR)$(MANPREFIX)/man1/surf.1
+	cp script.js $(HOME)/.config/surf
 
 uninstall:
 	rm -f $(DESTDIR)$(PREFIX)/bin/surf
