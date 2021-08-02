@@ -62,8 +62,9 @@ alias gfv='git fetch -v'
 alias gurl='git remote get-url --push origin'
 alias glsurl='git remote get-url --all origin'
 alias gpurl='git remote set-url --push origin'
-alias gaurl='g remote set-url --add origin'
+alias gra='git remote add'
 gfork() { git remote add fork "$1" && git fetch fork && git merge fork/master; }
+grt() { git reset HEAD~"$1"; }
 
 # void linux
 alias xq='xbps-query -R -s'
