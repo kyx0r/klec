@@ -13,7 +13,6 @@ KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/core"
 KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/extra"
 KISS_PATH="$KISS_PATH:$HOME/kiss/grepo/xorg"
 KISS_PATH="$KISS_PATH:$HOME/kiss/gcommunity/community"
-KISS_PATH="$KISS_PATH:$HOME/kiss/ksrepo"
 export XDG_RUNTIME_DIR=/run/user/$(id -u)
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
