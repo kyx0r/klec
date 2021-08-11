@@ -221,7 +221,7 @@ static void setmfact(const Arg *arg);
 static void setup(void);
 static void seturgent(Client *c, int urg);
 static void showhide(Client *c);
-static void show(Client *c);
+static int show(Client *c);
 static void sigchld(int unused);
 static void sighup(int unused);
 static void sigterm(int unused);
@@ -235,6 +235,8 @@ static void togglefloating(const Arg *arg);
 static void togglefullscr(const Arg *arg);
 static void toggletag(const Arg *arg);
 static void toggleview(const Arg *arg);
+static void togglehide(const Arg *arg);
+static void toggleshow(const Arg *arg);
 static void togglewin(const Arg *arg);
 static void unfocus(Client *c, int setfocus);
 static void unmanage(Client *c, int destroyed);
@@ -953,11 +955,6 @@ void
 hide(Client *c) {
 	if (!c)
 		return;
-	if (HIDDEN(c))
-	{
-		show(c);
-		return;
-	}
 
 	Window w = c->win;
 	static XWindowAttributes ra, ca;
@@ -974,7 +971,6 @@ hide(Client *c) {
 	XSelectInput(dpy, root, ra.your_event_mask);
 	XSelectInput(dpy, w, ca.your_event_mask);
 	XUngrabServer(dpy);
-
 	focus(c->snext);
 	arrange(c->mon);
 }
@@ -985,7 +981,6 @@ void
 focusin(XEvent *e)
 {
 	XFocusChangeEvent *ev = &e->xfocus;
-
 	if (selmon->sel && ev->window != selmon->sel->win)
 		setfocus(selmon->sel);
 }
@@ -1653,9 +1648,7 @@ restack(Monitor *m)
 				XRaiseWindow(dpy, c->win);
 			}
 		}
-	}
-	else
-	{
+	} else {
 		for (c = m->stack; c; c = c->snext)
 		{
 			if(c->ontop && ISVISIBLE(c))
@@ -1901,16 +1894,17 @@ seturgent(Client *c, int urg)
 	XFree(wmh);
 }
 
-void
+int
 show(Client *c)
 {
 	if (!c || !HIDDEN(c))
-		return;
+		return 0;
 
 	XMapWindow(dpy, c->win);
 	setclientstate(c, NormalState);
 	focus(c);
 	arrange(c->mon);
+	return 1;
 }
 
 void
@@ -2070,12 +2064,12 @@ void
 togglefullscr(const Arg *arg)
 {
 	if (selmon->lt[selmon->sellt] != &layouts[2]) {
-		for(last_layout = (Layout *)layouts; last_layout != selmon->lt[selmon->sellt]; last_layout++);
+		for(last_layout = (Layout*)layouts; last_layout != selmon->lt[selmon->sellt]; last_layout++);
 		setlayout(&((Arg) { .v = &layouts[2] }));
-		selmon->showbar = 1;
+		selmon->showbar = 2;
 	} else if (!selmon->showbar) {
 		setlayout(&((Arg) { .v = last_layout }));
-		selmon->showbar = 0;
+		last_layout = (Layout*)&layouts[2];
 	}
 	togglebar(arg);
 	if(selmon->sel)
@@ -2135,19 +2129,33 @@ toggleview(const Arg *arg)
 	}
 }
 
+void
+togglehide(const Arg *arg)
+{
+	hide(selmon->sel);
+}
+
+void
+toggleshow(const Arg *arg)
+{
+	Client *c;
+	for (c = selmon->sel; c && !show(c); c = c->next);
+	if (!c)
+		for (c = selmon->clients; c && !show(c); c = c->next);
+}
 
 void
 togglewin(const Arg *arg)
 {
 	Client *c = (Client*)arg->v;
-	if (c == selmon->sel)
-	{
+	if (c == selmon->sel && !HIDDEN(c))
 		hide(c);
-	}
 	else {
 		show(c);
-		focus(c);
-		restack(selmon);
+		if (c != selmon->sel) {
+			focus(c);
+			restack(selmon);
+		}
 	}
 }
 
