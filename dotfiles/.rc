@@ -83,7 +83,7 @@ alias k='kiss'
 alias kc='kiss-chroot'
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
-ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
+ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
 
 # make
