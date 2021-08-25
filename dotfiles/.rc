@@ -23,6 +23,7 @@ export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
 export KCPPFLAGS="$CFLAGS"
 export MAKEFLAGS="-j$(nproc)"
+export PREFIX=/usr
 
 if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
 if [[ ! -z "${DISPLAY}" ]]; then
@@ -109,6 +110,7 @@ alias d='gdb --args'
 alias c='cd ..'
 alias fnd='find . -name'
 alias thw='hwclock --systohc'
+alias lsnet='netstat -tulpn'
 alias 1='fg %1'
 alias 2='fg %2'
 alias 3='fg %3'
