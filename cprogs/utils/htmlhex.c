@@ -59,10 +59,10 @@ int main(int argc, char *argv[])
 	int _end = -1;
 
 	//byte read
-	printf("<span class='ws'>0000</span>%04X <span class='ws'> ", 0);
+	printf("0000%04X  ", 0);
 	for(i = n, j = 0; fread(&c, 1, 1, src) >= 1; i--){
 		if(!i) {
-			printf("</span> ");
+			printf(" ");
 			char* iter = BUFF;
 			int cc = 0;
 			int edge = 0;
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 			i = n; j = 0;
 			started = 0;
 			byte_count += n;
-			printf("<span class='ws'>0000</span>%04X <span class='ws'> ", byte_count);
+			printf("0000%04X  ", byte_count);
 			_beg = -1;
 			_end = -1;
 			//print # bytes read
@@ -121,22 +121,22 @@ int main(int argc, char *argv[])
 		{
 			if(byte_done == start || (byte_done > start && byte_done < end && i == n))
 			{
-				printf("</span>%s%s%02X%s<span class='ws'> ", plink, spc, c, i == 1 ? "</a>" : "");
+				printf("%s%s%02X%s ", plink, spc, c, i == 1 ? "</a>" : "");
 				started = 1;
 				_beg = j-1;
 				strcpy(old_buf, plink);
 			}
 			else if (byte_done == end || i == 1 && started)
 			{
-				printf("</span>%s%s%02X</a><span class='ws'> ", spc, i == n ? plink : "", c);
+				printf("%s%s%02X</a> ", spc, i == n ? plink : "", c);
 				started = 0;
 				_end = j;
 			}
 			else
-				printf("</span>%s%02X<span class='ws'> ", spc, c);
+				printf("%s%02X ", spc, c);
 		}
 		else
-			printf("</span>%s%02X<span class='ws'> ", spc, c);
+			printf("%s%02X ", spc, c);
 	}
 
 	putchar('\n');
