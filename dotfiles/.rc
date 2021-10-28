@@ -167,6 +167,14 @@ o3()
 	export KCPPFLAGS="$CFLAGS"
 }
 
+o0()
+{
+	export CFLAGS="-O0"
+	export KCFLAGS="$CFLAGS"
+	export CXXFLAGS="$CFLAGS"
+	export KCPPFLAGS="$CFLAGS"
+}
+
 d2()
 {
 	export CFLAGS="-O2 -g"
