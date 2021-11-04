@@ -112,6 +112,8 @@ alias fnd='find . -name'
 alias thw='hwclock --systohc'
 alias lsnet='netstat -tulpn'
 alias xc='xclip -selection clipboard'
+alias va='valgrind'
+alias cgr='valgrind --tool=callgrind'
 alias 1='fg %1'
 alias 2='fg %2'
 alias 3='fg %3'
@@ -159,34 +161,25 @@ extr () {
     fi
 }
 
-o3()
-{
-	export CFLAGS="-O3 -pipe -mtune=native -march=native"
+cflg() {
+	export CFLAGS="$1"
 	export KCFLAGS="$CFLAGS"
 	export CXXFLAGS="$CFLAGS"
 	export KCPPFLAGS="$CFLAGS"
 }
 
-o0()
-{
-	export CFLAGS="-O0"
-	export KCFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export KCPPFLAGS="$CFLAGS"
+o3() {
+	cflg "-O3 -pipe -mtune=native -march=native"
 }
 
-d2()
-{
-	export CFLAGS="-O2 -g"
-	export KCFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export KCPPFLAGS="$CFLAGS"
+o0() {
+	cflg "-O0"
 }
 
-d0()
-{
-	export CFLAGS="-O0 -g"
-	export KCFLAGS="$CFLAGS"
-	export CXXFLAGS="$CFLAGS"
-	export KCPPFLAGS="$CFLAGS"
+d2() {
+	cflg "-O2 -g"
+}
+
+d0() {
+	cflg "-O0 -g"
 }

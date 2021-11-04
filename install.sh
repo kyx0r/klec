@@ -32,7 +32,8 @@ make install
 cd ../utils 
 ./build.sh
 cp -f ./cembed /bin
-cd ../neatvi
-make install
+cd ../nextvi
+./build.sh
+./build.sh install
 cd ../dmenu
 make install
