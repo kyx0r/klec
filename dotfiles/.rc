@@ -94,7 +94,7 @@ alias mc='make clean'
 alias mu='make uninstall'
 
 # random progs
-alias grep='grep --color=auto'
+alias re='grep --color=auto'
 alias ls='ls --color=auto'
 alias l='ls -glhaS'
 alias df='df -h'

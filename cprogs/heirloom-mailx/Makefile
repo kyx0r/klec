@@ -66,7 +66,7 @@ STRIP = strip
 FEATURES	= -DMAILRC='"$(MAILRC)"' -DMAILSPOOL='"$(MAILSPOOL)"' \
 			-DSENDMAIL='"$(SENDMAIL)"' $(IPv6)
 
-OBJ = aux.o base64.o cache.o cmd1.o cmd2.o cmd3.o cmdtab.o collect.o \
+OBJ = _aux.o base64.o cache.o cmd1.o cmd2.o cmd3.o cmdtab.o collect.o \
 	dotlock.o edit.o fio.o getname.o getopt.o head.o hmac.o \
 	imap.o imap_search.o junk.o lex.o list.o lzw.o \
 	macro.o maildir.o main.o md5.o mime.o names.o nss.o \
@@ -93,7 +93,7 @@ mailx: $(OBJ) LIBS
 
 $(OBJ): config.h def.h extern.h glob.h rcv.h
 imap.o: imap_gssapi.c
-md5.o imap.o hmac.o smtp.o aux.o pop3.o junk.o: md5.h
+md5.o imap.o hmac.o smtp.o _aux.o pop3.o junk.o: md5.h
 nss.o: nsserr.c
 
 config.h LIBS: makeconfig
