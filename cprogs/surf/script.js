@@ -23,8 +23,8 @@
 (function() {
 
 var charset = "sdfghjklertzuivbn".split("");
-var key_follow = "f";
-var key_follow_new_win = "F";
+var key_follow = "F";
+var key_follow_new_win = "not in use";
 
 function update_highlights_or_abort()
 {
@@ -36,9 +36,7 @@ function update_highlights_or_abort()
     {
         col_unsel = "#DAFFAD";
         col_sel = "#FF5D00";
-    }
-    else
-    {
+    } else {
         col_unsel = "#A7FFF5";
         col_sel = "#33FF00";
     }
@@ -75,15 +73,11 @@ function update_highlights_or_abort()
                 save_parent_style(label);
                 label.elem.style.boxShadow = "0 0 5pt 2pt black, 0 0 0 2pt " +
                                              box_shadow_inner + " inset";
-            }
-            else
-            {
+            } else {
                 label.span.style.visibility = "hidden";
                 reset_parent_style(label);
             }
-        }
-        else
-        {
+        } else {
             label.span.style.visibility = "visible";
             label.span.innerHTML = id;
             reset_parent_style(label);
@@ -163,9 +157,7 @@ function set_state(new_state)
         document.lariza_hints.box.blur();
         document.lariza_hints.box.value = "";
         document.lariza_hints.box.style.visibility = "hidden";
-    }
-    else
-    {
+    } else {
         if (document.lariza_hints.labels === null)
             create_labels();
 
@@ -257,9 +249,7 @@ function create_labels()
             span.style.borderBottomLeftRadius = "10pt";
             span.style.padding = "0px 2pt 0px 5pt";
             elem.appendChild(span);
-        }
-        else
-        {
+        } else {
             span.style.borderRadius = "10pt";
             span.style.padding = "0px 5pt";
             elem.parentNode.insertBefore(span, elem);
@@ -300,9 +290,7 @@ function on_box_key(e)
         e.preventDefault();
         e.stopPropagation();
         set_state("inactive");
-    }
-    else if (e.key === "Enter")
-    {
+    } else if (e.key === "Enter") {
         e.preventDefault();
         e.stopPropagation();
         open_match();
