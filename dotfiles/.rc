@@ -1,5 +1,9 @@
 #!/bin/sh
-
+export EXINIT="e|tp io{
+}kA
+	|tp 1G2\"qY2j\"Qy$|tp oA {jo}koa|tp 0\"wy$|tp oa()i|tp 0\"ey$|tp oa\"\"i|tp 0\"ry$|tp oI/*A*/|tp 0\"aY|tp oi/*A*/|tp 0\"sy$|tp o/\/\*
+2x/\*\/
+2x|tp 02k2\"dY2j\"Dy$|bx 1|bx|ft|1"
 export KISS_SU=su
 export KISS_PATH=
 KISS_PATH="$HOME/kiss/no-updates"
