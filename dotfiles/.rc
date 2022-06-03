@@ -85,6 +85,8 @@ alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 #kiss linux
 alias k='kiss'
 alias kc='kiss-chroot'
+alias kd='export KISS_DEBUG=1'
+alias kdu='unset KISS_DEBUG'
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
