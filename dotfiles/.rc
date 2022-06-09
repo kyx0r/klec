@@ -100,6 +100,7 @@ alias kc='kiss-chroot'
 alias kd='export KISS_DEBUG=1'
 alias kdu='unset KISS_DEBUG'
 alias kds='export KISS_STRIP=0'
+alias kow='kiss owns /bin/'
 kpc() {
 	dirs=$(ls $HOME/.cache/kiss/proc/*/build/)
 	echo "$dirs" | tr '\n' ' ' | sed "s/  /\n/g" ; echo
