@@ -66,6 +66,8 @@ alias glsurl='git remote get-url --all origin'
 alias gpurl='git remote set-url --push origin'
 alias gra='git remote add'
 alias gcp='g cherry-pick'
+alias gcn='g cherry-pick --continue'
+alias gca='g cherry-pick --abort'
 alias gfp='git format-patch'
 alias gam='git am'
 gct() { git checkout tags/$1; }
