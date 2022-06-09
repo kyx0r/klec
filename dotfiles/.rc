@@ -99,6 +99,16 @@ alias k='kiss'
 alias kc='kiss-chroot'
 alias kd='export KISS_DEBUG=1'
 alias kdu='unset KISS_DEBUG'
+alias kds='export KISS_STRIP=0'
+kpc() {
+	dirs=$(ls $HOME/.cache/kiss/proc/*/build/)
+	echo "$dirs" | tr '\n' ' ' | sed "s/  /\n/g" ; echo
+	if [ "$2" ]; then
+		cd $HOME/.cache/kiss/proc/$2*/build/$1*;
+	else
+		cd $HOME/.cache/kiss/proc/*/build/$1*;
+	fi 
+}
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
