@@ -65,16 +65,14 @@ static const char *dmenucmd[] = { "dmenu_run", "-m", dmenumon, "-fn", dmenufont,
 static const char *termcmd[]  = { "st", NULL };
 static const char *slstatus[]  = { "slstatus", NULL };
 static const char *slkill[]  = { "pkill", "slstatus", NULL };
-static const char *lynx[]  = { "st", "lynx", NULL };
 static const char *scrot[]  = { "scrot", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
 	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_t,      spawn,          {.v = termcmd } },
-	{ MODKEY,                       XK_F1,     spawn,          {.v = slstatus } },
-	{ MODKEY|ShiftMask,             XK_F1,     spawn,          {.v = slkill } },
-	{ MODKEY,                       XK_F2,     spawn,          {.v = lynx } },
+	{ MODKEY,                       XK_F2,     spawn,          {.v = slstatus } },
+	{ MODKEY|ShiftMask,             XK_F2,     spawn,          {.v = slkill } },
 	{ MODKEY,                       XK_F3,     spawn,          {.v = scrot } },
 	{ MODKEY|ShiftMask,             XK_t,      ignorekeys,     {.i = 6 } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
