@@ -1,6 +1,5 @@
 mkdir -p /usr/share/icons/default/
 mkdir -p /etc/fonts
-cp cgi/ten_years__time_by_bythmark_d4dg6dz ~/
 cp -r cgi/GoldenShimmer /usr/share/icons
 cp -r cgi/terminus-ttf-4.47.0/ /usr/share/fonts
 

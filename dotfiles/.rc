@@ -24,14 +24,8 @@ export KCPPFLAGS="$CFLAGS"
 export MAKEFLAGS="-j$(nproc)"
 export PREFIX=/usr
 
-if [ -f ~/ten_years__time_by_bythmark_d4dg6dz ]; then
-if [[ ! -z "${DISPLAY}" ]]; then
-sh -c 'feh --bg-scale ~/ten_years__time_by_bythmark_d4dg6dz &'
-fi
-fi
-
 if type setxkbmap >/dev/null 2>&1; then
-setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
+	setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
 fi
 
 # git
