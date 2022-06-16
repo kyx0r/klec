@@ -1,0 +1,41 @@
+#!/bin/sh --
+# sx - start an xserver
+# requires Xorg
+
+cleanup() {
+	if [ "$pid" ] && kill -0 "$pid" 2> /dev/null; then
+		kill "$pid"
+		wait "$pid"
+		xorg=$?
+	fi
+
+	if ! stty "$stty"; then
+		stty sane
+	fi
+
+	if [ "$1" = exit ]; then
+		exit "${xorg:-0}"
+	fi
+}
+
+stty=$(stty -g)
+tty=$(tty)
+tty=${tty#/dev/tty}
+
+datadir=${XDG_DATA_HOME:-$HOME/.local/share}/sx
+
+export XAUTHORITY="${XAUTHORITY:-$datadir/xauthority}"
+touch -- "$XAUTHORITY"
+
+trap 'cleanup; trap - INT; kill -INT "$$"' INT
+trap 'cleanup exit' EXIT HUP TERM QUIT
+
+# Xorg will check whether it inherited a USR1 with a disposition of SIG_IGN and
+# use this state to reply back to the parent process with its own USR1.
+# This is done to indicate that the server is ready to accept connections.
+# Taking advantage of this feature allows launching the client directly from a
+# USR1 signal trap which obviates the need to poll for server readiness.
+trap 'DISPLAY=:$tty exec dwm & wait "$!"' USR1
+
+(trap '' USR1 && exec Xfbdev :"$tty" -noreset -auth "$XAUTHORITY") & pid=$!
+wait "$pid"
