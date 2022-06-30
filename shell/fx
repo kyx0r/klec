@@ -37,5 +37,5 @@ trap 'cleanup exit' EXIT HUP TERM QUIT
 # USR1 signal trap which obviates the need to poll for server readiness.
 trap 'DISPLAY=:$tty exec dwm & wait "$!"' USR1
 
-(trap '' USR1 && exec Xfbdev :"$tty" -noreset -auth "$XAUTHORITY") & pid=$!
+(trap '' USR1 && exec Xfbdev vt2 :"$tty" -noreset -auth "$XAUTHORITY") & pid=$!
 wait "$pid"
