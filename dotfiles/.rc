@@ -147,6 +147,7 @@ alias 3='fg %3'
 alias 4='fg %4'
 alias 5='fg %5'
 
+ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
