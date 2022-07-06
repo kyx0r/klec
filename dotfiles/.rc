@@ -97,6 +97,7 @@ alias kc='kiss-chroot'
 alias kd='export KISS_DEBUG=1'
 alias kdu='unset KISS_DEBUG'
 alias kds='export KISS_STRIP=0'
+krepo() { export KISS_PATH="$KISS_PATH:$HOME/kiss/$@"; }
 kow() { kiss owns /bin/$1; }
 kpc() {
 	dirs=$(ls $HOME/.cache/kiss/proc/*/build/)
