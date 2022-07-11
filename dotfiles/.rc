@@ -120,6 +120,7 @@ alias mc='make clean'
 alias mu='make uninstall'
 
 # random progs
+alias t='stty sane && reset'
 alias re='grep --color=auto'
 alias ls='ls --color=auto'
 alias l='ls -glhaS'
