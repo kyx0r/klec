@@ -38,8 +38,8 @@ alias gb='git branch --all'
 alias gc='git commit'
 alias gcm='git commit -m'
 alias gcms='git commit -S -m'
-alias gcr='git clone --recursive'
 alias gco='git checkout'
+alias gcom='git checkout main || git checkout master'
 alias gd='git diff'
 alias gds='git diff --staged'
 alias gf='git fetch'
@@ -79,6 +79,12 @@ gcop() {
 	do
 		git checkout $first -- $var
 	done
+}
+gcr() {
+	git clone --recursive "$@"
+	if [ $# -eq 1 ]; then
+		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
+	fi
 }
 
 # void linux
@@ -163,6 +169,7 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
 alias 'cd'='cdls'
+alias -='cd -'
 
 compr() {
     FILE=$1
