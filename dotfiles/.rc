@@ -61,8 +61,8 @@ alias gcls='git clean -fxd'
 alias gf='git fetch'
 alias gfv='git fetch -v'
 alias gurl='git remote get-url --push origin'
-alias glsurl='git remote get-url --all origin'
 alias gpurl='git remote set-url --push origin'
+alias gurls='git remote get-url --all origin'
 alias gra='git remote add'
 alias gcp='g cherry-pick'
 alias gcn='g cherry-pick --continue'
@@ -169,7 +169,15 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd "$@" && l; }
 alias 'cd'='cdls'
-alias -='cd -'
+pd() {
+	start=0
+	end=50
+	while [ "$start" -le "$end" ]; do
+	    [ -h "$HOME/$start" ] || break
+	    start=$((start+1))
+	done
+	ln -s $(pwd | sed 's/ /\\ /g') "$HOME/$start";
+}
 
 compr() {
     FILE=$1
