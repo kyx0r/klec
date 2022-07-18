@@ -118,6 +118,7 @@ knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOM
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
+krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
 
 # make
 alias m='make'
