@@ -1,3 +1,5 @@
+#!/bin/sh
+
 make $@
 make install
 make INSTALL_MOD_STRIP=1 modules_install
