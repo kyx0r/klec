@@ -170,6 +170,7 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd -P "$@" && l; }
 alias 'cd'='cdls'
+alias '-'='cd && cd'
 fd() {
 	start=0
 	end=50
