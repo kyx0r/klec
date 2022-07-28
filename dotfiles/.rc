@@ -173,12 +173,16 @@ alias 'cd'='cdls'
 alias '-'='cd && cd'
 fd() {
 	start=0
-	end=50
+	end=1000
 	while [ "$start" -le "$end" ]; do
-	    [ -h "$HOME/$start" ] || break
-	    start=$((start+1))
+		[ -h "$HOME/$start" ] || break
+		[ "$1" ] || echo "$start $(realpath "$HOME/$start")"
+		start=$((start+1))
 	done
-	ln -s "$(pwd)" "$HOME/$start";
+	if [ "$1" ]; then
+		echo "$start"
+		ln -s "$(pwd)" "$HOME/$start"
+	fi
 }
 
 compr() {
