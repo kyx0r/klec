@@ -119,6 +119,8 @@ kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
 krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
+kcm() { git commit -m "$(basename $(pwd)): "$@" $(cat version)"; }
+kcms() { git commit -S -m "$(basename $(pwd)): "$@" $(cat version)"; }
 
 # make
 alias m='make'
@@ -134,12 +136,9 @@ alias l='ls -glhaS'
 alias df='df -h'
 alias cp='cp -r'
 alias rm='rm -rf'
-alias v='vi .'
 alias i='vi'
 alias s='su root'
 alias f='feh --title %f___[%wX%h]_[%u/%l] -p'
-alias ,='vi /etc/X11/xinit/xinitrc'
-alias ,,='vi /etc/X11/xorg.conf'
 alias d='gdb --args'
 alias c='cd ..'
 alias fnd='find . -name'
@@ -151,6 +150,8 @@ alias tmd='mount -o size=32G,noatime -t tmpfs tmpfs'
 alias b='./build.sh && ./build.sh install'
 alias xc='DISPLAY=:2 xclip -selection clipboard'
 alias o='DISPLAY=:2 xclip -o'
+alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
+alias pass='gpg -d gen.gpg &> /tmp/gen'
 alias 1='fg %1'
 alias 2='fg %2'
 alias 3='fg %3'
@@ -158,6 +159,8 @@ alias 4='fg %4'
 alias 5='fg %5'
 
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
+sof() { scp -r "$1" root@kyryl.tk:"$2"; }
+sif() { scp -r root@kyryl.tk:"$@"; }
 e() { echo "$@"; }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
