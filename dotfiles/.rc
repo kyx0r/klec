@@ -106,7 +106,7 @@ alias kds='export KISS_STRIP=0'
 alias km='kiss manifest'
 alias krv='kiss revdepends'
 alias kdp='kiss depends'
-krepo() { export KISS_PATH="$KISS_PATH:$HOME/kiss/$@"; }
+krepo() { export KISS_PATH="$KISS_PATH:$HOME/kiss/$*"; }
 kow() { kiss owns /bin/$1; }
 kpc() {
 	dirs=$(ls $HOME/.cache/kiss/proc/*/build/)
@@ -122,10 +122,10 @@ kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && unset KISS_PROMPT; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
 krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
-kcmv() { git commit -m "$(basename $(pwd)): "$@" $(cat version)"; }
-kcmvs() { git commit -S -m "$(basename $(pwd)): "$@" $(cat version)"; }
-kcm() { git commit -m "$(basename $(pwd)): "$@""; }
-kcms() { git commit -S -m "$(basename $(pwd)): "$@""; }
+kcmv() { git commit -m "$(basename $(pwd)): $* $(cat version)"; }
+kcmvs() { git commit -S -m "$(basename $(pwd)): $* $(cat version)"; }
+kcm() { git commit -m "$(basename $(pwd)): $*"; }
+kcms() { git commit -S -m "$(basename $(pwd)): $*"; }
 
 # make
 alias m='make'
@@ -178,7 +178,7 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd -P "$@" && l; }
 alias 'cd'='cdls'
-alias '-'='cd && cd'
+alias '-'='chdir && cd'
 fd() {
 	start=0
 	end=1000
