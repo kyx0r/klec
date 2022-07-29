@@ -157,11 +157,11 @@ alias xc='DISPLAY=:2 xclip -selection clipboard'
 alias o='DISPLAY=:2 xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
-alias 1='fg %1'
-alias 2='fg %2'
-alias 3='fg %3'
-alias 4='fg %4'
-alias 5='fg %5'
+alias -1='fg %1'
+alias -2='fg %2'
+alias -3='fg %3'
+alias -4='fg %4'
+alias -5='fg %5'
 
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.tk:"$2"; }
@@ -177,14 +177,15 @@ fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() { cd -P "$@" && l; }
-alias 'cd'='cdls'
-alias '-'='chdir && cd'
+alias cd='cdls'
+alias -='cd'
 fd() {
 	start=0
 	end=1000
 	if [ ! "$1" ]; then
 		while [ "$start" -le "$end" ]; do
 			[ -h "$HOME/$start" ] && echo "$start $(realpath "$HOME/$start")"
+			[ -h "$HOME/$start" ] && alias "$start"="chdir && cd $HOME/$start"
 			start=$((start+1))
 		done
 		return
