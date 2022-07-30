@@ -24,10 +24,7 @@ export CXXFLAGS="$CFLAGS"
 export KCPPFLAGS="$CFLAGS"
 export MAKEFLAGS="-j$(nproc)"
 export PREFIX=/usr
-
-if type setxkbmap >/dev/null 2>&1; then
-	setxkbmap -layout us -option ctrl:nocaps 2>/dev/null
-fi
+export DISPLAY=:2
 
 # git
 alias g='git'
@@ -97,7 +94,7 @@ alias p='pacman'
 alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
-#kiss linux
+# kiss linux
 alias k='kiss'
 alias kc='kiss-chroot'
 alias kd='export KISS_DEBUG=1'
@@ -153,8 +150,8 @@ alias va='valgrind'
 alias cgr='valgrind --tool=callgrind'
 alias tmd='mount -o size=32G,noatime -t tmpfs tmpfs'
 alias b='./build.sh && ./build.sh install'
-alias xc='DISPLAY=:2 xclip -selection clipboard'
-alias o='DISPLAY=:2 xclip -o'
+alias x='xclip -selection clipboard'
+alias o='xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
 alias -1='fg %1'
@@ -179,13 +176,14 @@ r() { grep -n -r "$@" . ; }
 cdls() { cd -P "$@" && l; }
 alias cd='cdls'
 alias -='cd'
+alias --='cd -'
 fd() {
 	start=0
 	end=1000
 	if [ ! "$1" ]; then
 		while [ "$start" -le "$end" ]; do
 			[ -h "$HOME/$start" ] && echo "$start $(realpath "$HOME/$start")"
-			[ -h "$HOME/$start" ] && alias "$start"="chdir && cd $HOME/$start"
+			[ -h "$HOME/$start" ] && alias "$start"="cd $HOME/$start"
 			start=$((start+1))
 		done
 		return
@@ -211,7 +209,7 @@ compr() {
 	esac
 }
 
-ex () {
+ex() {
 	if [ ! -f $1 ]; then
 		echo "'$1' is not a valid file"
 		return
