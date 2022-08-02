@@ -154,11 +154,11 @@ alias x='xclip -selection clipboard'
 alias o='xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
-alias q1='fg %1'
-alias q2='fg %2'
-alias q3='fg %3'
-alias q4='fg %4'
-alias q5='fg %5'
+alias 1q='fg %1'
+alias 2q='fg %2'
+alias 3q='fg %3'
+alias 4q='fg %4'
+alias 5q='fg %5'
 
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.tk:"$2"; }
