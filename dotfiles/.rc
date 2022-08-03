@@ -17,7 +17,7 @@ export CHROME_FLAGS="--no-sandbox"
 export XDG_RUNTIME_DIR=/tmp
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
-export PS1="\[\e[1;35m\]$(tty | sed 's/[^0-9]*//g')\[\e[m\]\[\e[1;32m\]\w\[\e[m\] "
+export PS1="\[\e[1;32m\]\w\[\e[m\] "
 export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
@@ -173,7 +173,10 @@ sd() {
 fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
-cdls() { cd -P "$@" && l; }
+cdls() {
+	export PS1="\[\e[1;35m\]$(echo "$2" | sed 's/[^0-9]*//g')\[\e[1;32m\]\w\[\e[m\] "
+	cd "$@" && l;
+}
 alias cd='cdls'
 alias v='cd'
 alias vv='cd -'
@@ -183,7 +186,7 @@ fd() {
 	if [ ! "$1" ]; then
 		while [ "$start" -le "$end" ]; do
 			[ -h "$HOME/$start" ] && echo "$start $(realpath "$HOME/$start")"
-			[ -h "$HOME/$start" ] && alias "$start"="cd $HOME/$start"
+			[ -h "$HOME/$start" ] && alias "$start"="cd -P $HOME/$start"
 			start=$((start+1))
 		done
 		return
