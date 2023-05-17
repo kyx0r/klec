@@ -191,7 +191,12 @@ alias v='cd'
 alias vv='cd -'
 fd() {
 	if [ "$1" ]; then
-		echo "$(pwd)" >> "$HOME/links"
+		if [ "$1" -lt 0 ]; then
+			cnt=${1#-}
+			printf "%s\n" $(sed -e "$cnt, ${cnt}d" < "$HOME/links") > "$HOME/links"
+		else
+			echo "$(pwd)" >> "$HOME/links"
+		fi
 	fi
 	cnt=0
 	while IFS= read -r line || [[ -n "$line" ]]; do
