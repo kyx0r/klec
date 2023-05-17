@@ -176,29 +176,31 @@ fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() {
-	export PS1="\[\e[1;35m\]$(echo "$2" | sed 's/[^0-9]*//g')\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="\[\e[1;32m\]\w\[\e[m\] "
 	cd "$@" && l;
+}
+cdlsn() {
+	cnt=0
+	args=""
+	for last in "$@"; do cnt=$((cnt+1)); if [ $cnt -eq $# ]; then break; fi; args="$args${last}"; done
+	export PS1="\[\e[1;35m\]$(echo "$last" | sed 's/[^0-9]*//g')\[\e[1;32m\]\w\[\e[m\] "
+	cd "$args" && l;
 }
 alias cd='cdls'
 alias v='cd'
 alias vv='cd -'
 fd() {
-	start=0
-	end=1000
-	if [ ! "$1" ]; then
-		while [ "$start" -le "$end" ]; do
-			[ -h "$HOME/$start" ] && echo "$start $(realpath "$HOME/$start")"
-			[ -h "$HOME/$start" ] && alias "$start"="cd -P $HOME/$start"
-			start=$((start+1))
-		done
-		return
+	if [ "$1" ]; then
+		echo "$(pwd)" >> "$HOME/links"
 	fi
-	while [ "$start" -le "$end" ]; do
-		[ -h "$HOME/$start" ] || break
-		start=$((start+1))
-	done
-	echo "$start"
-	ln -s "$(pwd)" "$HOME/$start"
+	cnt=0
+	while IFS= read -r line || [[ -n "$line" ]]; do
+		cnt=$((cnt+1))
+		echo "$cnt $line"
+		eval "export c${cnt}=\"$line\""
+		alias "$cnt"="cdlsn $line $cnt"
+	done < "$HOME/links"
+	return
 }
 
 compr() {
