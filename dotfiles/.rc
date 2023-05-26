@@ -22,7 +22,7 @@ export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
 export KCPPFLAGS="$CFLAGS"
-export MAKEFLAGS="-j$(nproc)"
+export MAKEFLAGS="-j$(grep "^processor" /proc/cpuinfo | wc -l)"
 export PREFIX=/usr
 export DISPLAY=:2
 
