@@ -165,6 +165,7 @@ imgs() { convert -strip -quality "$1" "$2" "_$2"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.tk:"$2"; }
 sif() { scp -r root@kyryl.tk:"$@"; }
+scat() { cat ~/.ssh/id_rsa.pub | ssh "$1@$2" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
