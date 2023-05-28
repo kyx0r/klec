@@ -221,6 +221,8 @@ fd() {
 	return
 }
 
+inf() { while true; do $@; done; }
+
 compr() {
 	FILE=$1
 	shift
