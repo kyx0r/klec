@@ -199,7 +199,7 @@ fd() {
 			*)
 				if [ "$1" -lt 0 ]; then
 					cnt=${1#-}
-					printf "%s\n" $(sed -e "$cnt, ${cnt}d" < "$HOME/links") > "$HOME/links"
+					printf "%s\n" $(sed -e "$cnt,${cnt}d" < "$HOME/links") > "$HOME/links"
 				else
 					echo "$(pwd)" >> "$HOME/links"
 				fi
