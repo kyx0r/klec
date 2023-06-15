@@ -31,7 +31,3 @@ export HISTSIZE=50000
 shopt -s histappend
 
 complete -cf r
-
-#disable ^s lock
-stty -ixon 
-shopt -s autocd
