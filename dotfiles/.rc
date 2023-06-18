@@ -8,10 +8,10 @@ export EXINIT="e|tp io{
 export KISS_SU=su
 export KISS_PATH=
 KISS_PATH="$HOME/kiss/no-updates"
-KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/core"
-KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/extra"
-KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/xorg"
-KISS_PATH="$KISS_PATH:$HOME/kiss/repo-main/community"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo/core"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo/extra"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo/wayland"
+KISS_PATH="$KISS_PATH:$HOME/kiss/repo/community/community"
 KISS_PATH="$KISS_PATH:$HOME/kiss/repo-vulkan"
 export CHROME_FLAGS="--no-sandbox"
 export XDG_RUNTIME_DIR=/tmp
@@ -194,7 +194,7 @@ fd() {
 	if [ "$1" ]; then
 		case $1 in
 			''|*[!0-9-]*)
-				echo "$(pwd)/$1" >> "$HOME/links"
+				echo "$(realpath $1)" >> "$HOME/links"
 			;;
 			*)
 				if [ "$1" -lt 0 ]; then
