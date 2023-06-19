@@ -171,6 +171,7 @@ alias vm3="ssh $vm3"
 alias vm4="ssh $vm4"
 alias vm5="ssh $vm5"
 
+path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
 imgs() { convert -strip -quality "$1" "$2" "_$2"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
@@ -202,17 +203,19 @@ alias cd='cdls'
 alias v='cd'
 alias vv='cd -'
 fd() {
+	sarg=""
 	if [ "$1" ]; then
 		case $1 in
 			''|*[!0-9-]*)
-				echo "$(realpath $1)" >> "$HOME/links"
+				sarg="$(realpath $1)"
 			;;
 			*)
 				if [ "$1" -lt 0 ]; then
 					cnt=${1#-}
-					printf "%s\n" $(sed -e "$cnt,${cnt}d" < "$HOME/links") > "$HOME/links"
+					sed "${cnt}s/.*//" "$HOME/links" > "$HOME/links_"
+					mv "$HOME/links_" "$HOME/links"
 				else
-					echo "$(pwd)" >> "$HOME/links"
+					sarg="$(pwd)"
 				fi
 			;;
 		esac
@@ -220,19 +223,39 @@ fd() {
 	cnt=0
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
+		if [ -z "$line" ]; then
+			if [ "$sarg" != "" ]; then
+				line="$sarg"
+				sarg=""
+				sed "${cnt}s#.*#$line#" "$HOME/links" > "$HOME/links_"
+				mv "$HOME/links_" "$HOME/links"
+			else
+				continue
+			fi
+		fi
 		echo "$cnt $line"
 		eval "export c${cnt}=\"$line\""
-		#printf '%s' "${string#${string%?}}" #checking last char
 		if [ -f "$line" ]; then
 			alias "$cnt"="vi $line"
 		else
 			alias "$cnt"="cdlsn $line $cnt"
 		fi
 	done < "$HOME/links"
+	if [ "$sarg" != "" ]; then
+		cnt=$((cnt+1))
+		echo "$cnt $sarg"
+		eval "export c${cnt}=\"$sarg\""
+		if [ -f "$sarg" ]; then
+			alias "$cnt"="vi $sarg"
+		else
+			alias "$cnt"="cdlsn $sarg $cnt"
+		fi
+		echo "$sarg" >> "$HOME/links";
+	fi
 	return
 }
 
-inf() { while true; do $@; done; }
+if [ -f "$HOME/links" ]; then fd; fi
 
 compr() {
 	FILE=$1
