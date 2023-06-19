@@ -131,7 +131,7 @@ alias mc='make clean'
 alias mu='make uninstall'
 
 # random progs
-alias t='stty sane && reset'
+alias reset='stty sane && reset'
 alias re='grep --color=auto'
 alias ls='ls --color=auto'
 alias l='ls -glhaS'
@@ -140,7 +140,7 @@ alias cp='cp -r'
 alias rm='rm -rf'
 alias i='vi'
 alias s='su root'
-alias f='feh --title %f___[%wX%h]_[%u/%l] -p'
+alias feh='feh --title %f___[%wX%h]_[%u/%l] -p'
 alias d='gdb --args'
 alias c='cd ..'
 alias fnd='find . -name'
@@ -154,18 +154,29 @@ alias x='xclip -selection clipboard'
 alias o='xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
+alias f='fg'
 alias 1q='fg %1'
 alias 2q='fg %2'
 alias 3q='fg %3'
 alias 4q='fg %4'
 alias 5q='fg %5'
+export vm1="192.168.156.1"
+export vm2="192.168.156.2"
+export vm3="192.168.156.3"
+export vm4="192.168.156.4"
+export vm5="192.168.156.5"
+alias vm1="ssh $vm1"
+alias vm2="ssh $vm2"
+alias vm3="ssh $vm3"
+alias vm4="ssh $vm4"
+alias vm5="ssh $vm5"
 
 crop() { convert "$1" -crop "$2" "_$1"; }
 imgs() { convert -strip -quality "$1" "$2" "_$2"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.tk:"$2"; }
 sif() { scp -r root@kyryl.tk:"$@"; }
-scat() { cat ~/.ssh/id_rsa.pub | ssh "$1@$2" 'cat >> .ssh/authorized_keys'; }
+scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
