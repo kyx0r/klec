@@ -27,7 +27,8 @@ bind 'set vi-ins-mode-string \1\e[3 q\2'
 bind 'set vi-cmd-mode-string \1\e[4 q\2'
 # ignore duplicate commands, ignore commands starting with a space
 export HISTCONTROL=erasedups:ignorespace
-export HISTSIZE=50000
+export HISTSIZE=-1
+export HISTFILESIZE=-1
 shopt -s histappend
 
 complete -cf r
