@@ -155,7 +155,7 @@ alias x='xclip -selection clipboard'
 alias o='xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
-alias f='fg'
+alias q='fg'
 alias 1q='fg %1'
 alias 2q='fg %2'
 alias 3q='fg %3'
@@ -244,8 +244,9 @@ fd() {
 	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
 	return
 }
+alias f='fd'
 
-if [ -f "$HOME/links" ]; then fd; fi
+[ -f "$HOME/links" ] && fd &> /dev/null;
 
 compr() {
 	FILE=$1
