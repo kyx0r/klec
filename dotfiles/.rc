@@ -17,7 +17,8 @@ export CHROME_FLAGS="--no-sandbox"
 export XDG_RUNTIME_DIR=/tmp
 export PATH=/root/klec/shell:$PATH
 export EDITOR=vi
-export PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#${HOSTNAME%?}}")\[\e[m\]\[\e[1;32m\]\w\[\e[m\] "
+export HOST_PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#${HOSTNAME%?}}")\[\e[m\]"
+export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
@@ -189,14 +190,14 @@ fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() {
-	export PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#${HOSTNAME%?}}")\[\e[m\]\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 	cd "$@" && l;
 }
 cdlsn() {
 	cnt=0
 	args=""
 	for last in "$@"; do cnt=$((cnt+1)); if [ $cnt -eq $# ]; then break; fi; args="$args${last}"; done
-	export PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#${HOSTNAME%?}}")\[\e[1;35m\]$(echo "$last" | sed 's/[^0-9]*//g')\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
 	cd "$args" && l;
 }
 alias cd='cdls'
