@@ -212,8 +212,8 @@ fd() {
 			*)
 				if [ "$1" -lt 0 ]; then
 					cnt=${1#-}
-					sed "${cnt}s/.*//" "$HOME/links" > "$HOME/links_"
-					mv "$HOME/links_" "$HOME/links"
+					echo "$(sed "${cnt}s/.*//" "$HOME/links")" > "$HOME/links" && fd
+					return
 				else
 					sarg="$(pwd)"
 				fi
@@ -223,16 +223,15 @@ fd() {
 	cnt=0
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
-		if [ -z "$line" ]; then
-			if [ "$sarg" != "" ]; then
+		if [ "$1" ]; then
+			if [ -z "$line" ]; then
 				line="$sarg"
-				sarg=""
-				sed "${cnt}s#.*#$line#" "$HOME/links" > "$HOME/links_"
-				mv "$HOME/links_" "$HOME/links"
-			else
-				continue
+				echo "$(sed "${cnt}s#.*#$line#" "$HOME/links")" > "$HOME/links" && fd
+				return
 			fi
+			continue
 		fi
+		[ -z "$line" ] && continue
 		echo "$cnt $line"
 		eval "export c${cnt}=\"$line\""
 		if [ -f "$line" ]; then
@@ -241,17 +240,7 @@ fd() {
 			alias "$cnt"="cdlsn $line $cnt"
 		fi
 	done < "$HOME/links"
-	if [ "$sarg" != "" ]; then
-		cnt=$((cnt+1))
-		echo "$cnt $sarg"
-		eval "export c${cnt}=\"$sarg\""
-		if [ -f "$sarg" ]; then
-			alias "$cnt"="vi $sarg"
-		else
-			alias "$cnt"="cdlsn $sarg $cnt"
-		fi
-		echo "$sarg" >> "$HOME/links";
-	fi
+	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
 	return
 }
 
