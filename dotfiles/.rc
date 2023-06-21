@@ -113,7 +113,7 @@ kpc() {
 		cd $HOME/.cache/kiss/proc/$2*/build/$1*;
 	else
 		cd $HOME/.cache/kiss/proc/*/build/$1*;
-	fi 
+	fi
 }
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
@@ -182,14 +182,26 @@ loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 cdls() {
 	export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
-	cd "$@" && l;
+	\cd "$@" && l;
 }
 cdlsn() {
 	cnt=0
 	args=""
 	for last in "$@"; do cnt=$((cnt+1)); if [ $cnt -eq $# ]; then break; fi; args="$args${last}"; done
 	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
-	cd "$args" && l;
+	\cd "$args" && l;
+}
+fullpath() {
+	f=$@;
+	if [ -d "$f" ]; then
+		base="";
+		dir="$f";
+	else
+		base="/$(basename "$f")";
+		dir=$(dirname "$f");
+	fi;
+	dir=$(\cd "$dir" && pwd);
+	echo "$dir$base"
 }
 alias cd='cdls'
 alias v='cd'
@@ -199,7 +211,7 @@ fd() {
 	if [ "$1" ]; then
 		case $1 in
 			''|*[!0-9-]*)
-				sarg="$(realpath $1)"
+				sarg="$(fullpath $1)"
 			;;
 			*)
 				if [ "$1" -lt 0 ]; then
@@ -233,7 +245,6 @@ fd() {
 		fi
 	done < "$HOME/links"
 	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
-	return
 }
 alias f='fd'
 
