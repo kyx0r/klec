@@ -140,7 +140,7 @@ alias df='df -h'
 alias cp='cp -r'
 alias rm='rm -rf'
 alias i='vi'
-alias s='su root'
+alias s='su -l'
 alias feh='feh --title %f___[%wX%h]_[%u/%l] -p'
 alias d='gdb --args'
 alias c='cd ..'
@@ -151,8 +151,8 @@ alias va='valgrind'
 alias cgr='valgrind --tool=callgrind'
 alias tmd='mount -o size=32G,noatime -t tmpfs tmpfs'
 alias b='./build.sh && ./build.sh install'
-alias x='xclip -selection clipboard'
-alias o='xclip -o'
+alias xc='xclip -selection clipboard'
+alias xo='xclip -o'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
 alias j='jobs'
@@ -162,16 +162,6 @@ alias 2q='fg %2'
 alias 3q='fg %3'
 alias 4q='fg %4'
 alias 5q='fg %5'
-export vm1="192.168.156.1"
-export vm2="192.168.156.2"
-export vm3="192.168.156.3"
-export vm4="192.168.156.4"
-export vm5="192.168.156.5"
-alias vm1="ssh $vm1"
-alias vm2="ssh $vm2"
-alias vm3="ssh $vm3"
-alias vm4="ssh $vm4"
-alias vm5="ssh $vm5"
 
 path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
@@ -308,3 +298,5 @@ d2() {
 d0() {
 	cflg "-O0 -g"
 }
+
+[ -f "$HOME/.lrc" ] && source $HOME/.lrc;
