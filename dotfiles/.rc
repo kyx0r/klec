@@ -236,12 +236,13 @@ fd() {
 			continue
 		fi
 		[ -z "$line" ] && continue
-		echo "$cnt $line"
 		eval "export c${cnt}=\"$line\""
 		if [ -f "$line" ]; then
 			alias "$cnt"="vi $line"
+			echo "$cnt ${line}*"
 		else
 			alias "$cnt"="cdlsn $line $cnt"
+			echo "$cnt $line"
 		fi
 	done < "$HOME/links"
 	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
