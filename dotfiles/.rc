@@ -163,6 +163,7 @@ alias 3q='fg %3'
 alias 4q='fg %4'
 alias 5q='fg %5'
 
+nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
 imgs() { convert -strip -quality "$1" "$2" "_$2"; }
