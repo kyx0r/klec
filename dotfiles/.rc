@@ -318,12 +318,10 @@ klecinst() {
 	compr klec.tar.gz klec/ && passh -p $pass scp klec.tar.gz "$1:~/"
 	exec=""
 	if [ "$3" ]; then
-		exec="$exec echo -e \"$3\n\" | sudo -S -k passwd -d root &&"
-		exec="$exec echo -e \"$3\n\" | sudo -S -k passwd -d \$(id -nu) &&"
-		exec="$exec sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config &&"
-		exec="$exec sudo sed -i 's/^#\?PermitEmptyPasswords .*/PermitEmptyPasswords yes/' /etc/ssh/sshd_config &&"
-		exec="$exec if [ -f \"/etc/pam.d/common-auth\" ]; then sudo sed -i 's/nullok_secure/nullok/' /etc/pam.d/common-auth; fi &&"
-		exec="$exec sudo service sshd restart &&"
+		exec="$exec echo -e '$3\n$3\n$3\n' | sudo -S -k passwd root &&"
+		exec="$exec echo -e '$3\n$3\n$3\n' | sudo -S -k passwd \$(id -nu) &&"
+		exec="$exec echo '$3' | sudo -S -k sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config &&"
+		exec="$exec echo '$3' | sudo -S -k sudo service sshd restart &&"
 	fi
 	exec="$exec tar -xf ~/klec.tar.gz &&"
 	exec="$exec cd ~/klec && sh install.sh &&"
