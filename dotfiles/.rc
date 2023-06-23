@@ -136,10 +136,10 @@ alias reset='stty sane && reset'
 alias re='grep --color=auto'
 alias ls='ls --color=auto'
 alias l='ls -glhaS'
+alias i='vi'
 alias df='df -h'
 alias cp='cp -r'
 alias rm='rm -rf'
-alias i='vi'
 alias s='su -l'
 alias feh='feh --title %f___[%wX%h]_[%u/%l] -p'
 alias d='gdb --args'
@@ -249,6 +249,7 @@ fd() {
 	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
 }
 alias f='fd'
+ii() { [ "$1" ] && if ! grep -q -e "$1\$" "$HOME/links"; then f "$1" &> /dev/null; fi; vi "$@"; }
 
 [ -f "$HOME/links" ] && fd &> /dev/null;
 
