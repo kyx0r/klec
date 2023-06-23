@@ -12,5 +12,4 @@ ln -sf $PWD/dotfiles/.gitconfig ~/
 ln -sf $PWD/dotfiles/lynx.cfg /etc
 ln -sf $PWD/dotfiles/index.theme /usr/share/icons/default/
 ln -sf $PWD/dotfiles/local.conf /etc/fonts
-ln -sf $PWD/dotfiles/grub /etc/default/
 ln -sf $PWD/dotfiles/ssh_config /etc/ssh/ssh_config
