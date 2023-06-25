@@ -151,8 +151,11 @@ alias va='valgrind --log-file=valog'
 alias cgr='valgrind --tool=callgrind'
 alias tmd='mount -o size=32G,noatime -t tmpfs tmpfs'
 alias b='./build.sh && ./build.sh install'
-alias xc='xclip -selection clipboard'
+alias rc='source $HOME/.rc'
+alias xp='xclip -selection clipboard'
 alias xo='xclip -o'
+alias wp='waypaste'
+alias wo='waycopy'
 alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias pass='gpg -d gen.gpg &> /tmp/gen'
 alias j='jobs'
@@ -163,6 +166,7 @@ alias 3q='fg %3'
 alias 4q='fg %4'
 alias 5q='fg %5'
 
+neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
@@ -215,13 +219,15 @@ fd() {
 				sarg="$(fullpath $1)"
 			;;
 			*)
-				if [ "$1" -lt 0 ]; then
-					cnt=${1#-}
-					echo "$(sed "${cnt}s/.*//" "$HOME/links")" > "$HOME/links" && fd
-					return
-				else
-					sarg="$(pwd)"
-				fi
+				for arg in "$@"; do
+					if [ "$arg" -lt 0 ]; then
+						cnt=${arg#-}
+						echo "$(sed "${cnt}s/.*//" "$HOME/links")" > "$HOME/links"
+					else
+						sarg="$(pwd)"
+					fi
+				done
+				if [ "$1" -lt 0 ]; then fd; return; fi
 			;;
 		esac
 	fi
@@ -249,7 +255,8 @@ fd() {
 	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
 }
 alias f='fd'
-ii() { [ "$1" ] && if ! grep -q -e "$1\$" "$HOME/links"; then f "$1" &> /dev/null; fi; vi "$@"; }
+frm() { fd $(neq "$@"); }
+ii() { [ "$1" ] && if ! grep -q -e "$1\$" "$HOME/links"; then fd "$1" &> /dev/null; fi; vi "$@"; }
 
 [ -f "$HOME/links" ] && fd &> /dev/null;
 
@@ -257,11 +264,11 @@ compr() {
 	FILE=$1
 	shift
 	case $FILE in
-	*.tar.bz2) tar cjf $FILE $*  ;;
-	*.tar.gz)  tar czf $FILE $*  ;;
-	*.tgz)     tar czf $FILE $*  ;;
-	*.zip)     zip $FILE $*      ;;
-	*.rar)     rar $FILE $*      ;;
+	*.tar.bz2) tar cjf $FILE "${FILE%.*}"  ;;
+	*.tar.gz)  tar czf $FILE "${FILE%.*}"  ;;
+	*.tgz)     tar czf $FILE "${FILE%.*}"  ;;
+	*.zip)     zip $FILE "${FILE%.*}"      ;;
+	*.rar)     rar $FILE "${FILE%.*}"      ;;
 	*)         echo "Filetype not recognized" ;;
 	esac
 }
@@ -316,7 +323,7 @@ d0() {
 klecinst() {
 	pass=$2
 	if [ ! "$2" ]; then pass="a"; fi
-	compr klec.tar.gz klec/ && passh -p $pass scp klec.tar.gz "$1:~/"
+	compr klec.tar.gz && passh -p $pass scp klec.tar.gz "$1:~/"
 	exec=""
 	if [ "$3" ]; then
 		exec="$exec echo -e '$3\n$3\n$3\n' | sudo -S -k passwd root &&"
