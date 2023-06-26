@@ -264,8 +264,8 @@ compr() {
 	FILE=$1
 	shift
 	case $FILE in
-	*.tar.bz2) tar cjf $FILE "${FILE%.*}"  ;;
-	*.tar.gz)  tar czf $FILE "${FILE%.*}"  ;;
+	*.tar.bz2) tar cjf $FILE "${FILE%%.*}"  ;;
+	*.tar.gz)  tar czf $FILE "${FILE%%.*}"  ;;
 	*.tgz)     tar czf $FILE "${FILE%.*}"  ;;
 	*.zip)     zip $FILE "${FILE%.*}"      ;;
 	*.rar)     rar $FILE "${FILE%.*}"      ;;
