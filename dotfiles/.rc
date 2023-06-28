@@ -3,7 +3,7 @@ export EXINIT="e|tp io{
 }kA
 	|tp 1G2\"qY2j\"Qy$|tp oA {jo}koa|tp 0\"wy$|tp oa()i|tp 0\"ey$|tp oa\"\"i|tp 0\"ry$|tp oI/*A*/|tp 0\"aY|tp oi/*A*/|tp 0\"sy$|tp o/\/\*
 2x/\*\/
-2x|tp 02k2\"dY2j\"Dy$|tp o>%<<\$%<<|tp 0\"xy$|tp o:!cp % %_\\\\|w\\\\|!git diff --no-index %_ %|tp 0\"fy$|tp o:ac  \\\\|tp i\\\\|u\\\\|ac3ls|tp 0\"cy$|inc (^[^&&.git]+[^\\/]+$)|bx 1|bx|ft|1"
+2x|tp 02k2\"dY2j\"Dy$|tp o>\%<<\$\%<<|tp 0\"xy$|tp o:\!cp \% \%_\\\\|w\\\\|\!git diff --no-index \%_ \%|tp 0\"fy$|tp o:ac  \\\\|tp i\\\\|u\\\\|ac3ls|tp 0\"cy$|inc (^[^&&.git]+[^\\/]+$)|bx 1|bx|ft|1"
 
 export KISS_SU=su
 export KISS_PATH=
@@ -91,7 +91,7 @@ alias xi='xbps-install'
 alias xr='xbps-remove'
 
 # arch linux
-alias p='pacman'
+alias pac='pacman'
 alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
@@ -176,6 +176,7 @@ sof() { scp -r "$1" root@kyryl.tk:"$2"; }
 sif() { scp -r root@kyryl.tk:"$@"; }
 scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
+p() { printf "$@"; }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
 	dir=$(find -type d -regex $reg); echo "$dir"  | grep -n -E . && read i;
