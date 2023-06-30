@@ -191,11 +191,8 @@ cdls() {
 	\cd "$@" && l;
 }
 cdlsn() {
-	cnt=0
-	args=""
-	for last in "$@"; do cnt=$((cnt+1)); if [ $cnt -eq $# ]; then break; fi; args="$args${last}"; done
-	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
-	\cd "$args" && l;
+	export PS1="$HOST_PS1\[\e[1;35m\]$1\[\e[1;32m\]\w\[\e[m\] "
+	\cd "$2" && l;
 }
 fullpath() {
 	f=$@;
@@ -208,6 +205,13 @@ fullpath() {
 	fi;
 	dir=$(\cd "$dir" && pwd);
 	echo "$dir$base"
+}
+replace() {
+	tmp="$1_"
+	head -n "$(($2 - 1))" "$1" > "$tmp"
+	echo "$3" >> "$tmp"
+	tail -n "+$(($2 + 1))" "$1" >> "$tmp"
+	mv "$tmp" "$1"
 }
 alias cd='cdls'
 alias v='cd'
@@ -233,29 +237,29 @@ fd() {
 		esac
 	fi
 	cnt=0
+	shift
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
-		if [ "$1" ]; then
+		if [ "$sarg" ]; then
 			if [ -z "$line" ]; then
-				line="$sarg"
-				echo "$(sed "${cnt}s#.*#$line#" "$HOME/links")" > "$HOME/links" && fd
+				line="$sarg | $@"
+				replace "$HOME/links" $cnt "$line" && fd
 				return
 			fi
 			continue
 		fi
 		[ -z "$line" ] && continue
-		eval "export c${cnt}=\"$line\""
-		if [ -f "$line" ]; then
-			alias "$cnt"="vi $line"
-			echo "$cnt ${line}*"
-		else
-			alias "$cnt"="cdlsn $line $cnt"
-			echo "$cnt $line"
-		fi
+		p=${line%% |*}
+		cmd="${line#"$p |"}"
+		eval "export c${cnt}=$p"
+		eval "var=\"$cmd\""
+		alias "$cnt"="$var"
+		echo "$cnt $line"
 	done < "$HOME/links"
-	[ "$sarg" != "" ] && echo "$sarg" >> "$HOME/links" && fd
+	[ "$sarg" ] && echo "$sarg | $@" >> "$HOME/links" && fd;
 }
 alias f='fd'
+ff() { if [ -d "$1" ]; then fd "$@" cdlsn \$cnt \$p; else fd "$@" vi \$p; fi }
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1\$" "$HOME/links"; then fd "$1" &> /dev/null; fi; vi "$@"; }
 
