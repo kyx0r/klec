@@ -237,7 +237,7 @@ fd() {
 		esac
 	fi
 	cnt=0
-	shift
+	[ $# -ge 1 ] && shift;
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
 		if [ "$sarg" ]; then
