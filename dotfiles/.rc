@@ -26,6 +26,7 @@ export KCPPFLAGS="$CFLAGS"
 export MAKEFLAGS="-j$(grep "^processor" /proc/cpuinfo | wc -l)"
 export PREFIX=/usr
 export DISPLAY=:2
+export FDMAXLEN=0
 
 # git
 alias g='git'
