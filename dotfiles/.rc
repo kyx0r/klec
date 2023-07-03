@@ -235,8 +235,8 @@ fd() {
 			;;
 		esac
 	fi
-	cnt=0
 	[ $# -ge 1 ] && shift;
+	cnt=0
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
 		if [ "$sarg" ]; then
@@ -248,21 +248,30 @@ fd() {
 			continue
 		fi
 		[ -z "$line" ] && continue
-		p=${line%% |*}
-		cmd="${line#"$p |"}"
+		p=${line%% | *}
+		cmd="${line#"$p | "}"
 		eval "export c${cnt}=$p"
 		eval "var=\"$cmd\""
 		alias "$cnt"="$var"
-		echo "$cnt $line"
+		var="$cnt $p"
+		[[ ${#var} -gt $FDMAXLEN ]] && FDMAXLEN="${#var}";
+		printf "$cnt $p"
+		x=$(($FDMAXLEN - ${#var}))
+		while [ $x -gt 0 ];
+		do
+			printf " "
+			x=$(($x-1))
+		done
+		printf " | %s\n" "$cmd"
+
 	done < "$HOME/links"
+	export FDMAXLEN
 	[ "$sarg" ] && echo "$sarg | $@" >> "$HOME/links" && fd;
 }
 alias f='fd'
-ff() { if [ -d "$1" ]; then fd "$@" cdlsn \$cnt \$p; else fd "$@" vi \$p; fi }
+ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1\$" "$HOME/links"; then fd "$1" &> /dev/null; fi; vi "$@"; }
-
-[ -f "$HOME/links" ] && fd &> /dev/null;
 
 compr() {
 	FILE=$1
@@ -341,4 +350,5 @@ klecinst() {
 	passh -p $pass ssh $1 $exec
 }
 
+[ -f "$HOME/links" ] && fd &> /dev/null;
 [ -f "$HOME/.lrc" ] && source $HOME/.lrc;
