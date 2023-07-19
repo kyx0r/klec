@@ -1,0 +1,11 @@
+#!/bin/sh
+git checkout $1
+git commit --amend --no-edit --author "$(git config user.name) <$(git config user.email)>"
+sha=$(git rev-parse HEAD)
+git replace $1 $sha
+git filter-branch -- --all
+git replace -d $1
+git checkout main
+rm -rf .git/refs/original/
+#git reflog expire --expire-unreachable=now --all
+#git gc --prune=now

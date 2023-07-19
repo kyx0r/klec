@@ -1,3 +1,4 @@
+#!/bin/sh
 mkdir -p /usr/share/icons/default/
 mkdir -p /etc/fonts
 cp -r cgi/GoldenShimmer /usr/share/icons

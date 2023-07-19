@@ -1,3 +1,4 @@
+#!/bin/sh
 
 cd /
 wget https://cdn.kernel.org/pub/linux/kernel/v5.x/linux-5.8.13.tar.xz
