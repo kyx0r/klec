@@ -1,0 +1,124 @@
+diff --git a/macros.ahk b/macros.ahk
+new file mode 100644
+index 0000000..15e4d3d
+--- /dev/null
++++ b/macros.ahk
+@@ -0,0 +1,85 @@
++
++CapsLock::Control
++
++^space::
++{
++	WinSetAlwaysOnTop -1, "A"
++}
++
++!v::
++{
++	WinSetStyle "^0xC40000", "A"
++	;WinHide "A"
++	;WinShow "A"
++}
++
++/*
++!f::
++{
++	if WinExist("ahk_class Shell_TrayWnd") {
++		WinHide "ahk_class Shell_TrayWnd"
++		;WinHide "ahk_class Shell_SecondaryTrayWnd"
++	} Else {
++		WinShow "ahk_class Shell_TrayWnd"
++		;WinShow "ahk_class Shell_SecondaryTrayWnd"
++	}
++}
++*/
++
++!y::
++{
++	Loop
++	{
++		oid := WinGetList("Remote Desktop Connection",,,)
++		aid := Array()
++		id := oid.Length
++		For v in oid
++		{
++			aid.Push(v)
++		}
++		Loop aid.Length
++		{
++			this_id := aid[A_Index]
++			this_title := WinGetTitle("ahk_id " this_id)
++			;TrayTip, Found RDP session, %this_title%, 2, 17
++			state := WinGetMinMax("ahk_id" this_id)
++			if (state = -1)
++				WinActivate("ahk_id " this_id)
++			;FocusedHwnd := ControlGetFocus("ahk_id " this_id)
++			;FocusedClassNN := ControlGetClassNN(FocusedHwnd)
++			;MsgBox 'Control with focus = {Hwnd: ' FocusedHwnd ', ClassNN: "' FocusedClassNN '"}'
++			;ControlFocus(FocusedClassNN, "ahk_id " this_id)
++			;ControlSend("abc", , "ahk_id " this_id)
++			;ControlSend("{Shift}", , "ahk_id " this_id)
++			;Send "{Shift}"
++			WinGetPos(&X, &Y, &W, &H, "ahk_id " this_id)
++			MouseGetPos &xpos, &ypos
++			MouseMove(X, Y, 0)
++			Sleep(100)
++			MouseMove(xpos, ypos, 0)
++			Sleep(100)
++			if (state = -1)
++				WinMinimize("ahk_id " this_id)
++		}
++		Sleep(180000)
++	}
++	return
++}
++
++/*
++!t::
++{
++	Loop {
++		Send "^{s}"
++		Sleep 1000
++		Send "{Enter}"
++		Sleep 1000
++		Send "{n}"
++		Sleep 2500
++	}
++}
++*/
++
++#SuspendExempt
++!o::Suspend  ; Ctrl+Alt+S
++#SuspendExempt False
+diff --git a/mwm.ahk b/mwm.ahk
+index ee6e79c..6379467 100644
+--- a/mwm.ahk
++++ b/mwm.ahk
+@@ -7,6 +7,7 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
+ 
+ #include *i lib\miguru\miguru.ahk
+ #include *i lib\Popup.ahk
++#include macros.ahk
+ 
+ GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Benachrichtigung" " ahk_exe Teams.exe"                                                  )
+ GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Notification"     " ahk_exe Teams.exe"                                                  )
+@@ -16,9 +17,11 @@ GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe explor
+ GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe taskmgr.exe"                                                )
+ GroupAdd("MIGURU_AUTOFLOAT", "Calculator"                       " ahk_exe ApplicationFrameHost.exe"                                   )
+ GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe zeal.exe"                                                   )
++GroupAdd("MIGURU_IGNORE",                                       " ahk_exe mstsc.exe"                                                  )
+ 
+ GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe qutebrowser.exe"                                            )
+ GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe alacritty.exe"                                              )
++GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe mintty.exe"                                                 )
+ 
+ if !IsSet(MiguruWM) {
+     prog := RegExReplace(A_ScriptName, "i)\.ahk$", ".exe")
+@@ -108,7 +111,7 @@ mod1 := "Alt"
+ *q::Reload()
+ 
+ *Enter::mwm.Do("swap-window", { with: "master" })
+-*Space::mwm.Do("cycle-layout", { value: [tall, wide, fullscreen, floating, columns, rows] })
++*Space::mwm.Do("cycle-layout", { value: [tall, fullscreen, floating] })
+ 
+ *vk01::MoveActiveWindow()
+ *vk02::ResizeActiveWindow()
