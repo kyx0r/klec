@@ -1,11 +1,18 @@
 diff --git a/macros.ahk b/macros.ahk
 new file mode 100644
-index 0000000..15e4d3d
+index 0000000..f19b710
 --- /dev/null
 +++ b/macros.ahk
-@@ -0,0 +1,85 @@
+@@ -0,0 +1,92 @@
 +
 +CapsLock::Control
++
++^Capslock::
++{
++	Sleep(50)
++	WinMinimize("A")    ; need A to specify Active window
++	return
++}
 +
 +^space::
 +{
@@ -90,7 +97,7 @@ index 0000000..15e4d3d
 +!o::Suspend  ; Ctrl+Alt+S
 +#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index ee6e79c..6379467 100644
+index ee6e79c..b713d00 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,6 +7,7 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -113,12 +120,17 @@ index ee6e79c..6379467 100644
  
  if !IsSet(MiguruWM) {
      prog := RegExReplace(A_ScriptName, "i)\.ahk$", ".exe")
-@@ -108,7 +111,7 @@ mod1 := "Alt"
+@@ -108,10 +111,10 @@ mod1 := "Alt"
  *q::Reload()
  
  *Enter::mwm.Do("swap-window", { with: "master" })
 -*Space::mwm.Do("cycle-layout", { value: [tall, wide, fullscreen, floating, columns, rows] })
 +*Space::mwm.Do("cycle-layout", { value: [tall, fullscreen, floating] })
  
- *vk01::MoveActiveWindow()
- *vk02::ResizeActiveWindow()
+-*vk01::MoveActiveWindow()
+-*vk02::ResizeActiveWindow()
++^*vk01::MoveActiveWindow()
++^*vk02::ResizeActiveWindow()
+ 
+ #Hotif GetKeyState(mod1, "P") and GetKeyState("Shift", "P")
+ 
