@@ -167,6 +167,13 @@ alias 3q='fg %3'
 alias 4q='fg %4'
 alias 5q='fg %5'
 
+llm() { main --log-disable --keep -1 -s -1 -t 15 --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "[Q]" --in-prefix " " --in-suffix "[A]" --multiline-input -i -m "$@"; }
+llmp() { main --log-disable --keep -1 -s -1 -t 15 --mlock --color -c 4096 --temp 0.7 -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
+
+### Instruction:
+$1
+
+### Response:" -m "$2"; }
 neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
