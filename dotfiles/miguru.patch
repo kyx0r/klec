@@ -1,9 +1,9 @@
 diff --git a/macros.ahk b/macros.ahk
 new file mode 100644
-index 0000000..f19b710
+index 0000000..d3b062a
 --- /dev/null
 +++ b/macros.ahk
-@@ -0,0 +1,92 @@
+@@ -0,0 +1,94 @@
 +
 +CapsLock::Control
 +
@@ -41,6 +41,9 @@ index 0000000..f19b710
 +
 +!y::
 +{
++	SetTitleMatchMode 2
++	DetectHiddenWindows(true)
++	Sleep 100
 +	Loop
 +	{
 +		oid := WinGetList("Remote Desktop Connection",,,)
@@ -54,27 +57,26 @@ index 0000000..f19b710
 +		{
 +			this_id := aid[A_Index]
 +			this_title := WinGetTitle("ahk_id " this_id)
-+			;TrayTip, Found RDP session, %this_title%, 2, 17
++			; Try to activate and restore the window if it's minimized
++			try {
++				FocusedHwnd := ControlGetHwnd("IHWindowClass1", "ahk_id " this_id)
++			} catch Error as err {
++				;ToolTip(this_title)
++				continue
++			}
 +			state := WinGetMinMax("ahk_id" this_id)
 +			if (state = -1)
 +				WinActivate("ahk_id " this_id)
-+			;FocusedHwnd := ControlGetFocus("ahk_id " this_id)
-+			;FocusedClassNN := ControlGetClassNN(FocusedHwnd)
-+			;MsgBox 'Control with focus = {Hwnd: ' FocusedHwnd ', ClassNN: "' FocusedClassNN '"}'
-+			;ControlFocus(FocusedClassNN, "ahk_id " this_id)
-+			;ControlSend("abc", , "ahk_id " this_id)
-+			;ControlSend("{Shift}", , "ahk_id " this_id)
-+			;Send "{Shift}"
-+			WinGetPos(&X, &Y, &W, &H, "ahk_id " this_id)
-+			MouseGetPos &xpos, &ypos
-+			MouseMove(X, Y, 0)
-+			Sleep(100)
-+			MouseMove(xpos, ypos, 0)
-+			Sleep(100)
++			FocusedClassNN := ControlGetClassNN(FocusedHwnd)
++			;ToolTip(FocusedClassNN)
++			ControlShow(FocusedClassNN, "ahk_id " this_id)
++			ControlFocus(FocusedClassNN, "ahk_id " this_id)
++			ControlSend("{Shift}", FocusedClassNN, "ahk_id " this_id)
 +			if (state = -1)
 +				WinMinimize("ahk_id " this_id)
 +		}
-+		Sleep(180000)
++		;Sleep(10000)
++		Sleep(280000)
 +	}
 +	return
 +}
@@ -97,7 +99,7 @@ index 0000000..f19b710
 +!o::Suspend  ; Ctrl+Alt+S
 +#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index ee6e79c..b713d00 100644
+index ee6e79c..159593a 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,6 +7,7 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -108,11 +110,12 @@ index ee6e79c..b713d00 100644
  
  GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Benachrichtigung" " ahk_exe Teams.exe"                                                  )
  GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Notification"     " ahk_exe Teams.exe"                                                  )
-@@ -16,9 +17,11 @@ GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe explor
+@@ -16,9 +17,12 @@ GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe explor
  GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe taskmgr.exe"                                                )
  GroupAdd("MIGURU_AUTOFLOAT", "Calculator"                       " ahk_exe ApplicationFrameHost.exe"                                   )
  GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe zeal.exe"                                                   )
 +GroupAdd("MIGURU_IGNORE",                                       " ahk_exe mstsc.exe"                                                  )
++GroupAdd("MIGURU_IGNORE",                                       " ahk_exe VirtualBox.exe"                                             )
  
  GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe qutebrowser.exe"                                            )
  GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe alacritty.exe"                                              )
@@ -120,7 +123,7 @@ index ee6e79c..b713d00 100644
  
  if !IsSet(MiguruWM) {
      prog := RegExReplace(A_ScriptName, "i)\.ahk$", ".exe")
-@@ -108,10 +111,10 @@ mod1 := "Alt"
+@@ -108,10 +112,10 @@ mod1 := "Alt"
  *q::Reload()
  
  *Enter::mwm.Do("swap-window", { with: "master" })
