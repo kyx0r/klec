@@ -1,5 +1,5 @@
 
-KLEK: Kyryl's Linux Configuration Kit
+KLEC: Kyryl's Linux Enhanced Configuration
 
 A bunch of personal config settings, feel free
 to copy the idea / settings / etc 
@@ -20,12 +20,12 @@ Mostly posix utils
 
 CGI
 ---
-Computer generated graphics
+Computer generated imagery
 
 - GoldenShimmer -
 This is a custom animated X11 cursor.
 
-- terminus-ttf-4.47.0 -
+- terminus-ttf-4.49.3 -
 Font
 
 - ten_years__time_by_bythmark_d4dg6dz -
@@ -56,9 +56,6 @@ located in this repository
 1. The only interesting part is the config.h where
 I chose to display only the useful info
 
-- xkeyboard -
-(see submodule readme)
-
 - utils -
 1. tinycc.c is a special version of tcc that tries to almaginate 
 C source files. It has correct preprocessing of #include and 
@@ -82,7 +79,3 @@ to build surf, only webkitgtk2 is needed.
 - dmenu -
 1. Francesco's fork https://github.com/Francesco149/dmenu
 Just changed the default font.
-
-- mailx -
-1. Custom build, not no significat changed as of yet.
-
