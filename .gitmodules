@@ -1,6 +1,3 @@
-[submodule "cprogs/xkeyboard"]
-	path = cprogs/xkeyboard
-	url = https://github.com/kyx0r/xkeyboard.git
 [submodule "cprogs/nextvi"]
 	path = cprogs/nextvi
 	url = https://github.com/kyx0r/nextvi.git
