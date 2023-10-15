@@ -1,105 +1,5 @@
-diff --git a/macros.ahk b/macros.ahk
-new file mode 100644
-index 0000000..d3b062a
---- /dev/null
-+++ b/macros.ahk
-@@ -0,0 +1,94 @@
-+
-+CapsLock::Control
-+
-+^Capslock::
-+{
-+	Sleep(50)
-+	WinMinimize("A")    ; need A to specify Active window
-+	return
-+}
-+
-+^space::
-+{
-+	WinSetAlwaysOnTop -1, "A"
-+}
-+
-+!v::
-+{
-+	WinSetStyle "^0xC40000", "A"
-+	;WinHide "A"
-+	;WinShow "A"
-+}
-+
-+/*
-+!f::
-+{
-+	if WinExist("ahk_class Shell_TrayWnd") {
-+		WinHide "ahk_class Shell_TrayWnd"
-+		;WinHide "ahk_class Shell_SecondaryTrayWnd"
-+	} Else {
-+		WinShow "ahk_class Shell_TrayWnd"
-+		;WinShow "ahk_class Shell_SecondaryTrayWnd"
-+	}
-+}
-+*/
-+
-+!y::
-+{
-+	SetTitleMatchMode 2
-+	DetectHiddenWindows(true)
-+	Sleep 100
-+	Loop
-+	{
-+		oid := WinGetList("Remote Desktop Connection",,,)
-+		aid := Array()
-+		id := oid.Length
-+		For v in oid
-+		{
-+			aid.Push(v)
-+		}
-+		Loop aid.Length
-+		{
-+			this_id := aid[A_Index]
-+			this_title := WinGetTitle("ahk_id " this_id)
-+			; Try to activate and restore the window if it's minimized
-+			try {
-+				FocusedHwnd := ControlGetHwnd("IHWindowClass1", "ahk_id " this_id)
-+			} catch Error as err {
-+				;ToolTip(this_title)
-+				continue
-+			}
-+			state := WinGetMinMax("ahk_id" this_id)
-+			if (state = -1)
-+				WinActivate("ahk_id " this_id)
-+			FocusedClassNN := ControlGetClassNN(FocusedHwnd)
-+			;ToolTip(FocusedClassNN)
-+			ControlShow(FocusedClassNN, "ahk_id " this_id)
-+			ControlFocus(FocusedClassNN, "ahk_id " this_id)
-+			ControlSend("{Shift}", FocusedClassNN, "ahk_id " this_id)
-+			if (state = -1)
-+				WinMinimize("ahk_id " this_id)
-+		}
-+		;Sleep(10000)
-+		Sleep(280000)
-+	}
-+	return
-+}
-+
-+/*
-+!t::
-+{
-+	Loop {
-+		Send "^{s}"
-+		Sleep 1000
-+		Send "{Enter}"
-+		Sleep 1000
-+		Send "{n}"
-+		Sleep 2500
-+	}
-+}
-+*/
-+
-+#SuspendExempt
-+!o::Suspend  ; Ctrl+Alt+S
-+#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index 7ab1ec7..ed94c0c 100644
+index 7ab1ec7..fbec96c 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,6 +7,7 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -139,6 +39,15 @@ index 7ab1ec7..ed94c0c 100644
  ]
  
  mwm := { __Call: (name, params*) => } ; Ignore requests while mwm isn't ready yet
+@@ -70,7 +68,7 @@ mwm := MiguruWM({
+     followWindowToWorkspace: false,
+     followWindowToMonitor: false,
+ 
+-    focusWorkspaceByWindow: true,
++    focusWorkspaceByWindow: false,
+ 
+     delays: {
+         retryManage: 100,
 @@ -124,8 +122,8 @@ mod1 := "Alt"
  *Enter::mwm.Do("swap-window", { with: "master-or-mru" })
  *Space::mwm.Do("cycle-layout", { value: layouts })
