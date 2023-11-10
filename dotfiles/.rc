@@ -188,6 +188,8 @@ sif() { scp -r root@kyryl.me:"$@"; }
 scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 p() { printf "$@"; }
+inf() { IFS="
+"; for p in $1; do eval "$2 \$p $3"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
 	dir=$(find -type d -regex $reg); echo "$dir"  | grep -n -E . && read i;
