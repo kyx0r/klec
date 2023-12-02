@@ -170,10 +170,16 @@ alias 4q='fg %4'
 alias 5q='fg %5'
 alias me='ssh kyryl.me'
 
-llm() { main --log-disable --keep -1 -s -1 -t 15 --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "[Q]" --in-prefix " " --in-suffix "[A]" --multiline-input -i -m "$@"; }
-llmi() { main --log-disable --keep -1 -s -1 -t 15 --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
+# llama.cpp stuff
+llmi() { main --log-disable --keep -1 -s -1 -t 15 --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" --in-prefix "
+### Instruction:
 " --in-suffix "### Response:
-" --multiline-input -i -m "$@"; }
+" --multiline-input -i $LLM_ARGS -m "$@"; }
+llml() { main --log-disable --keep -1 -s -1 -t 15 --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" --in-prefix "
+<|im_start|>user
+" --in-suffix "<|im_end|>
+<|im_start|>assistant
+" --multiline-input -i $LLM_ARGS -m "$@"; }
 llmp() { main --log-disable --keep -1 -s -1 -t 15 --mlock -c 4096 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
 ### Instruction:
 $1
@@ -185,6 +191,7 @@ Answer to the best of your ability<|im_end|>
 $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
+
 neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
