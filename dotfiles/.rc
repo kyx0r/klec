@@ -172,11 +172,11 @@ alias 5q='fg %5'
 alias me='ssh kyryl.me'
 
 # llama.cpp stuff
-llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" --in-prefix "
+llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" -r "### Instruction:" --in-prefix "
 ### Instruction:
 " --in-suffix "### Response:
 " --multiline-input -i $LLM_ARGS -m "$@"; }
-llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" --in-prefix "
+llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" -r "<|im_start|>user" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
