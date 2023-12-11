@@ -172,15 +172,15 @@ alias 5q='fg %5'
 alias me='ssh kyryl.me'
 
 # llama.cpp stuff
-llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" -r "### Instruction:" --in-prefix "
+llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
 ### Instruction:
 " --in-suffix "### Response:
-" --multiline-input -i $LLM_ARGS -m "$@"; }
-llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "" -r "<|im_start|>user" --in-prefix "
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "<|im_start|>user" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
-" --multiline-input -i $LLM_ARGS -m "$@"; }
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
 llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 4096 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
 ### Instruction:
 $1

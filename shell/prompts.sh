@@ -357,7 +357,7 @@ c=0
 while read re; do
 	if [ $found -eq $c ]; then
 		printf '%s\n' "$re"
-		printf '%s\n' "$re" > prompt.txt
+		printf '%s' "$re" > prompt.txt
 		break
 	fi
 	c=$((c+1))
