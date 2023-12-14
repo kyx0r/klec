@@ -1,5 +1,5 @@
 diff --git a/mwm.ahk b/mwm.ahk
-index 7ab1ec7..fbec96c 100644
+index 7ab1ec7..b376fcd 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,6 +7,7 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -10,13 +10,7 @@ index 7ab1ec7..fbec96c 100644
  
  GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Benachrichtigung" " ahk_exe Teams.exe"                                                  )
  GroupAdd("MIGURU_AUTOFLOAT", "Microsoft Teams-Notification"     " ahk_exe Teams.exe"                                                  )
-@@ -18,10 +19,13 @@ GroupAdd("MIGURU_AUTOFLOAT", "Calculator"                       " ahk_exe Applic
- GroupAdd("MIGURU_AUTOFLOAT",                                    " ahk_exe zeal.exe"                                                   )
- GroupAdd("MIGURU_AUTOFLOAT", "Window Spy for AHKv2"                                                                                   )
- GroupAdd("MIGURU_AUTOFLOAT", "WinMerge"                                                                                               )
-+GroupAdd("MIGURU_IGNORE",                                       " ahk_exe mstsc.exe"                                                  )
-+GroupAdd("MIGURU_IGNORE",                                       " ahk_exe VirtualBox.exe"                                             )
- 
+@@ -22,9 +23,13 @@ GroupAdd("MIGURU_AUTOFLOAT", "WinMerge"
  GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe qutebrowser.exe"                                            )
  GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe alacritty.exe"                                              )
  GroupAdd("MIGURU_DECOLESS",                                     " ahk_exe msrdc.exe"                " ahk_class RAIL_WINDOW"          )
@@ -24,7 +18,13 @@ index 7ab1ec7..fbec96c 100644
  
  GroupAdd("MIGURU_IGNORE",                                       " ahk_exe msrdc.exe"                                                  )
  GroupAdd("MIGURU_IGNORE",    "WinUI Desktop"                    " ahk_exe PowerToys.Peek.UI.exe"    " ahk_class WinUIDesktopWin32WindowClass")
-@@ -36,14 +40,8 @@ if !IsSet(MiguruWM) {
++GroupAdd("MIGURU_IGNORE",                                       " ahk_exe mstsc.exe"                                                  )
++GroupAdd("MIGURU_IGNORE",                                       " ahk_exe VirtualBox.exe"                                             )
++GroupAdd("MIGURU_IGNORE",                                       " ahk_exe SnippingTool.exe"                                           )
+ 
+ if !IsSet(MiguruWM) {
+     prog := RegExReplace(A_ScriptName, "i)\.ahk$", ".exe")
+@@ -36,14 +41,8 @@ if !IsSet(MiguruWM) {
  
  layouts := [
      TallLayout(),
@@ -39,7 +39,7 @@ index 7ab1ec7..fbec96c 100644
  ]
  
  mwm := { __Call: (name, params*) => } ; Ignore requests while mwm isn't ready yet
-@@ -70,7 +68,7 @@ mwm := MiguruWM({
+@@ -70,7 +69,7 @@ mwm := MiguruWM({
      followWindowToWorkspace: false,
      followWindowToMonitor: false,
  
@@ -48,7 +48,7 @@ index 7ab1ec7..fbec96c 100644
  
      delays: {
          retryManage: 100,
-@@ -124,8 +122,8 @@ mod1 := "Alt"
+@@ -124,8 +123,8 @@ mod1 := "Alt"
  *Enter::mwm.Do("swap-window", { with: "master-or-mru" })
  *Space::mwm.Do("cycle-layout", { value: layouts })
  
