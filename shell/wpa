@@ -1,0 +1,4 @@
+#!/bin/sh
+printf "%b\n" "network={\n	ssid=\"$2\"\n	psk=\"$3\"\n}" > ./wpa_supplicant.conf
+wpa_supplicant -B -i $1 -c ./wpa_supplicant.conf
+rm ./wpa_supplicant.conf
