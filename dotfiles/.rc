@@ -178,21 +178,25 @@ alias 9q='fg %9'
 alias me='ssh kyryl.me'
 
 # llama.cpp stuff
-llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
+llm3() { main --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
+<|start_header_id|>user<|end_header_id|>
+" --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
 ### Instruction:
 " --in-suffix "### Response:
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
-llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 4096 --temp 0.7 -f $PWD/prompt.txt -r "<|im_start|>user" --in-prefix "
+llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|im_start|>user" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
-llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 4096 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
+llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
 ### Instruction:
 $1
 ### Response:
 " -m "$2"; }
-llmml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 4096 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
+llmml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
 Answer to the best of your ability<|im_end|>
 <|im_start|>user
 $1<|im_end|>
