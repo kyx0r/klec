@@ -178,7 +178,7 @@ alias 9q='fg %9'
 alias me='ssh kyryl.me'
 
 # llama.cpp stuff
-llm3() { main --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
+llm3() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
 <|start_header_id|>user<|end_header_id|>
 " --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
