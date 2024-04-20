@@ -203,6 +203,8 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
+nrstr() { filename="$1"; echo "${filename,,}"; }
+nrfile() { mv "$1" $(nrstr "$1"); }
 neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
