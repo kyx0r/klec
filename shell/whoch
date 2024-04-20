@@ -1,0 +1,51 @@
+#!/bin/sh
+
+# Function to validate the command
+validate_command() {
+    case $1 in
+        *[![:alnum:]_-]* | "") return 1 ;; # Rejects non-alphanumeric, underscores, and hyphens
+        *) return 0 ;; # Allows only alphanumeric, underscores, and hyphens
+    esac
+}
+
+# Function to search for the command in PATH
+search_command_in_path() {
+    command_to_find="$1"
+    found=false
+
+    IFS=:
+    for dir in $PATH; do
+        if [ -x "$dir/$command_to_find" ]; then
+            echo "$dir/$command_to_find"
+            found=true
+        fi
+    done
+
+    if [ "$found" = false ]; then
+        echo "Command '$command_to_find' not found in PATH" >&2
+        exit 1
+    fi
+}
+
+# Main function
+main() {
+    if ! validate_command "$1"; then
+        echo "Invalid command format. Please provide an alphanumeric command name only." >&2
+        exit 1
+    fi
+
+    search_command_in_path "$1"
+}
+
+# Execute main function with arguments
+case "$1" in
+    "-a")
+        main "$2" | awk '!seen[$0]++'
+        ;;
+    "--aa")
+        main "$2"
+        ;;
+    *)
+        main "$@" | head -n 1
+        ;;
+esac
