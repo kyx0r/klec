@@ -97,6 +97,11 @@ alias xr='xbps-remove'
 
 # arch linux
 alias pac='pacman'
+alias pacfs='pacman -Fx'
+alias pacs='pacman -Ss'
+alias pacu='pacman -Syyu'
+alias paci='pacman -Qi'
+alias pacl='pacman -Ql'
 alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
