@@ -208,6 +208,7 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
+theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh export THEMESET=1; fi;' >> $HOME/.lrc; }
 nrstr() { filename="$1"; echo "${filename,,}"; }
 nrfile() { mv "$1" $(nrstr "$1"); }
 neq() { echo "-$(seq -s ' -' $@)"; }
