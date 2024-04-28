@@ -129,6 +129,7 @@ kpc() {
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
+kci() { rm $HOME/.cache/kiss/bin/"$1"* && ki $1; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
 krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
 kcmv() { git commit -m "$(basename $(pwd)): $* $(cat version)"; }
