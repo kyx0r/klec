@@ -211,7 +211,7 @@ $1<|im_end|>
 " -m "$2"; }
 
 theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh export THEMESET=1; fi;' >> $HOME/.lrc; }
-nrstr() { filename="$1"; echo "${filename,,}"; }
+nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
 nrfile() { mv "$1" $(nrstr "$1"); }
 neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
