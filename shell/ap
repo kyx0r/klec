@@ -7,6 +7,9 @@ if [ $# -eq 1 ]; then
 	for file in $str; do
 		echo "$file"
 		fvp -v - "$file"
+		if [ $? -ne 0 ]; then
+			break
+		fi
 	done
 	exit 1
 fi
