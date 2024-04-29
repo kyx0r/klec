@@ -14,4 +14,7 @@ fi
 for file in "$@"; do
 	echo "$file"
 	fvp -v - "$file"
+	if [ $? -ne 0 ]; then
+		break
+	fi
 done
