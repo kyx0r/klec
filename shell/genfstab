@@ -19,7 +19,7 @@ find_tag() {
     if [ ! -d "${tagdir:=/dev/disk/by-$(printf %s "$ident" | tr '[:upper:]' '[:lower:]')}" ]; then
         out "# Directory '$dir' doesn't exist"
         case $ident in UUID)
-             tag="$ident=$(blkid $1 | sed -n 's/.*UUID="\([^"]*\)".*/\1/p')";;
+             tag="$ident=$(blkid $1 | sed -n 's/.* UUID="\([^"]*\)".*/\1/p')";;
         esac
         out "${tag:-$1}"
         return 1;
