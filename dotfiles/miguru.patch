@@ -1,17 +1,35 @@
 diff --git a/lib/miguru/miguru.ahk b/lib/miguru/miguru.ahk
-index 315fbf9..4b6f774 100644
+index 2ef8d7c..453cfb8 100644
 --- a/lib/miguru/miguru.ahk
 +++ b/lib/miguru/miguru.ahk
-@@ -246,7 +246,7 @@ class MiguruWM extends WMEvents {
-             window := this._manage(event, hwnd)
-             if !window {
+@@ -68,7 +68,7 @@ class MiguruWM extends WMEvents {
+             tilingMinWidth: 500,
+             tilingMinHeight: 500,
+             tilingInsertion: "last",
+-            floatingAlwaysOnTop: false,
++            floatingAlwaysOnTop: true,
+ 
+             focusFollowsMouse: false,
+             mouseFollowsFocus: false,
+@@ -76,7 +76,7 @@ class MiguruWM extends WMEvents {
+             followWindowToWorkspace: false,
+             followWindowToMonitor: false,
+ 
+-            focusWorkspaceByWindow: true,
++            focusWorkspaceByWindow: false,
+ 
+             showPopup: (*) =>,
+             focusIndicator: {
+@@ -274,7 +274,7 @@ class MiguruWM extends WMEvents {
+                 ;; still being invisible. So in case that same window is shown
+                 ;; later on it should be additionally focused.
                  if event == EV_WINDOW_FOCUSED
 -                    && !WinExist("ahk_id" hwnd " ahk_group MIGURU_IGNORE") {
 +                    && WinExist("ahk_id" hwnd " ahk_group MIGURU_MANAGE") {
-                     debug("Set active to non-managed {}", WinInfo(hwnd))
+ 
+                     debug("Set maybe-active to non-managed {}", WinInfo(hwnd))
                      this._maybeActiveWindow := hwnd
-                     this._opts.focusIndicator.Unmanaged(hwnd)
-@@ -882,8 +882,13 @@ class MiguruWM extends WMEvents {
+@@ -933,8 +933,13 @@ class MiguruWM extends WMEvents {
  
      ;; Add a window for which an event happened to the global list if it hasn't
      ;; been added yet.
@@ -26,7 +44,7 @@ index 315fbf9..4b6f774 100644
              trace(() => ["Ignoring: already managed D={} WS={} {}",
                  this._managed[hwnd].monitor.Index,
                  this._managed[hwnd].workspace.Index,
-@@ -901,12 +906,12 @@ class MiguruWM extends WMEvents {
+@@ -952,12 +957,12 @@ class MiguruWM extends WMEvents {
                  || IsWindowCloaked(hwnd) {
                  trace(() => ["Ignoring: hidden {}", WinInfo(hwnd)])
                  return ""
@@ -41,8 +59,117 @@ index 315fbf9..4b6f774 100644
                  trace(() => ["Ignoring: ahk_group {}", WinInfo(hwnd)])
                  return ""
              }
+diff --git a/macros.ahk b/macros.ahk
+new file mode 100644
+index 0000000..a36d39d
+--- /dev/null
++++ b/macros.ahk
+@@ -0,0 +1,103 @@
++
++CapsLock::Control
++
++^Capslock::
++{
++	Sleep(50)
++	WinMinimize("A")    ; need A to specify Active window
++	return
++}
++
++^space::
++{
++	WinSetAlwaysOnTop -1, "A"
++}
++
++!v::
++{
++	WinSetStyle "^0xC40000", "A"
++	;WinHide "A"
++	;WinShow "A"
++}
++
++/*
++!f::
++{
++	if WinExist("ahk_class Shell_TrayWnd") {
++		WinHide "ahk_class Shell_TrayWnd"
++		;WinHide "ahk_class Shell_SecondaryTrayWnd"
++	} Else {
++		WinShow "ahk_class Shell_TrayWnd"
++		;WinShow "ahk_class Shell_SecondaryTrayWnd"
++	}
++}
++*/
++
++!y::
++{
++	SetTitleMatchMode 2
++	DetectHiddenWindows(true)
++	Sleep 100
++	Loop
++	{
++		oid := WinGetList("Remote Desktop Connection",,,)
++		aid := Array()
++		id := oid.Length
++		For v in oid
++		{
++			aid.Push(v)
++		}
++		Loop aid.Length
++		{
++			this_id := aid[A_Index]
++			this_title := WinGetTitle("ahk_id " this_id)
++			; Try to activate and restore the window if it's minimized
++			try {
++				FocusedHwnd := ControlGetHwnd("IHWindowClass1", "ahk_id " this_id)
++			} catch Error as err {
++				;ToolTip(this_title)
++				continue
++			}
++			state := WinGetMinMax("ahk_id" this_id)
++			if (state = -1)
++				WinActivate("ahk_id " this_id)
++			FocusedClassNN := ControlGetClassNN(FocusedHwnd)
++			;ToolTip(FocusedClassNN)
++			ControlShow(FocusedClassNN, "ahk_id " this_id)
++			ControlFocus(FocusedClassNN, "ahk_id " this_id)
++			ControlSend("{Shift}", FocusedClassNN, "ahk_id " this_id)
++			if (state = -1)
++				WinMinimize("ahk_id " this_id)
++		}
++		;Sleep(10000)
++		Sleep(280000)
++	}
++	return
++}
++
++/*
++!t::
++{
++	Loop {
++		Send "^{s}"
++		Sleep 1000
++		Send "{Enter}"
++		Sleep 1000
++		Send "{n}"
++		Sleep 2500
++	}
++}
++*/
++
++^!t::
++{
++	Run "C:\Users\User\Desktop\eng36.rdp"
++	Sleep(2500)
++	ControlSendText(EnvGet("36pass"), , "ahk_exe CredentialUIBroker.exe")
++	Sleep(1500)
++	ControlSend("{Enter}", , "ahk_exe CredentialUIBroker.exe")
++}
++
++#SuspendExempt
++!o::Suspend  ; Ctrl+Alt+S
++#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index 7ab1ec7..907a45d 100644
+index 8324297..9c88e73 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,24 +7,18 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -95,25 +222,7 @@ index 7ab1ec7..907a45d 100644
  ]
  
  mwm := { __Call: (name, params*) => } ; Ignore requests while mwm isn't ready yet
-@@ -62,7 +50,7 @@ mwm := MiguruWM({
-     tilingMinWidth: 0,
-     tilingMinHeight: 0,
-     tilingInsertion: "last",
--    floatingAlwaysOnTop: false,
-+    floatingAlwaysOnTop: true,
- 
-     focusFollowsMouse: false,
-     mouseFollowsFocus: false,
-@@ -70,7 +58,7 @@ mwm := MiguruWM({
-     followWindowToWorkspace: false,
-     followWindowToMonitor: false,
- 
--    focusWorkspaceByWindow: true,
-+    focusWorkspaceByWindow: false,
- 
-     delays: {
-         retryManage: 100,
-@@ -118,14 +106,14 @@ mod1 := "Alt"
+@@ -92,14 +80,14 @@ Alt::return
  *.::mwm.Set("master-count", { delta: -1 })
  
  *t::mwm.Do("float-window", { value: "toggle" }), mwm.Do("center-window")
@@ -121,7 +230,7 @@ index 7ab1ec7..907a45d 100644
 +
  *q::Reload()
  
- *Enter::mwm.Do("swap-window", { with: "master-or-mru" })
+ *Enter::mwm.Do("swap-window", { with: "master" })
  *Space::mwm.Do("cycle-layout", { value: layouts })
  
 -*vk01::MoveActiveWindow()
@@ -131,7 +240,7 @@ index 7ab1ec7..907a45d 100644
  
  #Hotif GetKeyState(mod1, "P") and GetKeyState("Shift", "P")
  
-@@ -149,7 +137,7 @@ mod1 := "Alt"
+@@ -123,7 +111,7 @@ Alt::return
  *c::try WinClose("A")
  *q::ExitApp()
  
@@ -140,7 +249,7 @@ index 7ab1ec7..907a45d 100644
  *Space::ResetLayout()
  
  ; ..........................................................................}}}
-@@ -181,25 +169,20 @@ GetSHAppFolderPath(hwnd := 0) {
+@@ -155,25 +143,20 @@ GetSHAppFolderPath(hwnd := 0) {
      return res
  }
  
