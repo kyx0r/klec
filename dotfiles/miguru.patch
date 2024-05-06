@@ -169,10 +169,10 @@ index 0000000..a36d39d
 +!o::Suspend  ; Ctrl+Alt+S
 +#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index 8324297..9c88e73 100644
+index 8324297..7fa453b 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
-@@ -7,24 +7,18 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
+@@ -7,24 +7,17 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
  
  #include *i lib\miguru\miguru.ahk
  #include *i lib\Popup.ahk
@@ -197,7 +197,6 @@ index 8324297..9c88e73 100644
 +GroupAdd("MIGURU_MANAGE",                                       " ahk_exe SnippingTool.exe"                                           )
 +GroupAdd("MIGURU_MANAGE",                                       " ahk_exe chrome.exe"                                                 )
 +GroupAdd("MIGURU_MANAGE",                                       " ahk_exe explorer.exe"                                               )
-+GroupAdd("MIGURU_MANAGE",                                       " ahk_exe taskmgr.exe"                                                )
  
 -GroupAdd("MIGURU_IGNORE",                                       " ahk_exe msrdc.exe"                                                  )
 -GroupAdd("MIGURU_IGNORE",    "WinUI Desktop"                    " ahk_exe PowerToys.Peek.UI.exe"    " ahk_class WinUIDesktopWin32WindowClass")
@@ -207,7 +206,7 @@ index 8324297..9c88e73 100644
  
  if !IsSet(MiguruWM) {
      prog := RegExReplace(A_ScriptName, "i)\.ahk$", ".exe")
-@@ -36,14 +30,8 @@ if !IsSet(MiguruWM) {
+@@ -36,14 +29,8 @@ if !IsSet(MiguruWM) {
  
  layouts := [
      TallLayout(),
@@ -222,7 +221,7 @@ index 8324297..9c88e73 100644
  ]
  
  mwm := { __Call: (name, params*) => } ; Ignore requests while mwm isn't ready yet
-@@ -92,14 +80,14 @@ Alt::return
+@@ -92,14 +79,14 @@ Alt::return
  *.::mwm.Set("master-count", { delta: -1 })
  
  *t::mwm.Do("float-window", { value: "toggle" }), mwm.Do("center-window")
@@ -240,7 +239,7 @@ index 8324297..9c88e73 100644
  
  #Hotif GetKeyState(mod1, "P") and GetKeyState("Shift", "P")
  
-@@ -123,7 +111,7 @@ Alt::return
+@@ -123,7 +110,7 @@ Alt::return
  *c::try WinClose("A")
  *q::ExitApp()
  
@@ -249,7 +248,7 @@ index 8324297..9c88e73 100644
  *Space::ResetLayout()
  
  ; ..........................................................................}}}
-@@ -155,25 +143,20 @@ GetSHAppFolderPath(hwnd := 0) {
+@@ -155,25 +142,20 @@ GetSHAppFolderPath(hwnd := 0) {
      return res
  }
  
