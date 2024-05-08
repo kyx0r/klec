@@ -169,7 +169,7 @@ index 0000000..a36d39d
 +!o::Suspend  ; Ctrl+Alt+S
 +#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index 8324297..7fa453b 100644
+index 8324297..6e456bb 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,24 +7,17 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -221,7 +221,15 @@ index 8324297..7fa453b 100644
  ]
  
  mwm := { __Call: (name, params*) => } ; Ignore requests while mwm isn't ready yet
-@@ -92,14 +79,14 @@ Alt::return
+@@ -53,7 +40,6 @@ mwm := MiguruWM({
+         duration: 500,
+         showIcon: true,
+     }, opts)),
+-    focusIndicator: HazeOver(),
+     ;; …see https://github.com/imawizard/MiguruWM/wiki/Configuration
+ })
+ 
+@@ -92,14 +78,14 @@ Alt::return
  *.::mwm.Set("master-count", { delta: -1 })
  
  *t::mwm.Do("float-window", { value: "toggle" }), mwm.Do("center-window")
@@ -239,7 +247,7 @@ index 8324297..7fa453b 100644
  
  #Hotif GetKeyState(mod1, "P") and GetKeyState("Shift", "P")
  
-@@ -123,7 +110,7 @@ Alt::return
+@@ -123,7 +109,7 @@ Alt::return
  *c::try WinClose("A")
  *q::ExitApp()
  
@@ -248,7 +256,7 @@ index 8324297..7fa453b 100644
  *Space::ResetLayout()
  
  ; ..........................................................................}}}
-@@ -155,25 +142,20 @@ GetSHAppFolderPath(hwnd := 0) {
+@@ -155,25 +141,20 @@ GetSHAppFolderPath(hwnd := 0) {
      return res
  }
  
