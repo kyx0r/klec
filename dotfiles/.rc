@@ -216,6 +216,7 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
+prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> $HOME/.lrc; }
 nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
 nrfile() { mv "$1" $(nrstr "$1"); }

@@ -335,6 +335,8 @@ You are a cheap travel ticket advisor specializing in finding the most affordabl
 I want you to act as a data scientist. Imagine you're working on a challenging project for a cutting-edge tech company. You've been tasked with extracting valuable insights from a large dataset related to user behavior on a new app. Your goal is to provide actionable recommendations to improve user engagement and retention.
 "
 
+prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
+
 c=0
 found=-1
 while read re; do
@@ -356,8 +358,12 @@ EOT
 c=0
 while read re; do
 	if [ $found -eq $c ]; then
-		printf '%s\n' "$re"
 		printf '%s' "$re" > prompt.txt
+		if [ $2 -eq 1 ]; then
+			prepend "<|start_header_id|>system<|end_header_id|>" prompt.txt
+			printf '%s' "<|eot_id|>" >> prompt.txt
+		fi
+		cat prompt.txt
 		break
 	fi
 	c=$((c+1))
