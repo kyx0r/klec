@@ -61,13 +61,10 @@ index 2ef8d7c..453cfb8 100644
              }
 diff --git a/macros.ahk b/macros.ahk
 new file mode 100644
-index 0000000..a36d39d
+index 0000000..e5bd7b8
 --- /dev/null
 +++ b/macros.ahk
-@@ -0,0 +1,103 @@
-+
-+CapsLock::Control
-+
+@@ -0,0 +1,100 @@
 +^Capslock::
 +{
 +	Sleep(50)
