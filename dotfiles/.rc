@@ -1,9 +1,9 @@
 #!/bin/sh
 export EXINIT="se noled|tp Oo{
 }kA
-	|tp 1G2\"qY2j\"Qy$|tp oA {jo}koa|tp 0\"wy$|tp oa()i|tp 0\"ey$|tp oa\"\"i|tp 0\"ry$|tp oI/*A*/|tp 0\"aY|tp oi/*A*/|tp 0\"sy$|tp o/\/\*
+	|tp 1G2\"qY2j\"Qy$|tp oA {jo}koa|tp 0\"wy$|tp o:e \!p \$c|tp 0\"ey$|tp oa\"\"i|tp 0\"ry$|tp oI/*A*/|tp 0\"aY|tp oi/*A*/|tp 0\"sy$|tp o/\/\*
 2x/\*\/
-2x|tp 02k2\"dY2j\"Dy$|tp o>\%<<\$\%<<|tp 0\"xy$|tp o:\!cp \% \%_\\|w\\|\!git diff --no-index \%_ \%|tp 0\"fy$|tp o:ac  \\|tp i\\|u\\|ac3ls|tp 0\"cy$|inc (^[\!.git]+[^\\/]+$)|tp 50u|se led"
+2x|tp 02k2\"dY2j\"Dy$|tp o>\%<<\$\%<<|tp 0\"xy$|tp o:\!cp \% \%_\\|w\\|\!git diff --no-index \%_ \%|tp 0\"ly$|tp o:ac  \\|tp i\\|u\\|ac3ls|tp 0\"cy$|tp o:cd \!p \$c|tp 0\"fy$|inc (^[\!.git]+[^\\/]+$)|tp 50u|se led"
 
 export KISS_SU=su
 export KISS_PATH=
@@ -216,7 +216,6 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
-prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> $HOME/.lrc; }
 nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
 nrfile() { mv "$1" $(nrstr "$1"); }
