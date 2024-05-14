@@ -284,21 +284,21 @@ cdsplit() {
 }
 gg() {
 	cdsplit
-	eval "var=\$c$last"
+	eval "var=\$c${last}"
 	case $PWD in "$var") CDSTACK="c${last}${CDSTACK%c${last}}"; cdsplit; ;; esac
-	eval "var=\$c$last"
+	eval "var=\$c${last}"
 	export PS1="\[\e[1;31m\]\A\[\e[m\]$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$var"
 	export CDSTACK="c${last}${CDSTACK%c${last}}"
 }
 bb() {
 	cdsplit
-	eval "var=\$c$first"
-	case $PWD in "$var") CDSTACK="${CDSTACK##c$first}c${first}"; cdsplit; ;; esac
-	eval "var=\$c$first"
+	eval "var=\$c${first}"
+	case $PWD in "$var") CDSTACK="${CDSTACK##c${first}}c${first}"; cdsplit; ;; esac
+	eval "var=\$c${first}"
 	export PS1="\[\e[1;31m\]\A\[\e[m\]$HOST_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$var"
-	export CDSTACK="${CDSTACK##c$first}c${first}"
+	export CDSTACK="${CDSTACK##c${first}}c${first}"
 }
 fd() {
 	sarg=""
