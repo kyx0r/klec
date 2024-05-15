@@ -326,6 +326,7 @@ fd() {
 		cnt=$((cnt+1))
 		if [ "$sarg" ]; then
 			if [ -z "$line" ]; then
+				case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
 				line="$sarg | $@"
 				replace "$HOME/links" $cnt "$line" && fd
 				return
