@@ -92,6 +92,7 @@ gcr() {
 	fi
 }
 gtossh() { echo "git@${1}:$(git remote get-url --push origin | grep -E -o '[^/]*.[^/]*$')"; }
+gcmf() { git commit -m "$(git status | grep 'modified:' | cut -d ' ' -f4-): $*"; }
 
 # void linux
 alias xq='xbps-query -R -s'
