@@ -178,6 +178,7 @@ alias gin='grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-i
 alias mdl='yt-dlp -x'
 alias psa='ps aux'
 alias pargs='ps -o args='
+alias virtm='virt-viewer -f --hotkeys=toggle-fullscreen=shift+f11,release-cursor=shift+f12'
 alias j='jobs'
 alias q='fg'
 alias 1q='fg %1'
