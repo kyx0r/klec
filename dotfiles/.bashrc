@@ -29,6 +29,7 @@ bind 'set vi-cmd-mode-string \1\e[4 q\2'
 export HISTCONTROL=erasedups:ignorespace
 export HISTSIZE=-1
 export HISTFILESIZE=-1
+export PROMPT_COMMAND="history -n; history -a"
 shopt -s histappend
 
 complete -cf r
