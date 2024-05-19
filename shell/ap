@@ -7,7 +7,7 @@ if [ $# -eq 1 ]; then
 	for file in $str; do
 		echo "$file"
 		fvp -v - "$file"
-		if [ $? -ne 0 ]; then
+		if [ $? -eq 130 ]; then
 			break
 		fi
 	done
@@ -17,7 +17,7 @@ fi
 for file in "$@"; do
 	echo "$file"
 	fvp -v - "$file"
-	if [ $? -ne 0 ]; then
+	if [ $? -eq 130 ]; then
 		break
 	fi
 done
