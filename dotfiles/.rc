@@ -92,10 +92,10 @@ gcr() {
 	fi
 }
 gtossh() { echo "git@${1}:$(git remote get-url --push origin | grep -E -o '[^/]*.[^/]*$')"; }
-gcmf() { git commit -m "$(git status | grep 'modified:' | cut -d ' ' -f4- | sed -n "$2p" | tr '\n' ':') $1"; }
+gcmf() { git commit -m "$(git status | grep -E 'modified:|new file:|deleted:' | cut -d ' ' -f4- | sed -n "$2p" | tr '\n' ':') $1"; }
 gcmfs() {
 	MSG=""
-	inf "$(git status | grep 'modified:' | cut -d ' ' -f4- | sed -n "$2p")"\
+	inf "$(git status | grep -E 'modified:|new file:|deleted:' | cut -d ' ' -f4- | sed -n "$2p")"\
 	"printf '%s: '" "; read i; MSG=\$(printf '%b\n' \"\$MSG\\n\$p: \$i\")"
 	git commit -m "$1
 $MSG"
