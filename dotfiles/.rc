@@ -363,7 +363,10 @@ fd() {
 
 	done < "$HOME/links"
 	export FDMAXLEN
-	[ "$sarg" ] && echo "$sarg | $@" >> "$HOME/links" && fd;
+	if [ "$sarg" ]; then
+		case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
+		echo "$sarg | $@" >> "$HOME/links" && fd;
+	fi
 }
 alias f='fd'
 ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
