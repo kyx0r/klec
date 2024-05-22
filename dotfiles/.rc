@@ -236,6 +236,7 @@ nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
 imgs() { convert -strip -quality "$1" "$2" "_$2"; }
+tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.me:"$2"; } #of = download
 sif() { scp -r root@kyryl.me:"$@"; } #if = upload
