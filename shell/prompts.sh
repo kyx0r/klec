@@ -359,7 +359,7 @@ c=0
 while read re; do
 	if [ $found -eq $c ]; then
 		printf '%s' "$re" > prompt.txt
-		if [ $2 -eq 1 ]; then
+		[ $2 ] && if [ $2 -eq 1 ]; then
 			prepend "<|start_header_id|>system<|end_header_id|>" prompt.txt
 			printf '%s' "<|eot_id|>" >> prompt.txt
 		fi
