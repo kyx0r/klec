@@ -174,7 +174,7 @@ index 0000000..9993c77
 +!o::Suspend  ; Ctrl+Alt+S
 +#SuspendExempt False
 diff --git a/mwm.ahk b/mwm.ahk
-index 8324297..6e456bb 100644
+index 8324297..e069d12 100644
 --- a/mwm.ahk
 +++ b/mwm.ahk
 @@ -7,24 +7,17 @@ KeyHistory(0), ListLines(false), ProcessSetPriority("H")
@@ -243,7 +243,8 @@ index 8324297..6e456bb 100644
  *q::Reload()
  
  *Enter::mwm.Do("swap-window", { with: "master" })
- *Space::mwm.Do("cycle-layout", { value: layouts })
+-*Space::mwm.Do("cycle-layout", { value: layouts })
++*s::mwm.Do("cycle-layout", { value: layouts })
  
 -*vk01::MoveActiveWindow()
 -*vk02::ResizeActiveWindow()
