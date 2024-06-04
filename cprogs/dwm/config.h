@@ -67,7 +67,7 @@ static const char *chvt[]  = { "chvt", "1", NULL };
 
 static Key keys[] = {
 	/* modifier                     key        function        argument */
-	{ MODKEY,                       XK_d,      spawn,          {.v = dmenucmd } },
+	{ MODKEY,                       XK_x,      spawn,          {.v = dmenucmd } },
 	{ MODKEY,                       XK_t,      spawn,          {.v = termcmd } },
 	{ MODKEY,                       XK_F1,     spawn,          {.v = chvt } },
 	{ MODKEY,                       XK_F2,     spawn,          {.v = slstatus } },
@@ -75,8 +75,8 @@ static Key keys[] = {
 	{ MODKEY,                       XK_F3,     spawn,          {.v = scrot } },
 	{ MODKEY|ShiftMask,             XK_t,      ignorekeys,     {.i = 6 } },
 	{ MODKEY,                       XK_b,      togglebar,      {0} },
-	{ MODKEY,                       XK_x,      focusstack,     {.i = +1 } },
-	{ MODKEY|ShiftMask,             XK_x,      focusstack,     {.i = -1 } },
+	{ MODKEY,                       XK_j,      focusstack,     {.i = +1 } },
+	{ MODKEY,                       XK_k,      focusstack,     {.i = -1 } },
 	{ MODKEY|ControlMask,           XK_i,      incnmaster,     {.i = +1 } },
 	{ MODKEY|ShiftMask,             XK_i,      incnmaster,     {.i = -1 } },
 	{ MODKEY,                       XK_h,      setmfact,       {.f = -0.05} },
