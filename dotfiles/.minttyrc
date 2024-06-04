@@ -5,3 +5,6 @@ CursorType=block
 FontWeight=500
 Bidi=0
 Scrollbar=none
+ZoomShortcuts=yes
+ComposeKey=off
+CtrlShiftShortcuts=yes
