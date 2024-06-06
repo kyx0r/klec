@@ -5,7 +5,7 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-if [ -f ~/.rc ]; then
+[ -z $ENVSET ] && if [ -f ~/.rc ]; then
 	. ~/.rc
 fi
 
