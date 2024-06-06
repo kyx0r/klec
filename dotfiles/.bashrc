@@ -5,8 +5,8 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-[ -z $ENVSET ] && if [ -f ~/.rc ]; then
-	. ~/.rc
+[ -z $ENVSET ] && if [ -f ~/.profile ]; then
+	. ~/.profile
 fi
 
 set -o vi
