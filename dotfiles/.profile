@@ -1,4 +1,3 @@
 #!/bin/sh
-export ENVSET=1
+export ENV=~/.rc
 source ~/.rc
-unset ENVSET

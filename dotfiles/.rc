@@ -1,4 +1,5 @@
 #!/bin/sh
+export ENVSET=1
 export EXINIT="se noled|tp Oo{
 }kA
 	|tp 1G2\"qY2j\"Qy$|tp oA {jo}koa|tp 0\"wy$|tp o:e \!p \$c|tp 0\"ey$|tp oa\"\"i|tp 0\"ry$|tp oI/*A*/|tp 0\"aY|tp oi/*A*/|tp 0\"sy$|tp o/\/\*
@@ -178,7 +179,7 @@ alias va='valgrind --log-file=valog'
 alias cgr='valgrind --tool=callgrind'
 alias tmd='mount -o size=256G,noatime -t tmpfs tmpfs'
 alias b='./build.sh && ./build.sh install'
-alias rc='source $HOME/.profile'
+alias rc='source $HOME/.rc'
 alias xo='xclip -selection clipboard'
 alias xp='xclip -o'
 alias xsleep='xset dpms force standby'
@@ -461,3 +462,4 @@ klecinst() {
 
 [ -f "$HOME/links" ] && fd &> /dev/null;
 [ -f "$HOME/.lrc" ] && source $HOME/.lrc;
+unset ENVSET
