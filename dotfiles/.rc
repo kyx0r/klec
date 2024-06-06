@@ -43,7 +43,6 @@ alias gco='git checkout'
 alias gcom='git checkout main || git checkout master'
 alias gd='git diff'
 alias gds='git diff --staged'
-alias gdh='git diff HEAD~'
 alias gf='git fetch'
 alias gl='git log --graph --oneline'
 alias glg="git log --graph --decorate --stat"
@@ -75,6 +74,7 @@ alias gca='g cherry-pick --abort'
 alias gfp='git format-patch'
 alias gam='git am'
 alias gt='git tag'
+gdh() { git diff HEAD~${@}; }
 gap() { git apply -3 < $1; }
 grsr() { git reset $1 && rm $1; }
 gct() { git checkout tags/$1; }
