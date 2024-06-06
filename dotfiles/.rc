@@ -43,6 +43,7 @@ alias gco='git checkout'
 alias gcom='git checkout main || git checkout master'
 alias gd='git diff'
 alias gds='git diff --staged'
+alias gdh='git diff HEAD~'
 alias gf='git fetch'
 alias gl='git log --graph --oneline'
 alias glg="git log --graph --decorate --stat"
