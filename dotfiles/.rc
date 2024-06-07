@@ -98,7 +98,7 @@ gtossh() { echo "git@${1}:$(git remote get-url --push origin | grep -E -o '[^/]*
 gcmf() { git commit -m "$(git diff --name-only --cached | sed -n "$2p" | tr '\n' ':') $1"; }
 gcmfs() {
 	MSG=""
-	inf "$(git diff --name-only --cached | sed -n "$2p")"\
+	ffor "$(git diff --name-only --cached | sed -n "$2p")"\
 	"printf '%s: '" "; read i; MSG=\$(printf '%b\n' \"\$MSG\\n\$p: \$i\")"
 	git commit -m "$1
 $MSG"
@@ -205,6 +205,7 @@ alias 9q='fg %9'
 alias me='ssh kyryl.me'
 alias wget='curl -O'
 alias fs='stat'
+alias ctl='systemctl'
 
 # llama.cpp stuff
 llm3() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
@@ -249,9 +250,10 @@ sif() { scp -r root@kyryl.me:"$@"; } #if = upload
 scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 p() { printf "$@"; }
-# inf() usage: inf "path/any string" "cmd" "extra opts"
-inf() { IFS="
+# ffor() usage: inf "path/any string" "cmd" "extra opts"
+ffor() { IFS="
 "; for p in $1; do eval "$2 \$p $3"; done }
+inf() { while :; do "$@"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
 	dir=$(find -type d -regex $reg); echo "$dir"  | grep -n -E . && read i;
