@@ -233,6 +233,7 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
+randmac() { ip link set dev $1 address $(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//'); }
 enc() { openssl enc -aes-256-cbc -pbkdf2 -iter 20000 -in "$1" -out "$1.enc"; }
 dec() { openssl enc -d -aes-256-cbc -pbkdf2 -iter 20000 -in "$1"; }
 theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> $HOME/.lrc; }
