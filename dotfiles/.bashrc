@@ -32,7 +32,7 @@ export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bhist
 export HISTCONTROL=ignoredups
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-stty -ixon
+stty -ixon &> /dev/null
 
 # Case-insensitive globbing (used in pathname expansion)
 shopt -s nocaseglob;
