@@ -203,6 +203,8 @@ alias 7q='fg %7'
 alias 8q='fg %8'
 alias 9q='fg %9'
 alias me='ssh kyryl.me'
+alias wget='curl -O'
+alias fs='stat'
 
 # llama.cpp stuff
 llm3() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
