@@ -11,7 +11,7 @@ fi
 
 set -o vi
 bind -m vi-insert "\C-l":clear-screen
-bind '"kj":vi-movement-mode'
+#bind '"kj":vi-movement-mode'
 
 # SET THE MODE STRING AND CURSOR TO INDICATE THE VIM MODE
 #   FOR THE NUMBER AFTER `\e[`:
@@ -33,3 +33,12 @@ export HISTFILE=~/.bhist
 export HISTCONTROL=ignoredups
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 stty -ixon
+
+# Case-insensitive globbing (used in pathname expansion)
+shopt -s nocaseglob;
+# Correct spelling errors in arguments supplied to cd
+shopt -s cdspell;
+# Autocorrect on directory names to match a glob.
+shopt -s dirspell 2> /dev/null
+# Turn on recursive globbing (enables ** to recurse all directories)
+shopt -s globstar 2> /dev/null
