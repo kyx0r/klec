@@ -189,7 +189,8 @@ alias gmk='grub-mkconfig -o /boot/grub/grub.cfg'
 alias gin='grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=GRUB'
 alias mdl='yt-dlp -x'
 alias psa='ps aux'
-alias pargs='ps -o args='
+alias psx='ps aux | grep'
+alias ptrace='strace -p'
 alias virtm='virt-viewer -f --hotkeys=toggle-fullscreen=shift+f11,release-cursor=shift+f12'
 alias j='jobs'
 alias q='fg'
@@ -235,6 +236,8 @@ $1<|im_end|>
 <|im_start|>assistant
 " -m "$2"; }
 
+trace() { strace -p $(pidof $@); }
+args() { ps -o args= $(pidof $@); }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 fdate() { case $1 in *.*) mv $1 "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv $1 "$1_$(date '+%Y-%m-%d')"; ;; esac; }
 fcat() { printf '%b%s%b' "cat <<\\\\EOF > $1\n" "$(cat $1)" "\nEOF\n"; }
