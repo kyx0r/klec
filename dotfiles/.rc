@@ -269,6 +269,10 @@ sd() {
 fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
+calc() {
+	in="$(echo " $*" | sed -e 's/\[/(/g' -e 's/\]/)/g')";
+	gawk -M -v PREC=201 -M 'BEGIN {printf("%.60g\n",'"${in-0}"')}' < /dev/null
+}
 cdls() {
 	export PS1="\[\e[1;31m\]\A\[\e[m\]$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$@" && l;
