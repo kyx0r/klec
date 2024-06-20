@@ -366,6 +366,7 @@ while read re; do
 			printf '%s' "<|eot_id|>" >> prompt.txt
 		fi
 		cat prompt.txt
+		echo ""
 		break
 	fi
 	c=$((c+1))
