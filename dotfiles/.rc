@@ -157,6 +157,7 @@ alias mc='make clean'
 alias mu='make uninstall'
 
 # random progs
+alias date='date +"%Y-%m-%d %H:%M:%S"'
 alias sha='sha256sum'
 alias reset='stty sane && reset'
 alias re='grep --color=auto'
