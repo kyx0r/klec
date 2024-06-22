@@ -157,6 +157,7 @@ alias mc='make clean'
 alias mu='make uninstall'
 
 # random progs
+alias llm='source prompts.sh > /dev/null'
 alias date='date +"%Y-%m-%d %H:%M:%S"'
 alias sha='sha256sum'
 alias reset='stty sane && reset'
@@ -211,32 +212,6 @@ alias fs='stat'
 alias ctl='systemctl'
 alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
-
-# llama.cpp stuff
-llm3() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
-<|start_header_id|>user<|end_header_id|>
-" --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
-llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
-### Instruction:
-" --in-suffix "### Response:
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
-llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|im_start|>user" --in-prefix "
-<|im_start|>user
-" --in-suffix "<|im_end|>
-<|im_start|>assistant
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
-llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
-### Instruction:
-$1
-### Response:
-" -m "$2"; }
-llmml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
-Answer to the best of your ability<|im_end|>
-<|im_start|>user
-$1<|im_end|>
-<|im_start|>assistant
-" -m "$2"; }
 
 sdedup() { sort -u "$1" > "$1".tmp && mv -- "$1".tmp "$1"; }
 trace() { strace -p $(pidof $@); }
