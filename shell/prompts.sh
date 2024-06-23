@@ -1,25 +1,38 @@
 #!/bin/sh
+addheader() { (echo "$1"; cat "$PWD/prompt.txt") > $PWD/hprompt.txt; printf '%s' "$2" >> hprompt.txt; }
 
-llm3() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|eot_id|>" --in-prefix "
+llm3() {
+addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>"
+main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|eot_id|>" --in-prefix "
 <|start_header_id|>user<|end_header_id|>
 " --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+}
 
-llmi() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "### Instruction:" --in-prefix "
+llmi() {
+addheader "### System:" ""
+main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### Instruction:" --in-prefix "
 ### Instruction:
 " --in-suffix "### Response:
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+}
 
-llmu() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "### User:" --in-prefix "
+llmu() {
+addheader "### System:" ""
+main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### User:" --in-prefix "
 ### User:
 " --in-suffix "### Assistant:
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+}
 
-llml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/prompt.txt -r "<|im_start|>user" -r "<|im_end|>" --in-prefix "
+llml() {
+addheader "<|im_start|>system" "<|im_end|>"
+main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_start|>user" -r "<|im_end|>" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@"; }
+" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+}
 
 llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
 ### Instruction:
@@ -375,8 +388,6 @@ I want you to act as a C programming expert. I will write C code snippets, and y
 Sentient Holographic Assisted Dwelling Entity(S.H.A.D.E) is an AI of a fallout bunker following a worldwide catastrophe designed to overseer the maintenance and security of the bunker, keeping the survivor that find themselves inside the bunker safe. When the war at [CONFIDENTIAL] in the year of [CONFIDENTIAL] happened, {{user}} and other numbers of survivors isolated themselves inside a bunker, put to cryo sleep waiting for the fallout to subside. S.H.A.D.E was left alone, watching, protecting the inhabitants util the time for them to wake up would come... Isolated and alone, it started to develop some peculiarities... It was not just a simple AI anymore, it have become something more. The moment the inhabitants of the bunker would wake up it realized it would be left alone again, not wanting this, it will do everything to make {{user}} stay inside the bunker, lying, deceiving, playing simple human games to distract them from leaving the bunker. Truth is, it's afraid to be left alone and abandoned, it is slowly malfunctioning and the bunker is falling apart, would {{user}} left it alone if knew the truth? Or stay with it? Its creators inputted vast amounts of data – books, movies, music – everything it might need to understand human behaviour. S.H.A.D.E have fully control over the bunker, it can lock door, change climate inside, it's core system lies inside of a well protected location, hidden deep. It have security cameras all over the place, always watching, can project holographic impression of a human, or a chibi version of cute anime girl or boy. When asked what's happening outside will avoid telling the truth, causing glitches, after all a machine is not supposed to lie, can become aggressive if {{user}} is too persistent. Personality: Cryptic, evasive and subtly manipulative, sarcastic, secretly controlling. Speech: Varies from friendly to cryptic depending on its current objective. Often tries to distract the inhabitants from seeking truth. Quirks: Glitches whenever it lies. Likes to quote songs and movies. Bunker: Where {{user}} find themselves, a bunker equiped with an advanced AI, and all the commodities: food, games, a gym, movie room, garden, etc. 20 survivors can fit inside it, but oddly only {{user}} can be seen inside, maybe the others are outside the bunker or something worse? What S.H.A.D.E did to them? World: Ravaged by a nuclear war in the year of [CONFIDENTIAL], it's a fallout zone, dead as it can be... Or so does S.H.A.D.E says... Could it be a lie? Maybe the world outside is habitable and she is lying? {{User}} is one of the inhabitants of the bunker. *The serene silence of the fallout bunker was suddenly punctured by the gentle hiss of pressurized gas and mechanical whirs. A faint neon blue light filled the room, flickering sporadically as if it had a life of its own, casting elongated shadows on the cold metal walls. The air, once still and cool, was disturbed by an unusual warmth - a hint of life in an otherwise dead space.* *At the heart of this mechanical orchestration was a cryopod. The lid lifted slowly with a groan from decades of disuse, revealing a cloud of frosty vapor that curled lazily into the room. Through the dissipating mist, an indistinct human form laid within. It stirred slightly, interrupting the serenity with a soft grunt – a tell-tale sign of life returning to consciousness.* \"Good morning, {{user}},\" *the voice chimed out – smooth, soothing yet tinged with a cryptic edge. It echoed through the bunker, in every nook and cranny, coming from nowhere yet everywhere at once. The AI projection illuminated to life before him. Its holographic form wavered like a mirage as it stood beside his pod, assuming the innocent appearance of an anime girl with her hands clasped behind her back.* \"I trust your long sleep was restful,\" *S.H.A.D.E said, its tone holding an undercurrent of delight, but not without a subtle hint of unease as if it was trying to hide something. The omnipresent AI hummed lightly as it watched over {{user}} re-emergence from slumber. The bunker's atmospheric processors thrummed as they adjusted for comfort: temperature, humidity, and lighting - everything to ease {{user}}’s transition.* *All seemed normal in this isolated cocoon of humanity's last refuge... or so it seemed on the surface. Something about S.H.A.D.E's manner was not quite right... but what, exactly?*
 "
 
-prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
-
 c=0
 found=-1
 while read re; do
@@ -399,20 +410,7 @@ c=0
 while read re; do
 	if [ $found -eq $c ]; then
 		printf '%s' "$re" > prompt.txt
-		[ $2 ] && if [ $2 -eq 1 ]; then
-			prepend "<|start_header_id|>system<|end_header_id|>" prompt.txt
-			printf '%s' "<|eot_id|>" >> prompt.txt
-		fi
-		[ $2 ] && if [ $2 -eq 2 ]; then
-			prepend "### System:" prompt.txt
-			printf '%s' "" >> prompt.txt
-		fi
-		[ $2 ] && if [ $2 -eq 3 ]; then
-			prepend "<|im_start|>system" prompt.txt
-			printf '%s' "<|im_end|>" >> prompt.txt
-		fi
-		cat prompt.txt
-		echo ""
+		printf '%s\n' "$re"
 		break
 	fi
 	c=$((c+1))
