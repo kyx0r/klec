@@ -213,6 +213,8 @@ alias ctl='systemctl'
 alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
 
+cap() { file=$1; shift; script $file -c "sh -i -c \"$*\""; }
+ansi2txt() { cat $1 | sed -r "s/\x1B\[([0-9]{1,2}(;[0-9]{1,2})?)?[mGK]//g" | tr -dc '[[:print:]]\n'; }
 sdedup() { sort -u "$1" > "$1".tmp && mv -- "$1".tmp "$1"; }
 trace() { strace -p $(pidof $@); }
 args() { ps -o args= $(pidof $@); }
