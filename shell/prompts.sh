@@ -1,6 +1,20 @@
 #!/bin/sh
 addheader() { (echo "$1"; cat "$PWD/prompt.txt") > $PWD/hprompt.txt; printf '%s' "$2" >> hprompt.txt; }
 
+llmload() {
+file=$1
+shift
+cat <<EOF > /tmp/expect
+set inputf [exec cat $file]
+spawn sh -i -c "$*"
+EOF
+cat <<\EOF >> /tmp/expect
+send -- "${inputf}"
+interact
+EOF
+expect -f /tmp/expect
+}
+
 llm3() {
 addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>"
 main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|eot_id|>" --in-prefix "
