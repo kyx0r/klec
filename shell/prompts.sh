@@ -5,11 +5,9 @@ llmload() {
 file=$1
 shift
 cat <<EOF > /tmp/expect
-set inputf [exec cat $file]
 spawn sh -i -c "$*"
-EOF
-cat <<\EOF >> /tmp/expect
-send -- "${inputf}"
+sleep 0.1
+send [exec cat $file]
 interact
 EOF
 expect -f /tmp/expect
