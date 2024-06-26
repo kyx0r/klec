@@ -2,7 +2,14 @@
 addheader() { (echo "$1"; cat "$PWD/prompt.txt") > $PWD/hprompt.txt; printf '%s' "$2" >> hprompt.txt; }
 
 llmload() {
-file=$1
+file="/tmp/$1"
+#sed -e $'s/\e\\[2J//g' \
+#-e $'s/\e\\[H//g' \
+#-e $'s/\e\\[[[:digit:]]*;[[:digit:]]*H/@    /g' -e 'y/@/\n/' \
+#-e $'s/\e\\[K//g' \
+#-e $'s/\r//g' \
+#-e 's/\\/\\\\/g'
+sed -e $'1,4d;$d' $1 > $file
 shift
 cat <<EOF > /tmp/expect
 spawn sh -i -c "$*"
