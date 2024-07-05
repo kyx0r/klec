@@ -167,6 +167,10 @@ ipd() { ip a del "$1" dev "$2"; }
 ipra() { ip route add "$1" via "${1%.*}.$((${1##*.}+1))" dev "$2"; }
 iprd() { ip route del "$1"; }
 
+# ffmpeg
+tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
+fftrim() { ffmpeg -accurate_seek -i "$1" -to "$2" -c:v copy -c:a copy $(funiq "$1"); }
+
 # random progs
 alias llm='source prompts.sh'
 alias date='date +"%Y-%m-%d %H:%M:%S"'
@@ -243,7 +247,6 @@ nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
 path() { export PATH="$@:"$PATH; }
 crop() { convert "$1" -crop "$2" "_$1"; }
 imgs() { convert -strip -quality "$1" "$2" "_$2"; }
-tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.me:"$2"; } #of = download
 sif() { scp -r root@kyryl.me:"$@"; } #if = upload
@@ -382,6 +385,18 @@ alias f='fd'
 ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p &> /dev/null; fi; vi "$@"; }
+
+funiq() {
+	local full_name=$(fullpath "$1")
+	local base_name="${full_name%.*}"
+	local file_ext=".${full_name##*.}"
+	if [ "$file_ext" = ".$full_name" ]; then file_ext=""; fi
+	local count=1
+	while [ -f "$base_name${count}${file_ext}" ]; do
+		((count++))
+	done
+	echo "$base_name${count}${file_ext}"
+}
 
 compr() {
 	FILE=$1
