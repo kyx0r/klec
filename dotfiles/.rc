@@ -245,6 +245,7 @@ nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
 nrfile() { mv "$1" $(nrstr "$1"); }
 neq() { echo "-$(seq -s ' -' $@)"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
+gpass() { tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 12; }
 path() { export PATH="$@:"$PATH; }
 crop() { magick "$1" -crop "$2" "_$1"; }
 imgs() { magick "$1" -strip -quality "$2" "_$1"; }
