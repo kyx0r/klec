@@ -9,7 +9,8 @@ file="/tmp/$1"
 #-e $'s/\e\\[K//g' \
 #-e $'s/\r//g' \
 #-e 's/\\/\\\\/g'
-sed -e $'1,4d;$d' $1 > $file
+ln="$(($(wc -l $1 | cut -d ' ' -f1) - 3))"
+sed -e "1,4d;${ln},\$d;" $1 > $file
 shift
 cat <<EOF > /tmp/expect
 spawn sh -i -c "$*"
