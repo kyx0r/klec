@@ -300,6 +300,7 @@ replace() {
 alias cd='cdls'
 alias v='cd'
 alias vv='cd -'
+alias csc='unset CDSTACK'
 cdsplit() {
 	old_ifs=$IFS
 	IFS=c
@@ -348,6 +349,7 @@ fd() {
 	fi
 	[ $# -ge 1 ] && shift;
 	cnt=0
+	[ "$CDSTACK" ] && echo "$CDSTACK"
 	while IFS= read -r line || [[ -n "$line" ]]; do
 		cnt=$((cnt+1))
 		if [ "$sarg" ]; then
