@@ -23,7 +23,7 @@ expect -f /tmp/expect
 
 llm3() {
 addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>"
-main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|eot_id|>" --in-prefix "
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|eot_id|>" --in-prefix "
 <|start_header_id|>user<|end_header_id|>
 " --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
@@ -31,7 +31,7 @@ main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.c
 
 llmi() {
 addheader "### System:" ""
-main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### Instruction:" --in-prefix "
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### Instruction:" --in-prefix "
 ### Instruction:
 " --in-suffix "### Response:
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
@@ -39,7 +39,7 @@ main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.c
 
 llmu() {
 addheader "### System:" ""
-main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### User:" --in-prefix "
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### User:" --in-prefix "
 ### User:
 " --in-suffix "### Assistant:
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
@@ -47,20 +47,20 @@ main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.c
 
 llml() {
 addheader "<|im_start|>system" "<|im_end|>"
-main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_start|>user" -r "<|im_end|>" --in-prefix "
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_start|>user" -r "<|im_end|>" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
-llmp() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
+llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
 ### Instruction:
 $1
 ### Response:
 " -m "$2"; }
 
-llmml() { main --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
+llmml() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
 Answer to the best of your ability<|im_end|>
 <|im_start|>user
 $1<|im_end|>
