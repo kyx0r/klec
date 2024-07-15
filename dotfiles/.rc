@@ -369,6 +369,13 @@ fd() {
 		eval "export c${cnt}=$p"
 		eval "var=\"$cmd\""
 		alias "$cnt"="$var"
+		len=50
+		if [ ${#p} -gt $len ]; then
+			part=${p##*/}
+			p="${p:0:$len}.../${part:0:$len}"
+		else
+			p="${p:0:$len}"
+		fi
 		var="$cnt $p"
 		[[ ${#var} -gt $FDMAXLEN ]] && FDMAXLEN="${#var}";
 		printf "$cnt $p"
