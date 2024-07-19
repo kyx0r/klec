@@ -162,6 +162,7 @@ alias ipn='ip -brief neigh show'
 alias lsnet='netstat -tulpn'
 alias wip='ipconfig'
 alias wipr='ipconfig //renew'
+alias td='tcpdump'
 ipa() { ip a add "$1" dev "$2"; }
 ipd() { ip a del "$1" dev "$2"; }
 ipra() { ip route add "$1" via "${1%.*}.$((${1##*.}+1))" dev "$2"; }
