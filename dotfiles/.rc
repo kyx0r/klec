@@ -315,6 +315,7 @@ cdsplit() {
 	for last; do true; done
 }
 gg() {
+	[ -z "$CDSTACK" ] && return
 	cdsplit
 	eval "var=\$c${last}"
 	case $PWD in "$var") CDSTACK="c${last}${CDSTACK%c${last}}"; cdsplit; ;; esac
@@ -324,6 +325,7 @@ gg() {
 	export CDSTACK="c${last}${CDSTACK%c${last}}"
 }
 bb() {
+	[ -z "$CDSTACK" ] && return
 	cdsplit
 	eval "var=\$c${first}"
 	case $PWD in "$var") CDSTACK="${CDSTACK##c${first}}c${first}"; cdsplit; ;; esac

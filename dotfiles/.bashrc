@@ -11,6 +11,8 @@ fi
 
 set -o vi
 bind -m vi-insert "\C-l":clear-screen
+bind '"\C-k":"gg\n"'
+bind '"\C-b":"bb\n"'
 #bind '"kj":vi-movement-mode'
 
 # SET THE MODE STRING AND CURSOR TO INDICATE THE VIM MODE
