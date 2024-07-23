@@ -174,6 +174,7 @@ fftrim() { ffmpeg -accurate_seek -i "$1" -to "$2" -c:v copy -c:a copy $(funiq "$
 fframe() { ffmpeg -i "$1" -vf fps=1/5 '%04d.png'; }
 chfps() { ffmpeg -y -i "$1" -vf "setpts=1.25*PTS" -r $2 $(funiq "$1"); } # x > 1 slow down, x < 1 speed up
 nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -shortest $(funiq "$1"); }
+ffchk() { find . -name "$1" -exec sh -c "ffmpeg -v error -i '{}' -map 0:1 -f null - 2>'{}.chk'" \;; }
 
 # random progs
 alias llm='source prompts.sh'
