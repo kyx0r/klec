@@ -237,6 +237,7 @@ cap() { file=$1; shift; script $file -c "sh -i -c \"$*\""; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
 sdedup() { grep -v '^$' "$1" | sort -u > "$1".tmp && mv "$1.tmp" "$1"; }
 trace() { strace -p $(pidof $@); }
+pk() { kill $(ps ax | awk "/$1/ {print \$1}"); }
 args() { ps -o args= $(pidof $@); }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 fdate() { case $1 in *.*) mv $1 "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv $1 "$1_$(date '+%Y-%m-%d')"; ;; esac; }
