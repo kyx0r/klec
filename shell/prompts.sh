@@ -54,18 +54,7 @@ llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache 
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
-llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "Below is an instruction that describes a task. Write a response that appropriately completes the request.
-### Instruction:
-$1
-### Response:
-" -m "$2"; }
-
-llmml() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|im_start|>system
-Answer to the best of your ability<|im_end|>
-<|im_start|>user
-$1<|im_end|>
-<|im_start|>assistant
-" -m "$2"; }
+llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|start_header_id|>system<|end_header_id|>\n$1\n" -m "$2"; }
 
 prompts="\
 Linux Terminal
