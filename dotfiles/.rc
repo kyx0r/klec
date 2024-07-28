@@ -241,6 +241,7 @@ trace() { strace -p $(pidof $@); }
 pk() { kill $(ps ax | awk "/$1/ {print \$1}"); }
 args() { ps -o args= $(pidof $@); }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
+fappend() { mv "$1" "${2}${1}"; }
 fdate() { case $1 in *.*) mv $1 "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv $1 "$1_$(date '+%Y-%m-%d')"; ;; esac; }
 fcat() { printf '%b%s%b' "cat <<\\\\EOF > $1\n" "$(cat $1)" "\nEOF\n"; }
 randmac() { ip link set dev $1 address $(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//'); }
