@@ -30,10 +30,10 @@ llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache 
 }
 
 llmi() {
-addheader "### System:" ""
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### Instruction:" --in-prefix "
-### Instruction:
-" --in-suffix "### Response:
+addheader "<s>[INST]" "[/INST]"
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "</s>" -r "<s>" --in-prefix "
+</s><s>[INST]
+" --in-suffix "[/INST]
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
@@ -47,14 +47,14 @@ llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache 
 
 llml() {
 addheader "<|im_start|>system" "<|im_end|>"
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_start|>user" -r "<|im_end|>" --in-prefix "
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_end|>" --in-prefix "
 <|im_start|>user
 " --in-suffix "<|im_end|>
 <|im_start|>assistant
 " --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
-llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "<|start_header_id|>system<|end_header_id|>\n$1\n" -m "$2"; }
+llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "$1\n" -m "$2"; }
 
 prompts="\
 Linux Terminal
