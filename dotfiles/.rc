@@ -177,6 +177,7 @@ nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_ra
 ffchk() { find . -name "$1" -exec sh -c "ffmpeg -v error -i '{}' -map 0:1 -f null - 2>'{}.chk'" \;; }
 
 # random progs
+alias zdel='find . -size 0 -print -delete'
 alias llm='source prompts.sh'
 alias date='date +"%Y-%m-%d %H:%M:%S"'
 alias sha='sha256sum'
