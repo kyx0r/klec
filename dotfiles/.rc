@@ -172,6 +172,7 @@ iprd() { ip route del "$1"; }
 tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
 fftrim() { ffmpeg -accurate_seek -i "$1" -to "$2" -c:v copy -c:a copy $(funiq "$1"); }
 fframe() { ffmpeg -i "$1" -vf fps=1/5 '%04d.png'; }
+1frame() { ffmpeg -i "$1" -vframes:v 1 "${1%.*}.png"; }
 chfps() { ffmpeg -y -i "$1" -vf "setpts=1.25*PTS" -r $2 $(funiq "$1"); } # x > 1 slow down, x < 1 speed up
 nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -shortest $(funiq "$1"); }
 ffchk() { ffmpeg -loglevel verbose -i "$1" -map 0:a -f null -; }
@@ -240,7 +241,7 @@ cap() { file=$1; shift; script $file -c "sh -i -c \"$*\""; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
 sdedup() { grep -v '^$' "$1" | sort -u > "$1".tmp && mv "$1.tmp" "$1"; }
 trace() { strace -p $(pidof $@); }
-pk() { kill $(ps ax | awk "/$1/ {print \$1}"); }
+pk() { kill $2 $(ps ax | awk "/$1/ {print \$1}"); }
 args() { ps -o args= $(pidof $@); }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 fappend() { mv "$1" "${2}${1}"; }
