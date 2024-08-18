@@ -22,36 +22,35 @@ expect -f /tmp/expect
 }
 
 llm3() {
-addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>"
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|eot_id|>" --in-prefix "
-<|start_header_id|>user<|end_header_id|>
-" --in-suffix "<|eot_id|><|start_header_id|>assistant<|end_header_id|>
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>\n"
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+-r "<|eot_id|>" -r "<|eot_id|>\n" \
+--in-prefix "<|start_header_id|>user<|end_header_id|>\n" --in-suffix "<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>\n" \
+--multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
 llmi() {
-addheader "<s>[INST]" "[/INST]"
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "</s>" -r "<s>" --in-prefix "
-</s><s>[INST]
-" --in-suffix "[/INST]
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+addheader "<s>[INST]" "[/INST]\n"
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+-r "</s>" -r "<s>" \
+--in-prefix "\n</s><s>[INST]\n" --in-suffix "[/INST]\n" \
+--multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
 llmu() {
-addheader "### System:" ""
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "### User:" --in-prefix "
-### User:
-" --in-suffix "### Assistant:
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+addheader "### System:" "\n"
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+-r "### User:" -r "### User:\n" \
+--in-prefix "\n### User:\n" --in-suffix "### Assistant:\n" \
+--multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
 llml() {
-addheader "<|im_start|>system" "<|im_end|>"
-llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt -r "<|im_end|>" --in-prefix "
-<|im_start|>user
-" --in-suffix "<|im_end|>
-<|im_start|>assistant
-" --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+addheader "<|im_start|>system" "<|im_end|>\n"
+llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+-r "<|im_end|>" -r "<|im_end|>\n" \
+--in-prefix "\n<|im_start|>user\n" --in-suffix "<|im_end|>\n<|im_start|>assistant\n" \
+--multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
 llmp() { llama-cli --log-disable --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "$1\n" -m "$2"; }
