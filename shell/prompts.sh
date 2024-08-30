@@ -2,7 +2,7 @@
 addheader() { (echo "$1"; cat "$PWD/prompt.txt") > $PWD/hprompt.txt; printf '%s' "$2" >> hprompt.txt; }
 
 llmload() {
-file="/tmp/$1"
+file="/tmp/$(basename $1)"
 #sed -e $'s/\e\\[2J//g' \
 #-e $'s/\e\\[H//g' \
 #-e $'s/\e\\[[[:digit:]]*;[[:digit:]]*H/@    /g' -e 'y/@/\n/' \
