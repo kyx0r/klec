@@ -98,6 +98,7 @@ gcmfs() {
 	git commit -m "$1
 $MSG"
 }
+gpfix() { gal; gds > "$1"; grs; ga "$1"; gcmf "fix"; grh; }
 
 # void linux
 alias xq='xbps-query -R -s'
