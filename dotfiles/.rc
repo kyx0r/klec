@@ -498,7 +498,7 @@ klecinst() {
 		exec="$exec echo '$3' | sudo -S -k sudo sed -i 's/^#\?PermitRootLogin .*/PermitRootLogin yes/' /etc/ssh/sshd_config &&"
 		exec="$exec echo '$3' | sudo -S -k sudo service sshd restart &&"
 	fi
-	exec="$exec tar -xf ~/klec.tar.gz &&"
+	exec="$exec rm -rf ~/klec && tar -xf ~/klec.tar.gz &&"
 	exec="$exec cd ~/klec && sh install.sh"
 	passh -p $pass ssh $1 $exec
 }
