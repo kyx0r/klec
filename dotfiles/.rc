@@ -403,6 +403,7 @@ alias f='fd'
 ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p &> /dev/null; fi; vi "$@"; }
+x() { EXINIT="${EXINIT}|fd" vi "$@"; }
 
 funiq() {
 	local full_name=$(fullpath "$1")
