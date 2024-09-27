@@ -89,6 +89,12 @@ gcr() {
 		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
 	fi
 }
+gcb() {
+	git clone --single-branch "$@"
+	if [ $# -eq 1 ]; then
+		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
+	fi
+}
 gtossh() { echo "git@${1}:$(git remote get-url --push origin | grep -E -o '[^/]*.[^/]*$')"; }
 gcmf() { git commit -m "$(git diff --name-only --cached | sed -n "$2p" | tr '\n' ':') $1"; }
 gcmfs() {
