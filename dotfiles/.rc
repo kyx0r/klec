@@ -1,6 +1,6 @@
 #!/bin/sh
 export ENVSET=1
-export EXINIT=$'se noled|& Oo{\n}kA\n	|& 1G2\"qY2j\"Qy$|& oA {jo}koa|& 0\"wy$|& o:e \!p $c|& 0\"ey$|& oa\"\"i|& 0\"ry$|& oI/*A*/|& 0\"aY|& oi/*A*/|& 0\"sy$|& o/\/\*\n2x/\*\/\n2x|& 02k2\"dY2j\"Dy$|& o>\%<<$\%<<|& 0\"xy$|& o:\!cp \% \%_\\|w\\|\!git diff --no-index \%_ \%|& 0\"ly$|& o:ac  \\|& i\\|ac3ls|& 0\"cy$|& o:cd \!p $c|& 0\"fy$|inc (^[\!.git]+[^\\/]+$)|& 50u|se pac|se led'
+export EXINIT=$'se noled|& Oo{\n}kA\n	|& 1G2\"qY2j\"Qy$|& oA {jo}koa|& 0\"wy$|& o:e \!p $c|& 0\"ey$|& oa\"\"i|& 0\"ry$|& oI/*A*/|& 0\"aY|& oi/*A*/|& 0\"sy$|& o/\/\*\n2x/\*\/\n2x|& 02k2\"dY2j\"Dy$|& o>\%<<$\%<<|& 0\"xy$|& o:\!cp \% \%_\\|w\\|\!git diff --no-index \%_ \%|& 0\"ly$|& o:ac  \\|& i\\|ac3ls|& 0\"cy$|& o:cd \!p $c|& 0\"fy$|inc (^[\!.git]+[^\\/]+$)|u$|1|se pac|se led'
 export KISS_SU=su
 export KISS_PATH=
 KISS_PATH="$HOME/kiss/no-updates"
