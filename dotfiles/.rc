@@ -410,6 +410,7 @@ ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p &> /dev/null; fi; vi "$@"; }
 x() { EXINIT="${EXINIT}|fd" vi "$@"; }
+ix() { EXINIT= vi "$@"; }
 
 funiq() {
 	local full_name=$(fullpath "$1")
