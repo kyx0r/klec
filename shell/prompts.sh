@@ -37,11 +37,11 @@ llama-cli -fa --no-perf --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache 
 --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
-llmu() {
+llma() {
 addheader "### System:" "\n"
 llama-cli -fa --no-perf --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
--r "### User:" -r "### User:\n" \
---in-prefix "\n### User:\n" --in-suffix "### Assistant:\n" \
+-r "### Instruction:" -r "### Instruction:\n" \
+--in-prefix "\n### Instruction:\n" --in-suffix "### Assistant:\n" \
 --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
