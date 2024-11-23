@@ -281,6 +281,7 @@ fup() { curl -F"file=@$@" https://0x0.st/; }
 loc() { find . -name "$@" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $(($exp)); }
+rnm() { arg="$1"; shift; ffor "$(ls)" mv '$(echo $p | sed "$arg")'; }
 cdls() {
 	export PS1="\[\e[1;31m\]\A\[\e[m\]$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$@" && l;
