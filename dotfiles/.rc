@@ -147,10 +147,10 @@ ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; 
 kci() { rm $HOME/.cache/kiss/bin/"$1"* && ki $1; }
 kcd() { cd $(kiss search "$1"*) && echo "$(kiss search "$1"*)"; }
 krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
-kcmv() { git commit -m "$(basename $(pwd)): $* $(cat version)"; }
-kcmvs() { git commit -S -m "$(basename $(pwd)): $* $(cat version)"; }
-kcm() { git commit -m "$(basename $(pwd)): $*"; }
-kcms() { git commit -S -m "$(basename $(pwd)): $*"; }
+kcmv() { dir=$(dirname $(git diff --name-only --cached | head -n1))
+git commit -m "$(basename ${dir}): $* $(cat ${dir}/version)"; }
+kcm() { dir=$(dirname $(git diff --name-only --cached | head -n1))
+git commit -m "$(basename ${dir}): $*"; }
 
 # make
 alias m='make'
