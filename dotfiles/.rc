@@ -437,6 +437,7 @@ compr() {
 	*.rar)     rar "$FILE" "${FILE%.*}"       ;;
 	*.7z)      7z a -mx9 "$FILE" "${FILE%.*}" ;;
 	*.lz4)     lz4 -9 "${FILE%.*}" "$FILE"    ;;
+	*.xz)      xz -z -c -9  "${FILE%.*}" > "$FILE" ;;
 	*)         echo "Filetype not recognized" ;;
 	esac
 }
