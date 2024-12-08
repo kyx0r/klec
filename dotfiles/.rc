@@ -433,6 +433,7 @@ compr() {
 	*.tar.bz2) tar cjf "$FILE" "${FILE%%.*}"  ;;
 	*.tar.gz)  tar czf "$FILE" "${FILE%%.*}"  ;;
 	*.tgz)     tar czf "$FILE" "${FILE%.*}"   ;;
+	*.tar.xz)  tar cJf "$FILE" "${FILE%%.*}"  ;;
 	*.zip)     zip -r "$FILE" "${FILE%.*}"    ;;
 	*.rar)     rar "$FILE" "${FILE%.*}"       ;;
 	*.7z)      7z a -mx9 "$FILE" "${FILE%.*}" ;;
