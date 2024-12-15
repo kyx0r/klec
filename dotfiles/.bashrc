@@ -3,6 +3,7 @@
 #
 
 # If not running interactively, don't do anything
+[ ! "$SHELL" = "/bin/bash" ] && return
 [[ $- != *i* ]] && return
 
 [ -z $ENVSET ] && if [ -f ~/.rc ]; then
@@ -29,8 +30,6 @@ bind 'set show-mode-in-prompt on'
 bind 'set vi-ins-mode-string \1\e[3 q\2'
 bind 'set vi-cmd-mode-string \1\e[4 q\2'
 # Eternal bash history.
-export HISTFILESIZE=
-export HISTSIZE=
 export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bhist
 export HISTCONTROL=ignoredups
