@@ -68,6 +68,7 @@ alias gca='g cherry-pick --abort'
 alias gfp='git format-patch'
 alias gam='git am'
 alias gt='git tag'
+alias gpt='git push origin tag'
 gdh() { git diff HEAD~${@}; }
 gap() { for arg in "$@"; do git apply -3 < "$arg"; done; }
 grsr() { git reset $1 && rm $1; }
@@ -178,6 +179,7 @@ nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_ra
 ffchk() { ffmpeg -loglevel verbose -i "$1" -map 0:a -f null -; }
 
 # random progs
+alias unmute='amixer sset Master unmute'
 alias zdel='find . -size 0 -print -delete'
 alias llm='source prompts.sh'
 alias date='date +"%Y-%m-%d %H:%M:%S"'
