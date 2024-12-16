@@ -3,7 +3,7 @@
 #
 
 # If not running interactively, don't do anything
-[ ! "$SHELL" = "/bin/bash" ] && return
+case "$SHELL" in *bash*) ;; *) return ;; esac
 [[ $- != *i* ]] && return
 
 [ -z $ENVSET ] && if [ -f ~/.rc ]; then
