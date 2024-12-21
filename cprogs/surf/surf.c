@@ -106,16 +106,13 @@ typedef enum {
 	DNSPrefetch,
 	FileURLsCrossAccess,
 	FontSize,
-	FrameFlattening,
 	Geolocation,
 	HideBackground,
 	Inspector,
-	Java,
 	JavaScript,
 	KioskMode,
 	LoadImages,
 	MediaManualPlay,
-	Plugins,
 	PreferredLanguages,
 	RunInFullscreen,
 	ScrollBars,
@@ -318,20 +315,16 @@ static ParamName loadtransient[] = {
 };
 
 static ParamName loadcommitted[] = {
-	AcceleratedCanvas,
 //	AccessMicrophone,
 //	AccessWebcam,
 	CaretBrowsing,
 	DefaultCharset,
 	FontSize,
-	FrameFlattening,
 	Geolocation,
 	HideBackground,
 	Inspector,
-	Java,
 //	KioskMode,
 	MediaManualPlay,
-	Plugins,
 	RunInFullscreen,
 	ScrollBars,
 	SiteQuirks,
@@ -740,12 +733,10 @@ gettogglestats(Client *c)
 	togglestats[3] = curconfig[DiskCache].val.i ?       'D' : 'd';
 	togglestats[4] = curconfig[LoadImages].val.i ?      'I' : 'i';
 	togglestats[5] = curconfig[JavaScript].val.i ?      'S' : 's';
-	togglestats[6] = curconfig[Plugins].val.i ?         'V' : 'v';
-	togglestats[7] = curconfig[Style].val.i ?           'M' : 'm';
-	togglestats[8] = curconfig[FrameFlattening].val.i ? 'F' : 'f';
-	togglestats[9] = curconfig[Certificate].val.i ?     'X' : 'x';
-	togglestats[10] = curconfig[StrictTLS].val.i ?      'T' : 't';
-	togglestats[11] = '\0';
+	togglestats[6] = curconfig[Style].val.i ?           'M' : 'm';
+	togglestats[7] = curconfig[Certificate].val.i ?     'X' : 'x';
+	togglestats[8] = curconfig[StrictTLS].val.i ?      'T' : 't';
+	togglestats[9] = '\0';
 }
 
 void
@@ -825,9 +816,6 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 	modparams[p] = curconfig[p].prio;
 
 	switch (p) {
-	case AcceleratedCanvas:
-		webkit_settings_set_enable_accelerated_2d_canvas(s, a->i);
-		break;
 	case AccessMicrophone:
 		return; /* do nothing */
 	case AccessWebcam:
@@ -866,9 +854,6 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 	case FontSize:
 		webkit_settings_set_default_font_size(s, a->i);
 		return; /* do not update */
-	case FrameFlattening:
-		webkit_settings_set_enable_frame_flattening(s, a->i);
-		break;
 	case Geolocation:
 		refresh = 0;
 		break;
@@ -878,9 +863,6 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 		return; /* do not update */
 	case Inspector:
 		webkit_settings_set_enable_developer_extras(s, a->i);
-		return; /* do not update */
-	case Java:
-		webkit_settings_set_enable_java(s, a->i);
 		return; /* do not update */
 	case JavaScript:
 		webkit_settings_set_enable_javascript(s, a->i);
@@ -892,9 +874,6 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 		break;
 	case MediaManualPlay:
 		webkit_settings_set_media_playback_requires_user_gesture(s, a->i);
-		break;
-	case Plugins:
-		webkit_settings_set_enable_plugins(s, a->i);
 		break;
 	case PreferredLanguages:
 		return; /* do nothing */
@@ -923,8 +902,8 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 	case SpellLanguages:
 		return; /* do nothing */
 	case StrictTLS:
-		webkit_web_context_set_tls_errors_policy(
-		    webkit_web_view_get_context(c->view), a->i ?
+		webkit_website_data_manager_set_tls_errors_policy(
+		    webkit_web_view_get_website_data_manager(c->view), a->i ?
 		    WEBKIT_TLS_ERRORS_POLICY_FAIL :
 		    WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 		break;
@@ -1049,7 +1028,8 @@ evalscript(Client *c, const char *jsstr, ...)
 	script = g_strdup_vprintf(jsstr, ap);
 	va_end(ap);
 
-	webkit_web_view_run_javascript(c->view, script, NULL, NULL, NULL);
+	webkit_web_view_evaluate_javascript(c->view, script, -1,
+	    NULL, NULL, NULL, NULL, NULL);
 	g_free(script);
 }
 
@@ -1152,13 +1132,9 @@ newview(Client *c, WebKitWebView *rv)
 		   "enable-caret-browsing", curconfig[CaretBrowsing].val.i,
 		   "enable-developer-extras", curconfig[Inspector].val.i,
 		   "enable-dns-prefetching", curconfig[DNSPrefetch].val.i,
-		   "enable-frame-flattening", curconfig[FrameFlattening].val.i,
 		   "enable-html5-database", curconfig[DiskCache].val.i,
 		   "enable-html5-local-storage", curconfig[DiskCache].val.i,
-		   "enable-java", curconfig[Java].val.i,
 		   "enable-javascript", curconfig[JavaScript].val.i,
-		   "enable-plugins", curconfig[Plugins].val.i,
-		   "enable-accelerated-2d-canvas", curconfig[AcceleratedCanvas].val.i,
 		   "enable-site-specific-quirks", curconfig[SiteQuirks].val.i,
 		   "enable-smooth-scrolling", curconfig[SmoothScrolling].val.i,
 		   "enable-webgl", curconfig[WebGL].val.i,
@@ -1186,12 +1162,9 @@ newview(Client *c, WebKitWebView *rv)
 
 		cookiemanager = webkit_web_context_get_cookie_manager(context);
 
-		/* rendering process model, can be a shared unique one
-		 * or one for each view */
-		webkit_web_context_set_process_model(context,
-		    WEBKIT_PROCESS_MODEL_MULTIPLE_SECONDARY_PROCESSES);
 		/* TLS */
-		webkit_web_context_set_tls_errors_policy(context,
+		webkit_website_data_manager_set_tls_errors_policy(
+		    webkit_web_context_get_website_data_manager(context),
 		    curconfig[StrictTLS].val.i ? WEBKIT_TLS_ERRORS_POLICY_FAIL :
 		    WEBKIT_TLS_ERRORS_POLICY_IGNORE);
 		/* disk cache */
@@ -1462,10 +1435,6 @@ createwindow(Client *c)
 	} else {
 		w = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 
-		wmstr = g_path_get_basename(argv0);
-		gtk_window_set_wmclass(GTK_WINDOW(w), wmstr, windowclass);
-		g_free(wmstr);
-
 		wmstr = g_strdup_printf("%s[%"PRIu64"]", "Surf", c->pageid);
 		gtk_window_set_role(GTK_WINDOW(w), wmstr);
 		g_free(wmstr);
@@ -1678,8 +1647,7 @@ decidenavigation(WebKitPolicyDecision *d, Client *c)
 	case WEBKIT_NAVIGATION_TYPE_OTHER: /* fallthrough */
 	default:
 		/* Do not navigate to links with a "_blank" target (popup) */
-		if (webkit_navigation_policy_decision_get_frame_name(
-		    WEBKIT_NAVIGATION_POLICY_DECISION(d))) {
+                if (webkit_navigation_action_get_frame_name(a)) {
 			webkit_policy_decision_ignore(d);
 		} else {
 			/* Filter out navigation to different domain ? */
@@ -2087,14 +2055,6 @@ main(int argc, char *argv[])
 	case 'N':
 		defconfig[Inspector].val.i = 1;
 		defconfig[Inspector].prio = 2;
-		break;
-	case 'p':
-		defconfig[Plugins].val.i = 0;
-		defconfig[Plugins].prio = 2;
-		break;
-	case 'P':
-		defconfig[Plugins].val.i = 1;
-		defconfig[Plugins].prio = 2;
 		break;
 	case 'r':
 		scriptfile = EARGF(usage());

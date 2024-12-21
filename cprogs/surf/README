@@ -2,7 +2,6 @@ personal fork of surf with the following features
 
   > -l option to set the window class
   > no default font size set (setting it causes buggy font sizing)
-  > gpu acceleration always enabled (makes browsing smoother)
   > clicking on links calls xdg-open instead of spawning a new surf window. this allows you to
     wrap surf in a script that sends new windows to a specific tabbed instance. see the tsurf script
   > default config dir relocated to ~/.config/surf
@@ -52,4 +51,3 @@ instance of tabbed.
 
 [0] http://tools.suckless.org/dmenu
 [1] http://tools.suckless.org/tabbed
-

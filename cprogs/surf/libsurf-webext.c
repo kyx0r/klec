@@ -82,13 +82,11 @@ readsock(GIOChannel *s, GIOCondition c, gpointer unused)
 		jsc_context_evaluate(jsc, js, -1);
 		break;
 	}
-
 	return TRUE;
 }
 
 G_MODULE_EXPORT void
-webkit_web_extension_initialize_with_user_data(WebKitWebExtension *e,
-                                               const GVariant *gv)
+webkit_web_extension_initialize_with_user_data(WebKitWebExtension *e, GVariant *gv)
 {
 	GIOChannel *gchansock;
 
