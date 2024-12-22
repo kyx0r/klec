@@ -38,6 +38,7 @@ alias gco='git checkout'
 alias gcom='git checkout main || git checkout master'
 alias gd='git diff'
 alias gds='git diff --staged'
+alias gdi='git diff --no-index'
 alias gf='git fetch'
 alias gl='git log --graph --oneline'
 alias glg="git log --graph --decorate --stat"
