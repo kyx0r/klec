@@ -53,6 +53,12 @@ llama-cli -fa --no-perf --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache 
 --multiline-input -i --interactive-first $LLM_ARGS -m "$@";
 }
 
+llmd() {
+addheader "" "\n"
+llama-cli -fa --no-perf --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+--multiline-input -i --interactive-first $LLM_ARGS -m "$@";
+}
+
 llmp() { llama-cli --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "$1\n" -m "$2"; }
 
 prompts="\
