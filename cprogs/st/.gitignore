@@ -1,0 +1,9 @@
+*.o
+st
+f
+*.rej
+*.orig
+tags
+config.h
+*.swp*
+*.diff
