@@ -53,7 +53,7 @@ int allowwindowops = 0;
  * near minlatency, but it waits longer for slow updates to avoid partial draw.
  * low minlatency will tear/flicker more, as it can "detect" idle too early.
  */
-static double minlatency = 8;
+static double minlatency = 2;
 static double maxlatency = 33;
 
 /*
@@ -96,43 +96,43 @@ unsigned int tabspaces = 8;
 /* Terminal colors (16 first used in escape sequence) */
 static const char *colorname[] = {
 	/* 8 normal colors */
-	"#000000",
-	"#ff0000",
-	"#33ff00",
-	"#ffff00",
-	"#0066ff",
-	"#cc00ff",
-	"#00ffff",
-	"#ffffff",
+	[0] = "#000000",
+	[1] = "#ff3300",
+	[2] = "#66ff00",
+	[3] = "#ffcc00",
+	[4] = "#0033ff",
+	[5] = "#9900ff",
+	[6] = "#00ccff",
+	[7] = "#eeeeee",
 
 	/* 8 bright colors */
-	"#808080",
-	"#ff0000",
-	"#33ff00",
-	"#ffff00",
-	"#0066ff",
-	"#cc00ff",
-	"#00ffff",
-	"#ffffff",
+	[8] = "#808080",
+	[9] = "#ff0000",
+	[10] = "#33ff00",
+	[11] = "#ffff00",
+	[12] = "#0066ff",
+	[13] = "#cc00ff",
+	[14] = "#00ffff",
+	[15] = "#ffffff",
 
 	[255] = 0,
 
 	/* more colors can be added after 255 to use with DefaultXX */
-	"#cccccc",
-	"#2e3440",
+	[256] = "#cccccc",
+	[257] = "#2e3440",
+	[258] = "#d0d0d0", /* default foreground colour */
+	[259] = "#000000", /* default background colour */
 };
 
 
 /*
  * Default colors (colorname index)
- * foreground, background, cursor, reverse cursor
+ * foreground, background, cursor, reverse cursor, selection
  */
-unsigned int defaultfg = 7;
-unsigned int defaultbg = 0;
-static unsigned int defaultcs = 256;
-static unsigned int defaultrcs = 256;
-
-/* Colors used for selection */
+unsigned int defaultfg = 258;
+unsigned int defaultbg = 259;
+unsigned int defaultcs = 256;
+unsigned int defaultrcs = 256;
 unsigned int selectionbg = 257;
 unsigned int selectionfg = 7;
 /* If 0 use selectionfg as foreground in order to have a uniform foreground-color */
@@ -146,8 +146,7 @@ static int ignoreselfg = 1;
  * 6: Bar ("|")
  * 7: Snowman ("☃")
  */
-static unsigned int cursorstyle = 3;
-static Rune stcursor = 0x2603; /* snowman (U+2603) */
+static unsigned int cursorshape = 2;
 
 /*
  * Default columns and rows numbers
@@ -203,7 +202,6 @@ static Shortcut shortcuts[] = {
 	{ MODKEY,               XK_d,           kscrolldown,    {.i = -1} },
 	{ TERMMOD,              XK_U,           kscrollup,      {.i = 1} },
 	{ TERMMOD,              XK_D,           kscrolldown,    {.i = 1} },
-	{ MODKEY,               XK_y,           keyboard_select,{.i =  0} },
 };
 
 /*

@@ -1,9 +1,0 @@
-*.o
-st
-f
-*.rej
-*.orig
-tags
-config.def.h
-*.swp*
-*.diff
