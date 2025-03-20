@@ -12,7 +12,6 @@ die() {
 
 clean() {
     log Unmounting host filesystems; {
-        umount "$1/sys/firmware/efi/efivars" 2>/dev/null ||:
         umount "$1/tmp" ||:
         umount "$1/run" ||:
         umount "$1/dev/pts" ||:
@@ -64,9 +63,6 @@ log Mounting /dev, /proc and /sys from host; {
 
     mounted "$1/run" ||
         mount -t tmpfs tmpfs "$1/run"  ||:
-
-    mounted "$1/sys/firmware/efi/efivars" ||
-        mount -t efivarfs efivarfs "$1/sys/firmware/efi/efivars" 2>/dev/null ||:
 }
 
 log Copying /etc/resolv.conf from host; {
