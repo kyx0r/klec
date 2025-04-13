@@ -11,6 +11,13 @@ die() {
 }
 
 clean() {
+    if [ -f $1/etc/chroot_sentinel ]; then
+        cnt=$(cat $1/etc/chroot_sentinel)
+        cnt=$((cnt-1))
+        echo "$cnt" > $1/etc/chroot_sentinel
+        [ $cnt -ge 0 ] && return 0
+        rm -f "$1/etc/chroot_sentinel"
+    fi
     log Unmounting host filesystems; {
         umount "$1/tmp" ||:
         umount "$1/run" ||:
@@ -84,6 +91,15 @@ log Mounting /dev, /proc and /sys from host; {
 
 log Copying /etc/resolv.conf from host; {
     cp -f /etc/resolv.conf "$1/etc" ||:
+}
+
+log Setting up /etc/chroot_sentinel; {
+    cnt=0
+    if [ -f $1/etc/chroot_sentinel ]; then
+    	cnt=$(cat $1/etc/chroot_sentinel)
+    	cnt=$((cnt+1))
+    fi
+    echo "$cnt" > $1/etc/chroot_sentinel
 }
 
 log Entering chroot; {
