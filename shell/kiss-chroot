@@ -26,6 +26,19 @@ clean() {
     }
 }
 
+fullpath() {
+        f=$@;
+        if [ -d "$f" ]; then
+                base="";
+                dir="$f";
+        else
+                base="/$(basename "$f")";
+                dir=$(dirname "$f");
+        fi;
+        dir=$(\cd "$dir" && pwd);
+        echo "$dir$base"
+}
+
 mounted() {
     # This is a pure shell mountpoint implementation. We're dealing
     # with basic (and fixed/known) input so this doesn't need to
@@ -48,21 +61,25 @@ mounted() {
 trap 'clean "$1"' EXIT INT
 
 log Mounting /dev, /proc and /sys from host; {
-    mounted "$1/dev"  || mount -o bind /dev "$1/dev"  ||:
-    mounted "$1/proc" || mount -t proc proc "$1/proc" ||:
-    mounted "$1/sys"  || mount -t sysfs sys "$1/sys"  ||:
+    dev=$(fullpath "$1/dev")
+    proc=$(fullpath "$1/proc")
+    sys=$(fullpath "$1/sys")
+    shm=$(fullpath "$1/dev/shm")
+    pts=$(fullpath "$1/dev/pts")
+    tmp=$(fullpath "$1/tmp")
+    run=$(fullpath "$1/run")
+    
+    mounted "$dev"  || mount -o bind /dev "$dev"  ||:
+    mounted "$proc" || mount -t proc proc "$proc" ||:
+    mounted "$sys"  || mount -t sysfs sys "$sys"  ||:
 
-    mounted "$1/dev/shm" ||
-        mount -t tmpfs shmfs "$1/dev/shm"  ||:
+    mounted "$shm" || mount -t tmpfs shmfs "$shm"  ||:
 
-    mounted "$1/dev/pts" ||
-        mount -o bind /dev/pts "$1/dev/pts"  ||:
+    mounted "$pts" || mount -o bind /dev/pts "$pts"  ||:
 
-    mounted "$1/tmp" ||
-        mount -o mode=1777,nosuid,nodev -t tmpfs tmpfs "$1/tmp"  ||:
+    mounted "$tmp" || mount -o mode=1777,nosuid,nodev -t tmpfs tmpfs "$tmp"  ||:
 
-    mounted "$1/run" ||
-        mount -t tmpfs tmpfs "$1/run"  ||:
+    mounted "$run" || mount -t tmpfs tmpfs "$run"  ||:
 }
 
 log Copying /etc/resolv.conf from host; {
