@@ -182,6 +182,7 @@ fframe1() { ffmpeg -i "$1" -vframes:v 1 "${1%.*}.png"; }
 chfps() { ffmpeg -y -i "$1" -vf "setpts=1.25*PTS" -r $2 $(funiq "$1"); } # x > 1 slow down, x < 1 speed up
 nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -shortest $(funiq "$1"); }
 ffchk() { ffmpeg -loglevel verbose -i "$1" -map 0:a -f null -; }
+ffsp() { ffplay -ast $2 -vf "subtitles='$1':si=$3:fontsdir=/usr/share/fonts" "$1"; }
 
 # random progs
 alias unmute='amixer sset Master unmute && amixer set Master 50%'
