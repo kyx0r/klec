@@ -15,6 +15,7 @@ bind -m vi-insert "\C-l":clear-screen
 bind '"\C-k":"gg\n"'
 bind '"\C-b":"bb\n"'
 bind -x '"\C-f":"f"'
+bind -x '"\C-n":"l"'
 
 # Eternal bash history.
 export HISTTIMEFORMAT="[%F %T] "
