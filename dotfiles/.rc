@@ -47,8 +47,6 @@ alias gp='git push'
 alias gpf='git push --force'
 alias gpd='git push origin --delete'
 alias gpl='git pull'
-alias grb='git rebase'
-alias grc='git rebase --continue'
 alias gs='git status'
 alias ge='git config user.email'
 alias gsh='git stash'
@@ -109,10 +107,13 @@ $MSG"
 }
 gpfix() { gal; gds > "$1"; grs; ga "$1"; [ -z "$2" ] && gcmf "fix" || gcmf "$2"; grh; }
 
-# void linux
-alias xq='xbps-query -R -s'
-alias xi='xbps-install'
-alias xr='xbps-remove'
+# alpine linux
+alias apka='apk add'
+alias apkd='apk del'
+alias apks='apk search'
+alias apkl='apk list -I|less'
+alias apkll='apk list|less'
+alias apkm='apk manifest'
 
 # arch linux
 alias pac='pacman'
