@@ -71,7 +71,25 @@ alias gfp='git format-patch'
 alias gam='git am'
 alias gt='git tag'
 alias gpt='git push origin tag'
-gdf() { head=$1; shift; git diff $head HEAD ${@}; }
+gdf() {
+	hist="$(git --no-pager log --follow $1 | grep -E '^commit' | cut -d' ' -f2)"
+	IFS=$'\n'
+	prev=""
+	out=""
+	mkfifo /tmp/pipe
+	for p in $hist; do
+		if [ ! -z $prev ]; then
+			echo "commit: $prev -> $p"
+			echo "$(git log -1 --pretty=%B $prev)"
+			echo "$(git --no-pager diff $p $prev --follow $1)"
+		else
+			sleep 0.1
+		fi
+		prev=$p
+	done > /tmp/pipe &
+	less /tmp/pipe
+	rm /tmp/pipe
+}
 gdh() { git diff HEAD~${@}; }
 gap() { for arg in "$@"; do git apply -3 < "$arg"; done; }
 grsr() { git reset $1 && rm $1; }
@@ -275,9 +293,8 @@ sif() { scp -r root@kyryl.me:"$@"; } #if = download
 scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 p() { printf "$@"; }
-# ffor() usage: inf "path/any string" "cmd" "extra opts"
-ffor() { IFS="
-"; for p in $1; do eval "$2 \$p $3"; done }
+# ffor() usage: ffor "path/any string" "cmd" "extra opts"
+ffor() { IFS=$'\n'; for p in $1; do eval "$2 \$p $3"; done }
 inf() { while :; do eval "$@"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
