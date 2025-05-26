@@ -115,7 +115,10 @@ gcb() {
 		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
 	fi
 }
-gtossh() { echo "git@${1}:$(git remote get-url --push origin | grep -E -o '[^/]*.[^/]*$')"; }
+gtossh() {
+	curl=$(git remote get-url --push origin);
+	echo "git@$(echo $curl | cut -d '/' -f 3):$(echo $curl | grep -E -o '[^/]*.[^/]*$')";
+}
 gcmf() { git commit -m "$(git diff --name-only --cached | sed -n "$2p" | tr '\n' ':') $1"; }
 gcmfs() {
 	MSG=""
