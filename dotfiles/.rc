@@ -87,7 +87,7 @@ gdf() {
 		fi
 		prev=$p
 	done > /tmp/pipe &
-	less /tmp/pipe
+	cat /tmp/pipe | less
 	rm /tmp/pipe
 }
 gdh() { git diff HEAD~${@}; }
