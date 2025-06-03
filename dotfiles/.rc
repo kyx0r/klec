@@ -298,7 +298,7 @@ e() { echo "$@"; }
 p() { printf "$@"; }
 # ffor() usage: ffor "path/any string" "cmd" "extra opts"
 ffor() { IFS=$'\n'; for p in $1; do eval "$2 \$p $3"; done }
-inf() { trap 'quit=1' INT EXIT HUP TERM QUIT; quit=0; while [ $quit -eq 0 ]; do eval "$@"; done }
+inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' SIGINT INT EXIT HUP TERM QUIT; eval "$@"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
 	dir=$(find -type d -regex $reg); echo "$dir"  | grep -n -E . && read i;
