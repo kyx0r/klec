@@ -32,3 +32,19 @@ shopt -s cdspell;
 shopt -s dirspell 2> /dev/null
 # Turn on recursive globbing (enables ** to recurse all directories)
 shopt -s globstar 2> /dev/null
+
+colors() {
+	paste <(i=0; while [ $i -le 255 ]; do \
+		printf "\e[48;5;%sm%3d\e[0m " "$i" "$i"; \
+		if [ "$i" -eq 15 ] || { [ "$i" -gt 15 ] && [ $(( (i - 15) % 6 )) -eq 0 ]; }; then \
+			echo; \
+		fi; \
+		i=$((i + 1)); \
+	done) <(i=0; while [ $i -le 255 ]; do \
+		printf "\e[30m\e[48;5;%sm%3d\e[0m " "$i" "$i"; \
+		if [ "$i" -eq 15 ] || { [ "$i" -gt 15 ] && [ $(( (i - 15) % 6 )) -eq 0 ]; }; then \
+			echo; \
+		fi; \
+		i=$((i + 1)); \
+	done)
+}
