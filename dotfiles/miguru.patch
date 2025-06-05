@@ -77,7 +77,7 @@ index 0000000..9993c77
 +	WinSetAlwaysOnTop -1, "A"
 +}
 +
-+!v::
++!b::
 +{
 +	WinSetStyle "^0xC40000", "A"
 +	;WinHide "A"
