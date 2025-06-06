@@ -182,9 +182,9 @@ ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; 
 kci() { rm $HOME/.cache/kiss/bin/"$1"* && ki $1; }
 kcd() { path=$(kiss search "${1}*"); [ $? -eq 0 ] && cd $(echo "$path"|head -n1); }
 krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
-kcmv() { dir=$(dirname $(git diff --name-only --cached | head -n1))
+kcmv() { dir=$(dirname $(git diff --name-only --cached --relative | head -n1))
 git commit -m "$(basename ${dir}): $(cat ${dir}/version)"; }
-kcm() { dir=$(dirname $(git diff --name-only --cached | head -n1))
+kcm() { dir=$(dirname $(git diff --name-only --cached --relative | head -n1))
 git commit -m "$(basename ${dir}): $*"; }
 
 # make
