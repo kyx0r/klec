@@ -119,7 +119,16 @@ gtossh() {
 	curl=$(git remote get-url --push origin);
 	echo "git@$(echo $curl | cut -d '/' -f 3):$(echo $curl | grep -E -o '[^/]*.[^/]*$')";
 }
-gcmf() { git commit -m "$(git diff --name-only --cached | sed -n "$2p" | tr '\n' ':') $1"; }
+gcmf() {
+	ln=$2
+	[ -z "$ln" ] && ln=1
+	git commit -m "$(git diff --name-only --cached | sed -n "${ln}p" | tr '\n' ':') $1"
+}
+gcmd() {
+	ln=$2
+	[ -z "$ln" ] && ln=1
+	git commit -m "$(git diff --name-only --cached --relative | sed -n "${ln}p" | cut -d'/' -f1 | tr '\n' ':') $1"
+}
 gcmfs() {
 	MSG=""
 	ffor "$(git diff --name-only --cached | sed -n "$2p")"\
