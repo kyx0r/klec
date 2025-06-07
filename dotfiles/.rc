@@ -79,8 +79,11 @@ gdf() {
 	mkfifo /tmp/pipe
 	for p in $hist; do
 		if [ ! -z $prev ]; then
-			echo "commit: $prev -> $p"
-			echo "$(git log -1 --pretty=%B $prev)"
+			echo
+			echo "Commit: $prev -> $p"
+			echo "Msg: $(git log -1 --pretty=%B $prev)"
+			echo "Date: $(git log -1 --pretty=format:%cd --date=format:'%Y-%m-%d %H:%M' $prev)"
+			echo
 			echo "$(git --no-pager diff $p $prev --follow $1)"
 		else
 			sleep 0.1
