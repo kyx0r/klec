@@ -40,6 +40,7 @@ readsock(GIOChannel *s, GIOCondition c, gpointer unused)
 	static char js[48], msg[MSGBUFSZ];
 	WebKitWebPage *page;
 	JSCContext *jsc;
+	JSCValue *jsv = NULL;
 	GError *gerr = NULL;
 	gsize msgsz;
 
@@ -71,7 +72,7 @@ readsock(GIOChannel *s, GIOCondition c, gpointer unused)
 		snprintf(js, sizeof(js),
 		         "window.scrollBy(window.innerWidth/100*%d,0);",
 		         msg[2]);
-		jsc_context_evaluate(jsc, js, -1);
+		jsv = jsc_context_evaluate(jsc, js, -1);
 		break;
 	case 'v':
 		if (msgsz != 3)
@@ -79,9 +80,14 @@ readsock(GIOChannel *s, GIOCondition c, gpointer unused)
 		snprintf(js, sizeof(js),
 		         "window.scrollBy(0,window.innerHeight/100*%d);",
 		         msg[2]);
-		jsc_context_evaluate(jsc, js, -1);
+		jsv = jsc_context_evaluate(jsc, js, -1);
 		break;
+	default:
+		fprintf(stderr, "%s:%d:readsock: unknown cmd '%#x'\n", msg[1]);
 	}
+	g_object_unref(jsc);
+	if (jsv)
+		g_object_unref(jsv);
 	return TRUE;
 }
 

@@ -103,7 +103,6 @@ typedef enum {
 	CookiePolicies,
 	DiskCache,
 	DefaultCharset,
-	DNSPrefetch,
 	FileURLsCrossAccess,
 	FontSize,
 	Geolocation,
@@ -304,7 +303,6 @@ static ParamName loadtransient[] = {
 	Certificate,
 	CookiePolicies,
 	DiskCache,
-	DNSPrefetch,
 	FileURLsCrossAccess,
 	JavaScript,
 	LoadImages,
@@ -844,9 +842,6 @@ setparameter(Client *c, int refresh, ParamName p, const Arg *a)
 	case DefaultCharset:
 		webkit_settings_set_default_charset(s, a->v);
 		return; /* do not update */
-	case DNSPrefetch:
-		webkit_settings_set_enable_dns_prefetching(s, a->i);
-		return; /* do not update */
 	case FileURLsCrossAccess:
 		webkit_settings_set_allow_file_access_from_file_urls(s, a->i);
 		webkit_settings_set_allow_universal_access_from_file_urls(s, a->i);
@@ -1131,7 +1126,6 @@ newview(Client *c, WebKitWebView *rv)
 		   "default-charset", curconfig[DefaultCharset].val.v,
 		   "enable-caret-browsing", curconfig[CaretBrowsing].val.i,
 		   "enable-developer-extras", curconfig[Inspector].val.i,
-		   "enable-dns-prefetching", curconfig[DNSPrefetch].val.i,
 		   "enable-html5-database", curconfig[DiskCache].val.i,
 		   "enable-html5-local-storage", curconfig[DiskCache].val.i,
 		   "enable-javascript", curconfig[JavaScript].val.i,
@@ -1290,7 +1284,6 @@ createview(WebKitWebView *v, WebKitNavigationAction *a, Client *c)
 	default:
 		return NULL;
 	}
-
 	return GTK_WIDGET(n->view);
 }
 
@@ -1383,6 +1376,8 @@ winevent(GtkWidget *w, GdkEvent *e, Client *c)
 void
 showview(WebKitWebView *v, Client *c)
 {
+	if (c->win)
+		return;
 	GdkRGBA bgcolor = { 0 };
 	GdkWindow *gwin;
 
