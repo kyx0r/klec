@@ -70,7 +70,7 @@ static WebKitFindOptions findopts = WEBKIT_FIND_OPTIONS_CASE_INSENSITIVE |
              "| sed \"s/^$2(STRING) = //;s/^\\\"\\(.*\\)\\\"$/\\1/\" " \
              "  && [ -f " HISTORY_FILE " ] && sort < " HISTORY_FILE " | uniq -c " \
              "| sort -nr | awk '{$1=\"\"; print $0}')\" " \
-             "| dmenu -i -l 10 -p \"$4\" -w $1 | awk '{ print $1 == \".\" ? $2 : $0 }')\" " \
+             "| dmenu -i -l 50 -p \"$4\" -w $1 | awk '{ print $1 == \".\" ? $2 : $0 }')\" " \
              "  && xprop -id $1 -f $3 8s -set $3 \"$prop\"", \
              "surf-setprop", winid, r, s, p, NULL \
         } \
