@@ -268,6 +268,7 @@ static void scrollv(Client *c, const Arg *a);
 static void scrollh(Client *c, const Arg *a);
 static void navigate(Client *c, const Arg *a);
 static void stop(Client *c, const Arg *a);
+static void newwin(Client *c, const Arg *a);
 static void toggle(Client *c, const Arg *a);
 static void togglefullscreen(Client *c, const Arg *a);
 static void togglecookiepolicy(Client *c, const Arg *a);
@@ -1873,6 +1874,13 @@ void
 stop(Client *c, const Arg *a)
 {
 	webkit_web_view_stop_loading(c->view);
+}
+
+void
+newwin(Client *c, const Arg *a)
+{
+	c = newclient(NULL);
+	showview(NULL, c);
 }
 
 void
