@@ -23,7 +23,7 @@ expect -f /tmp/expect
 
 llm3() {
 addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>\n"
-llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -f $PWD/hprompt.txt \
 -r "<|eot_id|>" -r "<|eot_id|>\n" \
 --in-prefix "<|start_header_id|>user<|end_header_id|>\n" --in-suffix "<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>\n" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
@@ -31,7 +31,7 @@ llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --promp
 
 llmi() {
 addheader "<s>[INST]" "[/INST]\n"
-llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -f $PWD/hprompt.txt \
 -r "</s>" -r "<s>" \
 --in-prefix "\n</s><s>[INST]\n" --in-suffix "[/INST]\n" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
@@ -39,7 +39,7 @@ llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --promp
 
 llma() {
 addheader "### System:" "\n"
-llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -f $PWD/hprompt.txt \
 -r "### Instruction:" -r "### Instruction:\n" \
 --in-prefix "\n### Instruction:\n" --in-suffix "### Assistant:\n" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
@@ -47,14 +47,14 @@ llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --promp
 
 llml() {
 addheader "<|im_start|>system" "<|im_end|>\n"
-llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -f $PWD/hprompt.txt \
+llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -f $PWD/hprompt.txt \
 -r "<|im_end|>" -r "<|im_end|>\n" \
 --in-prefix "\n<|im_start|>user\n" --in-suffix "<|im_end|>\n<|im_start|>assistant\n" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
 }
 
 llmd() {
-llama-cli -fa --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" --color -c 0 --temp 0.7 -sys "$(cat $PWD/prompt.txt)" \
+llama-cli -fa --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -sys "$(cat $PWD/prompt.txt)" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
 }
 
