@@ -36,7 +36,6 @@ alias gc='git commit'
 alias gcm='git commit -m'
 alias gcms='git commit -S -m'
 alias gco='git checkout'
-alias gcom='git checkout origin/main || git checkout origin/master'
 alias gd='git diff'
 alias gds='git diff --staged'
 alias gdi='git diff --no-index'
@@ -71,6 +70,13 @@ alias gfp='git format-patch'
 alias gam='git am'
 alias gt='git tag'
 alias gpt='git push origin tag'
+gcom() {
+	if git show-ref --verify --quiet refs/heads/main; then
+		git checkout main
+	else
+		git checkout master
+	fi
+}
 gdf() {
 	hist="$(git --no-pager log --follow $1 | grep -E '^commit' | cut -d' ' -f2)"
 	IFS=$'\n'
