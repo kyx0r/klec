@@ -2,8 +2,9 @@
 # ~/.bashrc
 #
 
-# If not running interactively, don't do anything
 case "$SHELL" in *bash*) ;; *) return ;; esac
+case "$(echo $0)" in *bash*) ;; *) return ;; esac
+# If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
 [ -z $ENVSET ] && if [ -f ~/.rc ]; then
