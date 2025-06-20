@@ -294,7 +294,7 @@ alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
 
 fnd() { find . -name "$@"; }
-cap() { file=$1; shift; script $file -c "$SHELL -i -c \"$*\""; }
+cap() { file=$1; shift; script "$file" -c "$SHELL -i -c \"$*\""; sed -i 's/\r$//' "$file"; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
 sdedup() { grep -v '^$' "$1" | sort -u > "$1".tmp && mv "$1.tmp" "$1"; }
 trace() { strace -p $(pidof $@); }
