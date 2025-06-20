@@ -10,16 +10,13 @@ llmload() {
 	    echo "timed out waiting for $*"
 	fi
 	sleep 1
-	# Calculate the number of chunks needed
-	string="$(cat $file)"
-	chunks=$(( (${#string} + 1023) / 1024 ))
-
 	# Iterate over the string in 1024-byte chunks
 	start=0
-	while [ "$start" -le "$(( (chunks - 1) * 1024 ))" ]; do
-	    chunk="${string:$start:1024}"
-	    sexpect send "${chunk}"
-	    start=$((start + 1024))
+	chunk=$(dd if="$file" bs=1 count=1024 skip="$start" 2>/dev/null)
+	while [ "$chunk" ]; do
+		sexpect send "${chunk}"
+		start=$((start + 1024))
+		chunk=$(dd if="$file" bs=1 count=1024 skip="$start" 2>/dev/null)
 	done
 	sexpect interact
 }
