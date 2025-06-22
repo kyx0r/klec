@@ -7,7 +7,7 @@ llmload() {
 	export SEXPECT_SOCKFILE=/tmp/sexpect-$$.sock
 	sexpect spawn -idle 10 sh -i -c "$*"
 	if ! sexpect expect -t 5 -re "."; then
-	    echo "timed out waiting for $*"
+		echo "timed out waiting for $*"
 	fi
 	sleep 1
 	# Iterate over the string in 1024-byte chunks
@@ -18,6 +18,32 @@ llmload() {
 		start=$((start + 1024))
 		chunk=$(dd if="$file" bs=1 count=1024 skip="$start" 2>/dev/null)
 	done
+	sexpect interact
+}
+
+llmbench() {
+	rm *.cache
+	file="$1"
+	shift
+	export SEXPECT_SOCKFILE=/tmp/sexpect-$$.sock
+	sexpect spawn -idle 10 sh -i -c "$*"
+	if ! sexpect expect -t 15 -re "<\|im_start\|>user"; then
+		echo "timed out waiting for $*"
+	fi
+	while IFS= read -r line || [ -n "$line" ]; do
+		echo "$line" > /tmp/llmbench
+		start=0
+		chunk=$(dd if=/tmp/llmbench bs=1 count=1024 skip="$start" 2>/dev/null)
+		while [ "$chunk" ]; do
+			sexpect send "${chunk}"
+			start=$((start + 1024))
+			chunk=$(dd if=/tmp/llmbench bs=1 count=1024 skip="$start" 2>/dev/null)
+		done
+		sexpect send ""
+		if ! sexpect expect -t 60 -re "<\|im_start\|>user"; then
+			echo "timed out waiting for model's responce"
+		fi
+	done < "$file"
 	sexpect interact
 }
 
