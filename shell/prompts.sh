@@ -14,7 +14,8 @@ llmload() {
 	start=0
 	chunk=$(dd if="$file" bs=1 count=1024 skip="$start" 2>/dev/null)
 	while [ "$chunk" ]; do
-		sexpect send "${chunk}"
+	        chunk=$(echo "$chunk" | tr '\t' ' ')
+		sexpect send "$chunk"
 		start=$((start + 1024))
 		chunk=$(dd if="$file" bs=1 count=1024 skip="$start" 2>/dev/null)
 	done
@@ -35,7 +36,8 @@ llmbench() {
 		start=0
 		chunk=$(dd if=/tmp/llmbench bs=1 count=1024 skip="$start" 2>/dev/null)
 		while [ "$chunk" ]; do
-			sexpect send "${chunk}"
+		        chunk=$(echo "$chunk" | tr '\t' ' ')
+			sexpect send "$chunk"
 			start=$((start + 1024))
 			chunk=$(dd if=/tmp/llmbench bs=1 count=1024 skip="$start" 2>/dev/null)
 		done
