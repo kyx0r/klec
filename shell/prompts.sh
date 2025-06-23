@@ -72,10 +72,10 @@ llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --promp
 }
 
 llml() {
-addheader "<|im_start|>system" "<|im_end|>\n"
+addheader "<|im_start|>system" "<|im_end|>"
 llama-cli -fa --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock --prompt-cache "$1.cache" -c 0 --temp 0.7 -f $PWD/hprompt.txt \
 -r "<|im_end|>" -r "<|im_end|>\n" \
---in-prefix "\n<|im_start|>user\n" --in-suffix "<|im_end|>\n<|im_start|>assistant\n" \
+--in-prefix "<|im_start|>user\n" --in-suffix "<|im_end|>\n<|im_start|>assistant\n" \
 --multiline-input -i -if $LLM_ARGS -m "$@";
 }
 
