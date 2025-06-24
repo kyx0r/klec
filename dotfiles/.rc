@@ -25,6 +25,7 @@ export MAKEFLAGS="-j$NCORES"
 export PREFIX=/usr
 export DISPLAY=:2
 export FDMAXLEN=0
+export FDTRIM=0
 
 # git
 alias g='git'
@@ -436,19 +437,19 @@ fd() {
 		eval "export c${cnt}=$p"
 		eval "var=\"$cmd\""
 		alias "$cnt"="$var"
-		len=50
-		if [ ${#p} -gt $len ]; then
-			part=${p##*/}
-			p="${p:0:$len}.../${part:0:$len}"
-		else
-			p="${p:0:$len}"
+		if  [ $FDTRIM -ne 0 ]; then
+			if [ ${#p} -gt $FDTRIM ]; then
+				part=${p##*/}
+				p="${p:0:$FDTRIM}.../${part:0:$FDTRIM}"
+			else
+				p="${p:0:$FDTRIM}"
+			fi
 		fi
 		var="$cnt $p"
 		[[ ${#var} -gt $FDMAXLEN ]] && FDMAXLEN="${#var}";
 		printf "$cnt $p"
 		x=$(($FDMAXLEN - ${#var}))
-		while [ $x -gt 0 ];
-		do
+		while [ $x -gt 0 ]; do
 			printf " "
 			x=$(($x-1))
 		done
@@ -460,7 +461,7 @@ fd() {
 		echo "$sarg | $@" >> "$HOME/links" && fd;
 	fi
 }
-alias f='fd'
+f() { FDTRIM=50; [ $1 ] && fd "$@" || fd|sort -k2; FDTRIM=0; }
 ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p &> /dev/null; fi; vi "$@"; }
