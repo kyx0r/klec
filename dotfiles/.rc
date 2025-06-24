@@ -12,15 +12,15 @@ KISS_PATH="${KISS_PATH}:$HOME/kiss/repo-main/xorg"
 KISS_PATH="${KISS_PATH}:$HOME/kiss/repo-main/community"
 export CHROME_FLAGS="--no-sandbox"
 export XDG_RUNTIME_DIR=/tmp
-export PATH=$HOME/klec/shell:$PATH
+export PATH="$HOME"/klec/shell:"$PATH"
 export EDITOR=vi
-export HOST_PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#${HOSTNAME%?}}")\[\e[m\]"
+export HOST_PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#"${HOSTNAME%?}"}")\[\e[m\]"
 export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
 export KCPPFLAGS="$CFLAGS"
-export NCORES="$(grep "^processor" /proc/cpuinfo | wc -l)"
+export NCORES="$(grep -c "^processor" /proc/cpuinfo)"
 export MAKEFLAGS="-j$NCORES"
 export PREFIX=/usr
 export DISPLAY=:2
@@ -79,19 +79,18 @@ gcom() {
 	fi
 }
 gdf() {
-	hist="$(git --no-pager log --follow $1 | grep -E '^commit' | cut -d' ' -f2)"
+	hist="$(git --no-pager log --follow "$1" | grep -E '^commit' | cut -d' ' -f2)"
 	IFS=$'\n'
 	prev=""
-	out=""
 	mkfifo /tmp/pipe
 	for p in $hist; do
-		if [ ! -z $prev ]; then
+		if [ -n "$prev" ]; then
 			echo
 			echo "Commit: $prev -> $p"
-			echo "Msg: $(git log -1 --pretty=%B $prev)"
-			echo "Date: $(git log -1 --pretty=format:%cd --date=format:'%Y-%m-%d %H:%M' $prev)"
+			echo "Msg: $(git log -1 --pretty=%B "$prev")"
+			echo "Date: $(git log -1 --pretty=format:%cd --date=format:'%Y-%m-%d %H:%M' "$prev")"
 			echo
-			echo "$(git --no-pager diff $p $prev --follow $1)"
+			git --no-pager diff "$p" "$prev" --follow "$1"
 		else
 			sleep 0.1
 		fi
@@ -100,29 +99,29 @@ gdf() {
 	cat /tmp/pipe | less
 	rm /tmp/pipe
 }
-gdh() { git diff HEAD~${@}; }
+gdh() { git diff HEAD~"$1"; }
 gap() { for arg in "$@"; do git apply -3 < "$arg"; done; }
-grsr() { git reset $1 && rm $1; }
-gct() { git checkout tags/$1; }
-gfork() { git remote add fork "$1" && git fetch fork && git merge fork/$2; }
+grsr() { git reset "$1" && rm "$1"; }
+gct() { git checkout tags/"$1"; }
+gfork() { git remote add fork "$1" && git fetch fork && git merge fork/"$2"; }
 grt() { git reset HEAD~"$1"; }
 gcop() {
 	first="$1"; shift;
 	for var in "$@"
 	do
-		git checkout $first -- $var
+		git checkout "$first" -- "$var"
 	done
 }
 gcr() {
 	git clone --recursive "$@"
 	if [ $# -eq 1 ]; then
-		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
+		cd "$(echo "$1" | sed 's/.*\///' | sed 's/.git$//')" || return
 	fi
 }
 gcb() {
 	git clone --single-branch "$@"
 	if [ $# -eq 1 ]; then
-		cd $(echo "$1" | sed 's/.*\///' | sed 's/.git$//')
+		cd "$(echo "$1" | sed 's/.*\///' | sed 's/.git$//')" || return
 	fi
 }
 gtossh() {
@@ -178,29 +177,29 @@ alias km='kiss manifest'
 alias krv='kiss revdepends'
 alias kdp='kiss depends'
 krepo() { export KISS_PATH="$KISS_PATH:$HOME/kiss/$*"; }
-kow() { kiss owns /bin/$1; }
+kow() { kiss owns /bin/"$1"; }
 kpc() {
-	dirs=$(ls $HOME/.cache/kiss/proc/*/build/)
+	dirs=$(ls "$HOME"/.cache/kiss/proc/*/build/)
 	echo "$dirs" | tr '\n' ' ' | sed "s/  /\n/g" ; echo
 	if [ "$2" ]; then
-		cd $HOME/.cache/kiss/proc/$2*/build/$1*;
+		cd "$HOME"/.cache/kiss/proc/"$2"*/build/"$1"* || return
 	else
-		cd $HOME/.cache/kiss/proc/*/build/$1*;
+		cd "$HOME"/.cache/kiss/proc/*/build/"$1"* || return
 	fi
 }
 knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
 kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
 kci() { rm $HOME/.cache/kiss/bin/"$1"* && ki $1; }
-kcd() { path=$(kiss search "${1}*"); [ $? -eq 0 ] && cd $(echo "$path"|head -n1); }
-krs() { export KISS_FORCE=1; for file in $@; do kiss r "$file"; done; unset KISS_FORCE; }
+kcd() { path=$(kiss search "${1}*"); [ $? -eq 0 ] && cd "$(echo "$path"|head -n1)" || return; }
+krs() { export KISS_FORCE=1; for file in "$@"; do kiss r "$file"; done; unset KISS_FORCE; }
 kcmv() {
-	dir=$(dirname $(git diff --name-only --cached --relative | head -n1))
+	dir=$(dirname "$(git diff --name-only --cached --relative | head -n1)")
 	[ "$dir" = "." ] && dir="$PWD"
 	git commit -m "$(basename ${dir}): $(cat ${dir}/version)"
 }
 kcm() {
-	dir=$(dirname $(git diff --name-only --cached --relative | head -n1))
+	dir=$(dirname "$(git diff --name-only --cached --relative | head -n1)")
 	[ "$dir" = "." ] && dir="$PWD"
 	git commit -m "$(basename ${dir}): $*"
 }
@@ -226,13 +225,13 @@ iprd() { ip route del "$1"; }
 
 # ffmpeg
 tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
-fftrim() { ffmpeg -accurate_seek -i "$1" -to "$2" -c:v copy -c:a copy $(funiq "$1"); }
+fftrim() { ffmpeg -accurate_seek -i "$1" -to "$2" -c:v copy -c:a copy "$(funiq "$1")"; }
 fframe() { ffmpeg -i "$1" -vf fps=1/5 '%04d.png'; }
 fframe1() { ffmpeg -i "$1" -vframes:v 1 "${1%.*}.png"; }
-chfps() { ffmpeg -y -i "$1" -vf "setpts=1.25*PTS" -r $2 $(funiq "$1"); } # x > 1 slow down, x < 1 speed up
-nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -shortest $(funiq "$1"); }
+chfps() { ffmpeg -y -i "$1" -vf "setpts=1.25*PTS" -r "$2" "$(funiq "$1")"; } # x > 1 slow down, x < 1 speed up
+nullasrc() { ffmpeg -i "$1" -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 -c:v copy -shortest "$(funiq "$1")"; }
 ffchk() { ffmpeg -loglevel verbose -i "$1" -map 0:a -f null -; }
-ffsp() { ffplay -ast $2 -vf "subtitles='$1':si=$3:fontsdir=/usr/share/fonts" "$1"; }
+ffsp() { ffplay -ast "$2" -vf "subtitles='$1':si=$3:fontsdir=/usr/share/fonts" "$1"; }
 
 # random progs
 alias unmute='amixer sset Master unmute && amixer set Master 50%'
@@ -298,44 +297,44 @@ fnd() { find . -name "$@"; }
 cap() { file=$1; shift; script "$file" -c "$SHELL -i -c \"$*\""; sed -i 's/\r$//' "$file"; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
 sdedup() { grep -v '^$' "$1" | sort -u > "$1".tmp && mv "$1.tmp" "$1"; }
-trace() { strace -p $(pidof $@); }
-pk() { kill $2 $(ps ax | awk "/$1/ {print \$1}"); }
-args() { ps -o args= $(pidof $@); }
+trace() { strace -p "$(pidof "$@")"; }
+pk() { kill "$2" "$(ps ax | awk "/$1/ {print \$1}")"; }
+args() { ps -o args= "$(pidof "$@")"; }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 fappend() { mv "$1" "${2}${1}"; }
 fdate() { case $1 in *.*) mv $1 "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv $1 "$1_$(date '+%Y-%m-%d')"; ;; esac; }
 fcat() { printf '%b%s%b' "cat <<\\\\EOF > $1\n" "$(cat $1)" "\nEOF\n"; }
-randmac() { ip link set dev $1 address $(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//'); }
+randmac() { ip link set dev "$1" address "$(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//')"; }
 enc() { openssl enc -aes-256-cbc -pbkdf2 -iter 20000 -in "$1" -out "$1.enc"; }
 dec() { openssl enc -d -aes-256-cbc -pbkdf2 -iter 20000 -in "$1"; }
 theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> $HOME/.lrc; }
 nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
-nrfile() { mv "$1" $(nrstr "$1"); }
-neq() { echo "-$(seq -s ' -' $@)"; }
-nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d $(id -nu); }
+nrfile() { mv "$1" "$(nrstr "$1")"; }
+neq() { echo "-$(seq -s ' -' "$@")"; }
+nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d "$(id -nu)"; }
 gpass() { tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 12; }
-path() { export PATH="$@:"$PATH; }
+path() { export PATH="$1:$PATH"; }
 crop() { magick "$1" -crop "$2" "_$1"; }
 imgs() { magick "$1" -strip -quality "$2" "_$1"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
 sof() { scp -r "$1" root@kyryl.me:"$2"; } #of = upload
-sif() { scp -r root@kyryl.me:"$@"; } #if = download
+sif() { scp -r root@kyryl.me:"$*"; } #if = download
 scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 p() { printf "$@"; }
 # ffor() usage: ffor "path/any string" "cmd" "extra opts"
 ffor() { IFS=$'\n'; for p in $1; do eval "$2 \$p $3"; done }
-inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' SIGINT INT EXIT HUP TERM QUIT; eval "$@"; done }
+inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' INT EXIT HUP TERM QUIT; eval "$1"; done }
 sd() {
-	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi;
-	dir=$(find -type d -regex $reg); echo "$dir"  | grep -n -E . && read i;
-	if [ -z "$i" ]; then i=1; fi;
-	cd "$(echo "$dir" | sed -n "$i"p)"
+	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi
+	dir=$(find . -type d -regex $reg); echo "$dir"  | grep -n -E . && read i
+	if [ -z "$i" ]; then i=1; fi
+	cd "$(echo "$dir" | sed -n "$i"p)" || return
 }
-fup() { curl -F"file=@$@" https://0x0.st/; }
-loc() { find . -name "$@" | xargs wc -l; }
+fup() { curl -F"file=@$1" https://0x0.st/; }
+loc() { find . -name "$1" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
-calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $(($exp)); }
+calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $((exp)); }
 rnm() { arg="$1"; shift; ffor "$(ls)" mv '$(echo $p | sed "$arg")'; }
 cdls() {
 	export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
@@ -347,7 +346,7 @@ cdlsn() {
 	\cd "$2" && l;
 }
 fullpath() {
-	f=$@;
+	f=$1;
 	if [ -d "$f" ]; then
 		base="";
 		dir="$f";
@@ -383,9 +382,9 @@ gg() {
 	eval "var=\$c${last}"
 	case $PWD in "$var") CDSTACK="c${last}${CDSTACK%c${last}}"; cdsplit; ;; esac
 	eval "var=\$c${last}"
-	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
-	\cd "$var"
 	export CDSTACK="c${last}${CDSTACK%c${last}}"
+	\cd "$var" || return
+	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
 }
 bb() {
 	[ -z "$CDSTACK" ] && return
@@ -393,9 +392,9 @@ bb() {
 	eval "var=\$c${first}"
 	case $PWD in "$var") CDSTACK="${CDSTACK##c${first}}c${first}"; cdsplit; ;; esac
 	eval "var=\$c${first}"
-	export PS1="$HOST_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
-	\cd "$var"
 	export CDSTACK="${CDSTACK##c${first}}c${first}"
+	\cd "$var" || return
+	export PS1="$HOST_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
 }
 fd() {
 	sarg=""
@@ -420,12 +419,12 @@ fd() {
 	[ $# -ge 1 ] && shift;
 	cnt=0
 	[ "$CDSTACK" ] && [ -z "$sarg" ] && echo "$CDSTACK"
-	while IFS= read -r line || [[ -n "$line" ]]; do
+	while IFS= read -r line || [ -n "$line" ]; do
 		cnt=$((cnt+1))
 		if [ "$sarg" ]; then
 			if [ -z "$line" ]; then
 				case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
-				line="$sarg | $@"
+				line="$sarg | $*"
 				replace "$HOME/links" $cnt "$line" && fd
 				return
 			fi
@@ -446,37 +445,37 @@ fd() {
 			fi
 		fi
 		var="$cnt $p"
-		[[ ${#var} -gt $FDMAXLEN ]] && FDMAXLEN="${#var}";
-		printf "$cnt $p"
-		x=$(($FDMAXLEN - ${#var}))
+		[ ${#var} -gt $FDMAXLEN ] && FDMAXLEN="${#var}";
+		printf '%s' "$cnt $p"
+		x=$((FDMAXLEN - ${#var}))
 		while [ $x -gt 0 ]; do
 			printf " "
-			x=$(($x-1))
+			x=$((x-1))
 		done
 		printf " | %s\n" "$cmd"
 	done < "$HOME/links"
 	export FDMAXLEN
 	if [ "$sarg" ]; then
 		case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
-		echo "$sarg | $@" >> "$HOME/links" && fd;
+		echo "$sarg | $*" >> "$HOME/links" && fd;
 	fi
 }
 f() { FDTRIM=50; [ $1 ] && fd "$@" || fd|sort -k2; FDTRIM=0; }
-ff() { arg=$@; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
+ff() { arg=$1; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { fd $(neq "$@"); }
-ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p &> /dev/null; fi; vi "$@"; }
+ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
 x() { EXINIT="${EXINIT}:fd" vi "$@"; }
-ix() { EXINIT= vi "$@"; }
+ix() { EXINIT='' vi "$@"; }
 ic() { eval "var=$'$1'"; shift; EXINIT="$var" vi "$@"; }
 
 funiq() {
-	local full_name=$(fullpath "$1")
-	local base_name="${full_name%.*}"
-	local file_ext=".${full_name##*.}"
+	full_name=$(fullpath "$1")
+	base_name="${full_name%.*}"
+	file_ext=".${full_name##*.}"
 	if [ "$file_ext" = ".$full_name" ]; then file_ext=""; fi
-	local count=1
+	count=1
 	while [ -f "$base_name${count}${file_ext}" ]; do
-		((count++))
+		count=$((count+1))
 	done
 	echo "$base_name${count}${file_ext}"
 }
@@ -574,6 +573,6 @@ klecinst() {
 	passh -p $pass ssh $1 $exec
 }
 
-[ -f "$HOME/links" ] && fd &> /dev/null;
-[ -f "$HOME/.lrc" ] && source $HOME/.lrc;
+[ -f "$HOME/links" ] && fd > /dev/null 2>&1
+[ -f "$HOME/.lrc" ] && source "$HOME/.lrc"
 unset ENVSET
