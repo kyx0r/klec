@@ -1,6 +1,6 @@
 #!/bin/sh
 export ENVSET=1
-export EXINIT=$'se noled:se ish:i o{\n}kA\n	\nA {jo}koa\n\\:e \!p $c\nI/*A*/\ni/*A*/\n/\/\*\n2x/\*\/\n2x\n>\%<<$\%<<\n\\:\!cp \% \%_\\:w\\:\!git diff --no-index \%_ \%\n\\:ac  \\:& i\\:ac3ls\n\\:cd \!p $c\n\x1b:&1G0"q2Y2j"Qy$ 0j"wy$ j0"ey$ j0"ay$ j0"sy$ j0"d2Y2j"Dy$ j0"xy$ j0"ly$ j0"cy$ j0"fy$:inc (^(?\:(?\!^\.git).)+[^/]+$):u$:1:se pac:se led'
+export EXINIT="$(printf '%b' 'se noled:se ish:i o{\n}kA\n	\nA {jo}koa\n\\:e \!p $c\nI/*A*/\ni/*A*/\n/\/\*\n2x/\*\/\n2x\n>\%<<$\%<<\n\\:\!cp \% \%_\\:w\\:\!git diff --no-index \%_ \%\n\\:ac  \\:& i\\:ac3ls\n\\:cd \!p $c\n\x1b:&1G0"q2Y2j"Qy$ 0j"wy$ j0"ey$ j0"ay$ j0"sy$ j0"d2Y2j"Dy$ j0"xy$ j0"ly$ j0"cy$ j0"fy$:inc (^(?\:(?\!^\.git).)+[^/]+$):u$:1:se pac:se led')"
 export HISTFILESIZE=1073741824
 export HISTSIZE=67108864
 export KISS_SU=su
@@ -80,7 +80,8 @@ gcom() {
 }
 gdf() {
 	hist="$(git --no-pager log --follow "$1" | grep -E '^commit' | cut -d' ' -f2)"
-	IFS=$'\n'
+	IFS="
+"
 	prev=""
 	mkfifo /tmp/pipe
 	for p in $hist; do
@@ -126,7 +127,7 @@ gcb() {
 }
 gtossh() {
 	curl=$(git remote get-url --push origin);
-	echo "git@$(echo $curl | cut -d '/' -f 3):$(echo $curl | grep -E -o '[^/]*.[^/]*$')";
+	echo "git@$(echo "$curl" | cut -d '/' -f 3):$(echo "$curl" | grep -E -o '[^/]*.[^/]*$')";
 }
 gcmf() {
 	ln=$2
@@ -137,8 +138,8 @@ gcmd() {
 	ln=$2
 	[ -z "$ln" ] && ln=1
 	name="$(git diff --name-only --cached --relative | sed -n "${ln}p" | cut -d'/' -f1)"
-	[ ! -d "$name" ] && name="$(basename $PWD)"
-	git commit -m "$(echo $name | tr '\n' ':') $1"
+	[ ! -d "$name" ] && name="$(basename "$PWD")"
+	git commit -m "$(echo "$name" | tr '\n' ':') $1"
 }
 gcmfs() {
 	MSG=""
@@ -147,7 +148,7 @@ gcmfs() {
 	git commit -m "$1
 $MSG"
 }
-gpfix() { gal; gds > "$1"; grs; ga "$1"; [ -z "$2" ] && gcmf "fix" || gcmf "$2"; grh; }
+gpfix() { gal; gds > "$1"; grs; ga "$1"; if [ "$2" ]; then gcmf "$2"; else gcmf "fix"; fi; grh; }
 
 # alpine linux
 alias apka='apk add'
@@ -187,21 +188,21 @@ kpc() {
 		cd "$HOME"/.cache/kiss/proc/*/build/"$1"* || return
 	fi
 }
-knu() { mkdir -p $HOME/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" $HOME/kiss/no-updates; }
-kru() { rm -Rf $HOME/kiss/no-updates/"$1"; }
+knu() { mkdir -p "$HOME"/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" "$HOME"/kiss/no-updates; }
+kru() { rm -Rf "$HOME"/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
-kci() { rm $HOME/.cache/kiss/bin/"$1"* && ki $1; }
+kci() { rm "$HOME"/.cache/kiss/bin/"$1"* && ki "$1"; }
 kcd() { path=$(kiss search "${1}*"); [ $? -eq 0 ] && cd "$(echo "$path"|head -n1)" || return; }
 krs() { export KISS_FORCE=1; for file in "$@"; do kiss r "$file"; done; unset KISS_FORCE; }
 kcmv() {
 	dir=$(dirname "$(git diff --name-only --cached --relative | head -n1)")
 	[ "$dir" = "." ] && dir="$PWD"
-	git commit -m "$(basename ${dir}): $(cat ${dir}/version)"
+	git commit -m "$(basename "$dir"): $(cat "$dir"/version)"
 }
 kcm() {
 	dir=$(dirname "$(git diff --name-only --cached --relative | head -n1)")
 	[ "$dir" = "." ] && dir="$PWD"
-	git commit -m "$(basename ${dir}): $*"
+	git commit -m "$(basename "$dir"): $*"
 }
 
 # make
@@ -302,12 +303,12 @@ pk() { kill "$2" "$(ps ax | awk "/$1/ {print \$1}")"; }
 args() { ps -o args= "$(pidof "$@")"; }
 prepend() { (echo "$1"; cat "$2") > temp && mv temp "$2"; }
 fappend() { mv "$1" "${2}${1}"; }
-fdate() { case $1 in *.*) mv $1 "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv $1 "$1_$(date '+%Y-%m-%d')"; ;; esac; }
-fcat() { printf '%b%s%b' "cat <<\\\\EOF > $1\n" "$(cat $1)" "\nEOF\n"; }
+fdate() { case $1 in *.*) mv "$1" "${1%%.*}_$(date '+%Y-%m-%d').${1#*.}"; ;; *) mv "$1" "$1_$(date '+%Y-%m-%d')"; ;; esac; }
+fcat() { printf '%b%s%b' "cat <<\\\\EOF > $1\n" "$(cat "$1")" "\nEOF\n"; }
 randmac() { ip link set dev "$1" address "$(openssl rand -hex 6 | sed 's/\(..\)/\1:/g; s/:$//')"; }
 enc() { openssl enc -aes-256-cbc -pbkdf2 -iter 20000 -in "$1" -out "$1.enc"; }
 dec() { openssl enc -d -aes-256-cbc -pbkdf2 -iter 20000 -in "$1"; }
-theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> $HOME/.lrc; }
+theme() { echo 'if [ -z "${THEMESET}" ]; then base16-pulsar.sh; export THEMESET=1; fi;' >> "$HOME"/.lrc; }
 nrstr() { filename="$1"; echo "${filename}" | awk '{print tolower($0)}'; }
 nrfile() { mv "$1" "$(nrstr "$1")"; }
 neq() { echo "-$(seq -s ' -' "$@")"; }
@@ -323,11 +324,12 @@ scat() { cat ~/.ssh/id_rsa.pub | ssh "$1" 'cat >> .ssh/authorized_keys'; }
 e() { echo "$@"; }
 p() { printf "$@"; }
 # ffor() usage: ffor "path/any string" "cmd" "extra opts"
-ffor() { IFS=$'\n'; for p in $1; do eval "$2 \$p $3"; done }
+ffor() { IFS="
+"; for p in $1; do eval "$2 \$p $3"; done }
 inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' INT EXIT HUP TERM QUIT; eval "$1"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi
-	dir=$(find . -type d -regex $reg); echo "$dir"  | grep -n -E . && read i
+	dir=$(find . -type d -regex "$reg"); echo "$dir"  | grep -n -E . && read -r i
 	if [ -z "$i" ]; then i=1; fi
 	cd "$(echo "$dir" | sed -n "$i"p)" || return
 }
@@ -380,9 +382,9 @@ gg() {
 	[ -z "$CDSTACK" ] && return
 	cdsplit
 	eval "var=\$c${last}"
-	case $PWD in "$var") CDSTACK="c${last}${CDSTACK%c${last}}"; cdsplit; ;; esac
+	case $PWD in "$var") CDSTACK="c${last}${CDSTACK%c"${last}"}"; cdsplit; ;; esac
 	eval "var=\$c${last}"
-	export CDSTACK="c${last}${CDSTACK%c${last}}"
+	export CDSTACK="c${last}${CDSTACK%c"${last}"}"
 	\cd "$var" || return
 	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
 }
@@ -390,9 +392,9 @@ bb() {
 	[ -z "$CDSTACK" ] && return
 	cdsplit
 	eval "var=\$c${first}"
-	case $PWD in "$var") CDSTACK="${CDSTACK##c${first}}c${first}"; cdsplit; ;; esac
+	case $PWD in "$var") CDSTACK="${CDSTACK##c"${first}"}c${first}"; cdsplit; ;; esac
 	eval "var=\$c${first}"
-	export CDSTACK="${CDSTACK##c${first}}c${first}"
+	export CDSTACK="${CDSTACK##c"${first}"}c${first}"
 	\cd "$var" || return
 	export PS1="$HOST_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
 }
@@ -401,7 +403,7 @@ fd() {
 	if [ "$1" ]; then
 		case $1 in
 			''|*[!0-9-]*)
-				sarg="$(fullpath $1)"
+				sarg="$(fullpath "$1")"
 			;;
 			*)
 				for arg in "$@"; do
@@ -460,9 +462,9 @@ fd() {
 		echo "$sarg | $*" >> "$HOME/links" && fd;
 	fi
 }
-f() { FDTRIM=50; [ $1 ] && fd "$@" || fd|sort -k2; FDTRIM=0; }
+f() { FDTRIM=50; if [ "$1" ]; then fd "$@"; else fd|sort -k2; fi; FDTRIM=0; }
 ff() { arg=$1; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
-frm() { fd $(neq "$@"); }
+frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
 x() { EXINIT="${EXINIT}:fd" vi "$@"; }
 ix() { EXINIT='' vi "$@"; }
@@ -560,7 +562,7 @@ d0() {
 klecinst() {
 	pass=$2
 	if [ ! "$2" ]; then pass="a"; fi
-	compr klec.tar.gz && passh -p $pass scp klec.tar.gz "$1:~/"
+	compr klec.tar.gz && passh -p "$pass" scp klec.tar.gz "$1:~/"
 	exec=""
 	if [ "$3" ]; then
 		exec="$exec echo -e '$3\n$3\n$3\n' | sudo -S -k passwd root &&"
@@ -570,9 +572,9 @@ klecinst() {
 	fi
 	exec="$exec rm -rf ~/klec && tar -xf ~/klec.tar.gz &&"
 	exec="$exec cd ~/klec && sh install.sh"
-	passh -p $pass ssh $1 $exec
+	passh -p "$pass" ssh "$1" "$exec"
 }
 
 [ -f "$HOME/links" ] && fd > /dev/null 2>&1
-[ -f "$HOME/.lrc" ] && source "$HOME/.lrc"
+[ -f "$HOME/.lrc" ] && . "$HOME/.lrc"
 unset ENVSET
