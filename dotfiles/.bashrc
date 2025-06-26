@@ -2,8 +2,8 @@
 # ~/.bashrc
 #
 
-case "$SHELL" in *bash*) ;; *) return ;; esac
-case "$(echo $0)" in *bash*) ;; *) return ;; esac
+case "$SHELL" in *bash*) ;; *) unset HISTFILE; return ;; esac
+case "$(echo $0)" in *bash*) ;; *) unset HISTFILE; return ;; esac
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
