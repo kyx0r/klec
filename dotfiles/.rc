@@ -553,6 +553,10 @@ os() {
 	cflg "-Os"
 }
 
+d3() {
+	cflg "-O3 -pipe -mtune=native -march=native -g"
+}
+
 d2() {
 	cflg "-O2 -g"
 }
