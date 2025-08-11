@@ -298,11 +298,6 @@ alias ctl='systemctl'
 alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
 
-trim() {
-    trim=${1#${1%%[![:space:]]*}}
-    trim=${trim%${trim##*[![:space:]]}}
-    printf '%s\n' "$trim"
-}
 fnd() { find . -name "$@"; }
 cap() { file=$1; shift; script "$file" -c "$SHELL -i -c \"$*\""; sed -i 's/\r$//' "$file"; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
@@ -447,9 +442,10 @@ fd() {
 		eval "export c${cnt}=$p"
 		eval "var=\"$cmd\""
 		alias "$cnt"="$var"
-		p="$(trim "$p")"
+		p=${p#${p%%[![:space:]]*}}
+		p=${p%${p##*[![:space:]]}}
 		plast="${p##*/}"
-		[ ${#cnt} -lt $FDCOUNT ] && fdc=$((FDCOUNT -  ${#cnt})) || fdc=1
+		[ ${#cnt} -lt $FDCOUNT ] && fdc=$((FDCOUNT - ${#cnt})) || fdc=1
 		[ $((${#plast} + ${#cnt} + fdc)) -gt $FDMAXLEN1 ]\
 			&& FDMAXLEN1="$((${#plast} + ${#cnt} + fdc))";
 		if  [ $FDTRIM -ne 0 ]; then
