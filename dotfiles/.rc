@@ -26,7 +26,7 @@ export PREFIX=/usr
 export DISPLAY=:2
 export FDMAXLEN0=0
 export FDMAXLEN1=0
-export FDCOUNT=1
+export FDCOUNT=0
 export FDTRIM=0
 
 # git
@@ -424,6 +424,8 @@ fd() {
 	fi
 	[ $# -ge 1 ] && shift;
 	cnt=0
+	maxln=-1
+	maxnm=-1
 	[ "$CDSTACK" ] && [ -z "$sarg" ] && echo "$CDSTACK"
 	while IFS= read -r line || [ -n "$line" ]; do
 		cnt=$((cnt+1))
@@ -445,28 +447,32 @@ fd() {
 		p=${p#${p%%[![:space:]]*}}
 		p=${p%${p##*[![:space:]]}}
 		plast="${p##*/}"
-		[ ${#cnt} -lt $FDCOUNT ] && fdc=$((FDCOUNT - ${#cnt})) || fdc=1
+		[ $FDCOUNT -gt 0 ] && fdc=$((FDCOUNT - ${#cnt})) || fdc=0
 		[ $((${#plast} + ${#cnt} + fdc)) -gt $FDMAXLEN1 ]\
-			&& FDMAXLEN1="$((${#plast} + ${#cnt} + fdc))";
+			&& FDMAXLEN1="$((${#plast} + ${#cnt} + fdc))" && maxnm=$cnt;
 		if  [ $FDTRIM -ne 0 ]; then
 			p="$plast"
 			if [ $((${#p} + ${#cnt} + fdc)) -gt $FDTRIM ]; then
 				p="$(echo "$p" | cut -c "$((${#p} - $((FDTRIM - ${#cnt} - fdc)) + 1))-${#p}")"
 			fi
-			[ $FDMAXLEN1 -gt $FDTRIM ] && FDMAXLEN0=$FDTRIM || FDMAXLEN0=$FDMAXLEN1
+			[ $FDMAXLEN1 -gt $FDTRIM ] && FDMAXLEN1=$FDTRIM
+			x=$((FDMAXLEN1 - $((${#p} + ${#cnt} + fdc))))
+		else
+			[ $((${#p} + ${#cnt} + fdc)) -gt $FDMAXLEN0 ]\
+				&& FDMAXLEN0="$((${#p} + ${#cnt} + fdc))" && maxln=$cnt;
+			x=$((FDMAXLEN0 - $((${#p} + ${#cnt} + fdc))))
 		fi
-		[ $((${#p} + ${#cnt} + fdc)) -gt $FDMAXLEN0 ]\
-			&& FDMAXLEN0="$((${#p} + ${#cnt} + fdc))";
-		x=$((FDMAXLEN0 - $((${#p} + ${#cnt} + fdc))))
-		printf "%*s$cnt $p%*s | $cmd\n" $((fdc - 1)) "" $x ""
+		printf "%*s$cnt $p%*s | $cmd\n" $fdc "" $x ""
 	done < "$HOME/links"
-	FDCOUNT=$((${#cnt} + 1))
+	FDCOUNT=${#cnt}
+	[ $maxln -ge 0 ] && FDMAXLEN0="$((FDMAXLEN0 + FDCOUNT - ${#maxln}))";
+	[ $maxnm -ge 0 ] && FDMAXLEN1="$((FDMAXLEN1 + FDCOUNT - ${#maxnm}))";
 	if [ "$sarg" ]; then
 		case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
 		echo "$sarg | $*" >> "$HOME/links" && fd;
 	fi
 }
-f() { FDTRIM=50; if [ "$1" ]; then fd "$@"|sort -k2; else fd|sort -k2; fi; FDTRIM=0; }
+f() { FDTRIM=50; if [ "$1" ]; then fd "$@"; else fd; fi; FDTRIM=0; }
 ff() { arg=$1; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
