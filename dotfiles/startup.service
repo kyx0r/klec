@@ -1,0 +1,10 @@
+[Unit]
+Description=Startup Script
+
+[Service]
+Type=simple
+RemainAfterExit=yes
+ExecStart=/bin/sh /root/startup.sh
+
+[Install]
+WantedBy=multi-user.target 
