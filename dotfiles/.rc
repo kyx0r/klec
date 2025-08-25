@@ -473,6 +473,7 @@ fd() {
 	fi
 }
 f() { FDTRIM=50; if [ "$1" ]; then fd "$@"; else fd; fi; FDTRIM=0; }
+fe() { cmd=$(f|grep -i -E -o "[0-9]+ $1"); eval "$cmd"; }
 ff() { arg=$1; [ ! "$arg" ] && arg="."; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p; else fd "$arg" vi \$p; fi }
 frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
