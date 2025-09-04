@@ -36,6 +36,7 @@ alias gal='git add .'
 alias gb='git branch'
 alias gbd='git push origin --delete'
 alias gc='git commit'
+alias gca='git commit --author'
 alias gcm='git commit -m'
 alias gcms='git commit -S -m'
 alias gco='git checkout'
@@ -151,6 +152,7 @@ gcmfs() {
 $MSG"
 }
 gpfix() { gal; gds > "$1"; grs; ga "$1"; if [ "$2" ]; then gcmf "$2"; else gcmf "fix"; fi; grh; }
+gtd() { git tag --delete "$1"; echo "delete tag at origin?" && read resp; git push --delete origin "$1"; }
 
 # alpine linux
 alias apka='apk add'
