@@ -332,7 +332,7 @@ e() { echo "$@"; }
 p() { printf "$@"; }
 # ffor() usage: ffor "path/any string" "cmd" "extra opts"
 ffor() { IFS="
-"; for p in $1; do eval "$2 \$p $3"; done }
+"; i=0; for p in $1; do eval "$2 \$p $3"; i=$((i + 1)); done }
 inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' INT EXIT HUP TERM QUIT; eval "$1"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi
@@ -476,7 +476,22 @@ fd() {
 	fi
 }
 f() { FDTRIM=50; if [ "$1" ]; then fd "$@"; else fd; fi; FDTRIM=0; }
-fe() { cmd=$(f | awk -v term="$1" 'tolower($0) ~ tolower(term) {print $1; exit}'); eval "$cmd"; }
+fe() {
+	cmd="$(f | grep -i -E "$1")"
+IFS="
+"
+	i=1; for p in $cmd; do
+		printf "$i $p\n"
+		i=$((i + 1))
+	done 
+	if [ $i -gt 2 ]; then
+		read -r i
+		cmd="$(echo "$cmd" | sed -n "$i"p | grep -E -o '^[ 0-9]+')"
+	else
+		cmd="$(echo "$cmd" | grep -E -o '^[ 0-9]+')"
+	fi
+	eval "$cmd"
+}
 ff() { arg=$1; [ ! "$arg" ] && arg="$PWD"; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p | grep "$arg"; else fd "$arg" vi \$p; fi }
 frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
