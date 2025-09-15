@@ -492,9 +492,9 @@ IFS="
 	fi
 	eval "$cmd"
 }
-ff() { arg=$1; [ ! "$arg" ] && arg="$PWD"; if [ -d "$arg" ]; then fd "$arg" cdlsn \$cnt \$p | grep "$arg"; else fd "$arg" vi \$p; fi }
+ff() { arg=$1; [ ! "$arg" ] && arg="$PWD"; if [ -d "$arg" ]; then fd "$arg" 'cdlsn $cnt $p' | grep "$arg"; else fd "$arg" 'vi $p' | grep "$arg"; fi }
 frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
-ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" vi \$p > /dev/null 2>&1; fi; vi "$@"; }
+ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" 'vi $p' > /dev/null 2>&1; fi; vi "$@"; }
 x() { EXINIT="${EXINIT}:fd" vi "$@"; }
 ix() { EXINIT='' vi "$@"; }
 ic() { eval "var=$'$1'"; shift; EXINIT="$var" vi "$@"; }
