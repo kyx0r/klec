@@ -240,7 +240,7 @@ ffchk() { ffmpeg -loglevel verbose -i "$1" -map 0:a -f null -; }
 ffsp() { ffplay -ast "$2" -vf "subtitles='$1':si=$3:fontsdir=/usr/share/fonts" "$1"; }
 
 # random progs
-alias tzgmt4='echo "Etc/GMT+4" > /etc/timezone && cp /usr/share/zoneinfo/Etc/GMT+4 /etc/localtime'
+alias tzutc0='echo "UTC0" > /etc/timezone && cp /usr/share/zoneinfo/UTC /etc/localtime'
 alias unmute='amixer sset Master unmute && amixer set Master 50%'
 alias zdel='find . -size 0 -print -delete'
 alias llm='source prompts.sh'
