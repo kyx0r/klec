@@ -301,9 +301,10 @@ alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
 alias uex='unset EXINIT'
 
-fnd() { find . -regex ".*$@.*"; }
+fnd() { find . -regex ".*$*.*"; }
 se() {
-	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:$=0:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b0:led')"
+	bf=1; [ $# -ge 2 ] && bf=0
+	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:$=0:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b$bf:led')"
 	eval "ex=\"$CMD:$EXINIT\""
 	shift; EXINIT="$ex" vi "$@"
 }
@@ -346,7 +347,6 @@ sd() {
 	cd "$(echo "$dir" | sed -n "$i"p)" || return
 }
 fup() { curl -F"file=@$1" https://0x0.st/; }
-loc() { find . -name "$1" | xargs wc -l; }
 r() { grep -n -r "$@" . ; }
 calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $((exp)); }
 rnm() { arg="$1"; shift; ffor "$(ls)" mv '$(echo $p | sed "$arg")'; }
