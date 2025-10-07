@@ -304,7 +304,7 @@ alias uex='unset EXINIT'
 fnd() { find . -regex ".*$*.*"; }
 se() {
 	bf=1; [ $# -ge 2 ] && bf=0
-	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:$=0:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b$bf:led')"
+	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:$=1:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b$bf:led')"
 	eval "ex=\"$CMD:$EXINIT\""
 	shift; EXINIT="$ex" vi "$@"
 }
