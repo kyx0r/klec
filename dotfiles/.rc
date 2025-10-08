@@ -305,8 +305,8 @@ fnd() { find . -regex ".*$*.*"; }
 se() {
 	bf=1; [ $# -ge 2 ] && bf=0
 	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:$=1:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b$bf:led')"
-	eval "ex=\"$CMD:$EXINIT\""
-	shift; EXINIT="$ex" vi "$@"
+	eval "ex=\"$CMD\""
+	shift; EXINIT="$ex:$EXINIT" vi "$@"
 }
 cap() { file=$1; shift; script "$file" -c "$SHELL -i -c \"$*\""; sed -i 's/\r$//' "$file"; }
 dedup() { cat -n "$1" | sort -u -k2,7 | sort -n | sed 's/[^\t]*.//'; }
