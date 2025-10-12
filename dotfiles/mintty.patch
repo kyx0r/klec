@@ -1,0 +1,15 @@
+diff --git a/src/wininput.c b/src/wininput.c
+index 4d61e734..b1ba0eb7 100644
+--- a/src/wininput.c
++++ b/src/wininput.c
+@@ -2721,6 +2721,10 @@ C	M	+C	+A	"	"
+   bool win = (is_key_down(VK_LWIN) && key != VK_LWIN)
+           || (is_key_down(VK_RWIN) && key != VK_RWIN);
+   trace_alt("alt %d lalt %d ralt %d altgr %d\n", alt, lalt, ralt, altgr);
++  if (key == 'V' && (alt || lalt)) {
++    win_paste();
++    return true;
++  }
+ 
+   mod_keys mods = shift * MDK_SHIFT
+                 | alt * MDK_ALT
