@@ -258,11 +258,12 @@ alias cp='cp -r'
 alias rm='rm -rf'
 alias s='su -l'
 alias feh='feh --title %f___[%wX%h]_[%u/%l] -p'
-alias d='gdb --args'
+alias da='gdb --args'
 alias rd='r2 -A -d -e dbg.bpinmaps=false -e bin.relocs.apply=true'
 alias fdmesg='dmesg -w | tee f'
 alias de='dmesg'
 alias c='cd ..'
+alias d='cd'
 alias thw='hwclock --systohc'
 alias va='valgrind --log-file=valog'
 alias cgr='valgrind --tool=callgrind'
@@ -388,7 +389,6 @@ replace() {
 	mv "$tmp" "$1"
 }
 alias cd='cdls'
-alias v='cd'
 alias vv='cd -'
 alias csc='unset CDSTACK'
 cdsplit() {
