@@ -182,7 +182,7 @@ alias kds='export KISS_STRIP=0'
 alias km='kiss manifest'
 alias krv='kiss revdepends'
 alias kdp='kiss depends'
-krepo() { export KISS_PATH="$KISS_PATH:$HOME/kiss/$*"; }
+krepo() { echo 'export KISS_PATH="$KISS_PATH:'"$(fullpath $*)\"" >> "$HOME"/.lrc; }
 kow() { kiss owns /bin/"$1"; }
 kpc() {
 	dirs=$(ls "$HOME"/.cache/kiss/proc/*/build/)
