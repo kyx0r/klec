@@ -137,6 +137,7 @@ gcmf() {
 	[ -z "$ln" ] && ln=1
 	git commit -m "$(git diff --name-only --cached | sed -n "${ln}p" | tr '\n' ':') $1"
 }
+gcmfe() { gcmf "$@"; git commit --amend; }
 gcmd() {
 	ln=$2
 	[ -z "$ln" ] && ln=1
@@ -144,6 +145,7 @@ gcmd() {
 	[ ! -d "$name" ] && name="$(basename "$PWD")"
 	git commit -m "$(echo "$name" | tr '\n' ':') $1"
 }
+gcmde() { gcmf "$@"; git commit --amend; }
 gcmfs() {
 	MSG=""
 	ffor "$(git diff --name-only --cached | sed -n "$2p")"\
