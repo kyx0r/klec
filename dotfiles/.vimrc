@@ -29,8 +29,6 @@ highlight FoldColumn term=bold cterm=none ctermfg=Magenta ctermbg=none
 hi Search cterm=NONE ctermfg=Red ctermbg=none
 let g:netrw_banner=0 "disable the file browser banner
 let g:netrw_liststyle=3 "tree view
-let &t_SI = "\e[3 q"
-let &t_EI = "\e[4 q"
 let mapleader = "\<Space>"
 let $RTP=split(&runtimepath, ',')[0]
 let g:netrw_bufsettings = 'noma nomod nu nobl nowrap ro'
