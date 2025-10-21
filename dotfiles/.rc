@@ -355,7 +355,7 @@ inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' INT EXIT HUP TERM QUIT; 
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi
 	dir=$(find . -type d -regex "$reg"); echo "$dir"  | grep -n -E . && read -r i
-	if [ -z "$i" ]; then i=1; fi
+	[ -z "$i" ] && i=1
 	cd "$(echo "$dir" | sed -n "$i"p)" || return
 }
 fup() { curl -F"file=@$1" https://0x0.st/; }
@@ -502,6 +502,7 @@ IFS="
 	done 
 	if [ $i -gt 2 ]; then
 		read -r i
+		[ -z "$i" ] && i=1
 		cmd="$(echo "$cmd" | sed -n "$i"p | grep -E -o '^[ 0-9]+')"
 	else
 		cmd="$(echo "$cmd" | grep -E -o '^[ 0-9]+')"
