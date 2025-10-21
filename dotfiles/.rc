@@ -285,25 +285,8 @@ alias psx='ps aux | grep'
 alias ptrace='strace -p'
 alias virtm='virt-viewer -f --hotkeys=toggle-fullscreen=shift+f11,release-cursor=shift+f12'
 alias j='jobs'
+i=1; while [ $i -le 10 ]; do alias "$i"="fg %$i"; i=$((i+1)); done;
 alias q='fg'
-alias q1='fg %1'
-alias q2='fg %2'
-alias q3='fg %3'
-alias q4='fg %4'
-alias q5='fg %5'
-alias q6='fg %6'
-alias q7='fg %7'
-alias q8='fg %8'
-alias q9='fg %9'
-alias k1='kill -9 %1'
-alias k2='kill -9 %2'
-alias k3='kill -9 %3'
-alias k4='kill -9 %4'
-alias k5='kill -9 %5'
-alias k6='kill -9 %6'
-alias k7='kill -9 %7'
-alias k8='kill -9 %8'
-alias k9='kill -9 %9'
 alias me='ssh kyryl.me'
 alias dl='curl -O'
 alias dlh='curl -L -O'
@@ -432,7 +415,7 @@ fd() {
 				for arg in "$@"; do
 					if [ "$arg" -lt 0 ]; then
 						cnt=${arg#-}
-						echo "$(sed "${cnt}s/.*//" "$HOME/links")" > "$HOME/links"
+						echo "$(sed "$((cnt - 9))s/.*//" "$HOME/links")" > "$HOME/links"
 					else
 						sarg="$(pwd)"
 					fi
@@ -442,7 +425,7 @@ fd() {
 		esac
 	fi
 	[ $# -ge 1 ] && shift;
-	cnt=0
+	cnt=9
 	maxln=-1
 	maxnm=-1
 	[ "$CDSTACK" ] && [ -z "$sarg" ] && echo "$CDSTACK"
@@ -452,7 +435,7 @@ fd() {
 			if [ -z "$line" ]; then
 				case $sarg in *[[:space:]]*) sarg="\"$sarg\"" ;; esac
 				line="$sarg | $*"
-				replace "$HOME/links" $cnt "$line" && fd
+				replace "$HOME/links" $((cnt - 9)) "$line" && fd
 				return
 			fi
 			continue
