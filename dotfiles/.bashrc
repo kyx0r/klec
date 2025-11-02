@@ -21,7 +21,7 @@ bind -x '"\C-n":"l"'
 # Eternal bash history.
 export HISTTIMEFORMAT="[%F %T] "
 export HISTFILE=~/.bhist
-export HISTCONTROL=ignoredups
+export HISTCONTROL=ignoredups:erasedups
 PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
 stty -ixon &> /dev/null
 
