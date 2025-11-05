@@ -61,10 +61,10 @@ index f3f91c0..d50064a 100644
              }
 diff --git a/macros.ahk b/macros.ahk
 new file mode 100644
-index 0000000..9993c77
+index 0000000..3d83ad6
 --- /dev/null
 +++ b/macros.ahk
-@@ -0,0 +1,108 @@
+@@ -0,0 +1,101 @@
 +^Capslock::
 +{
 +	Sleep(50)
@@ -155,16 +155,9 @@ index 0000000..9993c77
 +
 +^!t::
 +{
-+	Run "C:\Users\User\Desktop\eng36.rdp"
++	Run "C:\Users\win\Desktop\eng36.rdp"
 +	WinWaitActive "ahk_exe CredentialUIBroker.exe"
-+	ControlSendText(EnvGet("rdpusr"), , "ahk_exe CredentialUIBroker.exe")
-+	ControlSend("{Tab}", , "ahk_exe CredentialUIBroker.exe")
 +	Sleep(1500)
-+	ControlSendText(EnvGet("rdppass"), , "ahk_exe CredentialUIBroker.exe")
-+	Sleep(1500)
-+	ControlSend("{Enter}", , "ahk_exe CredentialUIBroker.exe")
-+	Sleep(1500)
-+	WinWaitActive "ahk_exe CredentialUIBroker.exe"
 +	ControlSendText(EnvGet("rdppass"), , "ahk_exe CredentialUIBroker.exe")
 +	Sleep(1500)
 +	ControlSend("{Enter}", , "ahk_exe CredentialUIBroker.exe")
