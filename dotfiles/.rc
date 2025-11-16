@@ -195,6 +195,7 @@ kpc() {
 		cd "$HOME"/.cache/kiss/proc/*/build/"$1"* || return
 	fi
 }
+kpr() { rm -rf "$HOME"/.cache/kiss/proc/*; }
 knu() { mkdir -p "$HOME"/kiss/no-updates && cp -r /var/db/kiss/installed/"$1" "$HOME"/kiss/no-updates; }
 kru() { rm -Rf "$HOME"/kiss/no-updates/"$1"; }
 ki() { export KISS_PROMPT=0 && kiss b "$1" && kiss i "$1" && unset KISS_PROMPT; }
