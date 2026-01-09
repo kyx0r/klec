@@ -72,6 +72,7 @@ alias gfp='git format-patch'
 alias gam='git am'
 alias gt='git tag'
 alias gpt='git push origin tag'
+alias gmnd='git commit --amend'
 gcom() {
 	if git show-ref --verify --quiet refs/heads/main; then
 		git checkout main
