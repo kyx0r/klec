@@ -307,7 +307,7 @@ rel() {
 }
 se() {
 	bf=1; [ $# -ge 2 ] && bf=0
-	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:1,$+1=1p:pr:& \:bx a\n:ya!a:g/^/ya\:& \\\\\\:e \n\:b-2:b-1:u:bs1:b0:b$bf:led')"
+	CMD="$(printf '%b' 'led:inc $1:fd:b-2:pra:1,$+1=1p:pr:bx %@a:ya!a:g/^/;;\$ya a\:e \%@a\:b-2:b-1:u:bs1:b0:b$bf:led:mpt0')"
 	eval "ex=\"$CMD\""
 	shift; EXINIT="$ex:$EXINIT" vi "$@"
 }
