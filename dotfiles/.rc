@@ -230,6 +230,13 @@ ipa() { ip a add "$1" dev "$2"; }
 ipd() { ip a del "$1" dev "$2"; }
 ipra() { ip route add "$1" via "${1%.*}.$((${1##*.}+1))" dev "$2"; }
 iprd() { ip route del "$1"; }
+tcap() {
+	iface="${1:-any}"
+	h1="$2"
+	h2="$3"
+	shift 3
+	tcpdump -i "$iface" host "$h1" and host "$h2" "$@"
+}
 
 # ffmpeg
 tomp4() { ffmpeg -i "$1" -vcodec libx265 -crf 28 "${1%.*}.mp4"; }
