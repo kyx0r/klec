@@ -154,6 +154,24 @@ $MSG"
 }
 gpfix() { gal; gds > "$1"; grs; ga "$1"; if [ "$2" ]; then gcmf "$2"; else gcmf "fix"; fi; grh; }
 gtd() { git tag --delete "$1"; echo "delete tag at origin?" && read resp; git push --delete origin "$1"; }
+gbs() {
+	branches=$(git branch)
+	count=$(printf '%s\n' "$branches" | wc -l)
+	c=$1
+	if [ -z "$c" ]; then
+		printf '%s\n' "$branches" | nl -ba
+		[ "$count" -gt 9 ] && return
+		stty -icanon min 1 time 0
+		printf 'branch: '
+		c=$(dd bs=1 count=1 2>/dev/null)
+		stty icanon
+		printf '\n'
+	fi
+	case "$c" in [1-9])
+		branch=$(printf '%s\n' "$branches" | sed -n "${c}p" | sed 's/^[* ]*//')
+		[ -n "$branch" ] && git checkout "$branch"
+	esac
+}
 
 # alpine linux
 alias apka='apk add'
