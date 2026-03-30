@@ -383,6 +383,10 @@ neq() { echo "-$(seq -s ' -' "$@")"; }
 nopw() { [ "$1" ] && passwd -d "$@" && return; passwd -d "$(id -nu)"; }
 gpass() { tr -dc 'A-Za-z0-9' < /dev/urandom | head -c 12; }
 path() { export PATH="$1:$PATH"; }
+saveenv() {
+	val=$(printenv "$1") || { echo "Variable '$1' not set"; return 1; }
+	echo "export $1='$val'" >> ~/.lrc
+}
 crop() { magick "$1" -crop "$2" "_$1"; }
 imgs() { magick "$1" -strip -quality "$2" "_$1"; }
 ntmount() { ntfs-3g -o uid=1000,gid=1000,dmask=22,fmask=133 "$@"; }
