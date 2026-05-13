@@ -320,6 +320,7 @@ alias fs='stat'
 alias ctl='systemctl'
 alias pyenv='python -m venv .env'
 alias pyact='source .env/bin/activate'
+alias u='unset'
 alias uex='unset EXINIT'
 alias delsyms='find . -type l ! -exec test -e {} \; -delete'
 
