@@ -1,5 +1,4 @@
 #!/bin/sh
-addheader() { (echo "$1"; cat "$PWD/prompt.txt") > $PWD/hprompt.txt; printf '%s' "$2" >> hprompt.txt; }
 
 llmload() {
 	file="$1"
@@ -49,44 +48,57 @@ llmbench() {
 	sexpect interact
 }
 
-llm3() {
-addheader "<|start_header_id|>system<|end_header_id|>" "<|eot_id|>\n"
-llama-cli -fa on --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 -f "$PWD"/hprompt.txt \
--r "<|eot_id|>" -r "<|eot_id|>\n" \
---in-prefix "<|start_header_id|>user<|end_header_id|>\n" --in-suffix "<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>\n" \
---multiline-input -i -if $LLM_ARGS -m "$@";
+llmlog() {
+	export LLM_ARGS="${LLM_ARGS}--log-file
+log
+--verbose
+--log-colors
+off
+"
 }
 
-llmi() {
-addheader "<s>[INST]" "[/INST]\n"
-llama-cli -fa on --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 -f "$PWD"/hprompt.txt \
--r "</s>" -r "<s>" \
---in-prefix "\n</s><s>[INST]\n" --in-suffix "[/INST]\n" \
---multiline-input -i -if $LLM_ARGS -m "$@";
+llmv() {
+	export LLM_ARGS="${LLM_ARGS}--verbose-prompt
+--special
+"
 }
 
 llma() {
-addheader "### System:" "\n"
-llama-cli -fa on --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 -f "$PWD"/hprompt.txt \
--r "### Instruction:" -r "### Instruction:\n" \
---in-prefix "\n### Instruction:\n" --in-suffix "### Assistant:\n" \
---multiline-input -i -if $LLM_ARGS -m "$@";
+cat <<\EOF > /tmp/template
+{% if messages[0]['role'] == 'system' %}
+{% set loop_messages = messages[1:] %}
+{% set content = '### System:\n' + messages[0]['content'] %}
+{{ content }}
+{% else %}
+{% set loop_messages = messages %}
+{% set content = '' %}
+{% endif %}
+{% for message in loop_messages %}
+{% set content = message['content'] %}
+{% if message['role'] == 'user' %}
+{{ '### Instruction:\n' + content.strip() }}
+{% elif message['role'] == 'assistant' %}
+{{ '### Response:\n' + content.strip() }}
+{% endif %}
+{% endfor %}
+{% if add_generation_prompt %}
+{{ '### Response:\n' }}
+{% endif %}
+EOF
+llama-cli -fa on --keep -1 -t $((NCORES-1)) -sysf prompt.txt -mli \
+--chat-template-file /tmp/template -r '### Instruction:' $LLM_ARGS -m "$@"
 }
 
 llml() {
-addheader "<|im_start|>system" "<|im_end|>"
-llama-cli -fa on --no-perf -no-cnv --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 -f "$PWD"/hprompt.txt \
--r "<|im_end|>" -r "<|im_end|>\n" \
---in-prefix "<|im_start|>user\n" --in-suffix "<|im_end|>\n<|im_start|>assistant\n" \
---multiline-input -i -if $LLM_ARGS -m "$@";
+llama-cli -fa on --keep -1 -t $((NCORES-1)) -sysf prompt.txt -mli \
+--chat-template chatml $LLM_ARGS -m "$@"
 }
 
 llmd() {
-llama-cli -fa on --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 -sysf "$PWD"/prompt.txt \
---multiline-input -i -if $LLM_ARGS -m "$@";
+llama-cli -fa on --keep -1 -t $((NCORES-1)) -sysf prompt.txt -mli $LLM_ARGS -m "$@";
 }
 
-llmp() { llama-cli --keep -1 -s -1 -t $((NCORES-1)) --mlock -c 0 --temp 0.7 $LLM_ARGS -p "$1\n" -m "$2"; }
+llmp() { llama-cli -st --keep -1 -t $((NCORES-1)) $LLM_ARGS -p "$1\n" -m "$2"; }
 
 prompts="\
 Linux Terminal
