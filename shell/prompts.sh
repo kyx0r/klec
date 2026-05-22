@@ -27,7 +27,7 @@ llmbench() {
 	shift
 	export SEXPECT_SOCKFILE=/tmp/sexpect-$$.sock
 	sexpect spawn -idle 10 sh -i -c "$*"
-	if ! sexpect expect -t 15 -re "<\|im_start\|>user"; then
+	if ! sexpect expect -t 30 -re "> $"; then
 		echo "timed out waiting for $*"
 	fi
 	while IFS= read -r line || [ -n "$line" ]; do
@@ -41,7 +41,7 @@ llmbench() {
 			chunk=$(dd if=/tmp/llmbench bs=1 count=1024 skip="$start" 2>/dev/null)
 		done
 		sexpect send ""
-		if ! sexpect expect -t 60 -re "<\|im_start\|>user"; then
+		if ! sexpect expect -t 300 -re "> $"; then
 			echo "timed out waiting for model's responce"
 		fi
 	done < "$file"
