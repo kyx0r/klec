@@ -560,8 +560,9 @@ IFS="
 	fi
 	eval "$cmd"
 }
-ff() { arg=$1; [ ! "$arg" ] && arg="$PWD"; if [ -d "$arg" ]; then fd "$arg" 'cdlsn $cnt $p' | grep "$arg"; else fd "$arg" 'vi -a $p' | grep "$arg"; fi }
-frm() { [ $# -ge 2 ] && fd $(neq "$@"); }
+_ff() { if [ -d "$1" ]; then fd "$1" 'cdlsn $cnt $p'; else fd "$1" 'vi -a $p'; fi }
+ff() { arg=$1; [ ! "$arg" ] && arg="$PWD"; _ff "$arg" > /tmp/_ff 2>&1; grep -F "$arg " /tmp/_ff; }
+frm() { [ $# -ge 2 ] && fd $(neq $@); }
 ii() { [ "$1" ] && if ! grep -q -e "$1" "$HOME/links"; then fd "$1" 'vi -a $p' > /dev/null 2>&1; fi; vi -a "$@"; }
 x() { EXINIT="${EXINIT}:fd" vi -a "$@"; }
 ix() { EXINIT='' vi "$@"; }
