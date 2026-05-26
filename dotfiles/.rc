@@ -619,6 +619,7 @@ ex() {
 	*.tar.xz)    tar xf "$1"    ;;
 	*.xz)        xz -d "$1"     ;;
 	*.tar.zst)   unzstd "$1"    ;;
+	*.zst)       unzstd "$1"    ;;
 	*.tar.lz4)   lz4 -d "$1" -c | tar xvf - ;;
 	*.lz4)       lz4 -d "$1"    ;;
 	*)           echo "'$1' cannot be extracted via ex()" ;;
