@@ -663,9 +663,9 @@ d0() {
 }
 
 klecinst() {
-	pass=$2
-	if [ ! "$2" ]; then pass="a"; fi
-	compr klec.tar.gz && passh -p "$pass" scp klec.tar.gz "$1:~/"
+	[ "$2" ] && pass="$2" || pass="a"
+	[ "$4" ] && port="$4" || port="22"
+	compr klec.tar.gz && passh -p "$pass" scp -P "$port" klec.tar.gz "$1:~/"
 	exec=""
 	if [ "$3" ]; then
 		exec="$exec echo -e '$3\n$3\n$3\n' | sudo -S -k passwd root &&"
@@ -675,7 +675,7 @@ klecinst() {
 	fi
 	exec="$exec rm -rf ~/klec && tar -xf ~/klec.tar.gz &&"
 	exec="$exec cd ~/klec && sh install.sh"
-	passh -p "$pass" ssh "$1" "$exec"
+	passh -p "$pass" ssh -p "$port" "$1" "$exec"
 }
 
 [ -f "$HOME/links" ] && fd > /dev/null 2>&1
