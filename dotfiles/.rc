@@ -15,8 +15,6 @@ export XDG_RUNTIME_DIR=/tmp
 export PATH="$HOME"/klec/shell:"$PATH"
 export EDITOR=vi
 export PAGER=less
-export HOST_PS1="\[\e[1;33m\]$(printf '%.1s%s' "$HOSTNAME" "${HOSTNAME#"${HOSTNAME%?}"}")\[\e[m\]"
-export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
 export CFLAGS="-O2"
 export KCFLAGS="$CFLAGS"
 export CXXFLAGS="$CFLAGS"
@@ -29,6 +27,46 @@ export FDMAXLEN0=0
 export FDMAXLEN1=0
 export FDCOUNT=0
 export FDTRIM=0
+
+get_pool_index() {
+  _char="$1"
+  _pool="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  _left="${_pool%%"${_char}"*}"
+  if [ "${_left}" = "${_pool}" ]; then
+    INDEX_VAL=1
+  else
+    INDEX_VAL=${#_left}
+  fi
+}
+
+get_pool_char() {
+  _idx="$1"
+  _pool="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  _right="${_pool}"
+  _i=0
+  while [ "$_i" -lt "$_idx" ]; do
+    _right="${_right#?}"
+    _i=$((_i + 1))
+  done
+  CHAR_VAL="${_right%%"${_right#?}"}"
+}
+
+COMBINED="$HOSTNAME$USER"
+SUM=0
+while [ -n "$COMBINED" ]; do
+  current_char="${COMBINED%%"${COMBINED#?}"}"
+  get_pool_index "$current_char"
+  SUM=$((SUM + INDEX_VAL))
+  COMBINED="${COMBINED#?}"
+done
+
+FINAL_INDEX=$((SUM % 62))
+get_pool_char "$FINAL_INDEX"
+COLOR_CODE=$((SUM % 8 + 30))
+COLOR_CODE=$((COLOR_CODE + (COLOR_CODE == 32)))
+COLOR_CODE=$((COLOR_CODE + (COLOR_CODE == 35)))
+export ID_PS1="\[\e[1;${COLOR_CODE}m\]${CHAR_VAL}\[\e[m\]"
+export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "
 
 # git
 alias g='git'
@@ -414,12 +452,12 @@ r() { grep -n -r "$@" . ; }
 calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $((exp)); }
 rnm() { arg="$1"; shift; ffor "$(ls)" mv '$(echo $p | sed "$arg")'; }
 cdls() {
-	export PS1="$HOST_PS1\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$@" && l;
 }
 cdlsn() {
 	case $CDSTACK in *"c$1"|*"c$1"c*) true;; *) export CDSTACK="${CDSTACK}c$1" ;; esac
-	export PS1="$HOST_PS1\[\e[1;35m\]$1\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$ID_PS1\[\e[1;35m\]$1\[\e[1;32m\]\w\[\e[m\] "
 	\cd "$2" && l;
 }
 fullpath() {
@@ -460,7 +498,7 @@ gg() {
 	eval "var=\$c${last}"
 	export CDSTACK="c${last}${CDSTACK%c"${last}"}"
 	\cd "$var" || return
-	export PS1="$HOST_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$ID_PS1\[\e[1;35m\]$last\[\e[1;32m\]\w\[\e[m\] "
 }
 bb() {
 	[ -z "$CDSTACK" ] && return
@@ -470,7 +508,7 @@ bb() {
 	eval "var=\$c${first}"
 	export CDSTACK="${CDSTACK##c"${first}"}c${first}"
 	\cd "$var" || return
-	export PS1="$HOST_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
+	export PS1="$ID_PS1\[\e[1;35m\]$first\[\e[1;32m\]\w\[\e[m\] "
 }
 fd() {
 	sarg=""
