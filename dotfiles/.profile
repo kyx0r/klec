@@ -1,3 +1,5 @@
 #!/bin/sh
-export ENV=~/.rc
-source ~/.rc
+[ -z "$ENVSET" ] && if [ -f ~/.rc ]; then
+	export ENV=~/.rc
+	. ~/.rc
+fi

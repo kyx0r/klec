@@ -7,7 +7,8 @@ case "$(echo $0)" in *bash*) ;; *) unset HISTFILE; return ;; esac
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-[ -z $ENVSET ] && if [ -f ~/.rc ]; then
+[ -z "$ENVSET" ] && if [ -f ~/.rc ]; then
+	export ENV=~/.rc
 	. ~/.rc
 fi
 
