@@ -30,7 +30,7 @@ export FDTRIM=0
 
 get_pool_index() {
   _char="$1"
-  _pool="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  _pool="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   _left="${_pool%%"${_char}"*}"
   if [ "${_left}" = "${_pool}" ]; then
     INDEX_VAL=1
@@ -41,7 +41,7 @@ get_pool_index() {
 
 get_pool_char() {
   _idx="$1"
-  _pool="0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
+  _pool="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   _right="${_pool}"
   _i=0
   while [ "$_i" -lt "$_idx" ]; do
@@ -60,11 +60,11 @@ while [ -n "$COMBINED" ]; do
   COMBINED="${COMBINED#?}"
 done
 
-FINAL_INDEX=$((SUM % 62))
+FINAL_INDEX=$((SUM % 52))
 get_pool_char "$FINAL_INDEX"
 COLOR_CODE=$((SUM % 8 + 30))
-COLOR_CODE=$((COLOR_CODE + (COLOR_CODE == 32)))
-COLOR_CODE=$((COLOR_CODE + (COLOR_CODE == 35)))
+[ "$COLOR_CODE" -eq 32 ] && COLOR_CODE=33
+[ "$COLOR_CODE" -eq 35 ] && COLOR_CODE=36
 export ID_PS1="\[\e[1;${COLOR_CODE}m\]${CHAR_VAL}\[\e[m\]"
 export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "
 
