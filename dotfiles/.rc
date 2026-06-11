@@ -231,12 +231,13 @@ alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
 # ubuntu
-dlrdeps() { apt-get download $(apt-rdepends tio | grep -v "^ "); }
+dlrdeps() { apt-get download $(apt-rdepends "$1" | grep -v "^ "); }
 alias aptfu='apt install apt-file && apt-file update'
 alias aptu='apt update && apt upgrade'
 alias apti='apt install'
 alias aptl='apt list --installed'
 alias apts='apt list search'
+alias dpki='dpkg -i'
 
 # kiss linux
 alias k='kiss'
