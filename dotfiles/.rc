@@ -33,9 +33,9 @@ get_pool_index() {
   _pool="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"
   _left="${_pool%%"${_char}"*}"
   if [ "${_left}" = "${_pool}" ]; then
-    INDEX_VAL=1
+	INDEX_VAL=1
   else
-    INDEX_VAL=${#_left}
+	INDEX_VAL=${#_left}
   fi
 }
 
@@ -45,8 +45,8 @@ get_pool_char() {
   _right="${_pool}"
   _i=0
   while [ "$_i" -lt "$_idx" ]; do
-    _right="${_right#?}"
-    _i=$((_i + 1))
+	_right="${_right#?}"
+	_i=$((_i + 1))
   done
   CHAR_VAL="${_right%%"${_right#?}"}"
 }
@@ -231,7 +231,21 @@ alias pc='rm /var/lib/pacman/db.lck'
 alias mpkg='makepkg -si --skippgpcheck --skipinteg --skipchecksums'
 
 # ubuntu
-dlrdeps() { apt-get download $(apt-rdepends "$1" | grep -v "^ "); }
+dlrdeps() {
+	local valid_pkgs=""
+	# Build a space-separated string of packages that actually exist
+	for pkg in $(apt-rdepends "$1" | grep -v "^ "); do
+		if ! apt-cache policy "$pkg" | grep -q "Candidate: (none)"; then
+			valid_pkgs="$valid_pkgs $pkg"
+		fi
+	done
+	# Download the entire batch at once if the list isn't empty
+	if [ -n "$valid_pkgs" ]; then
+		apt-get download $valid_pkgs
+	else
+		echo "No valid packages found to download."
+	fi
+}
 alias aptfu='apt install apt-file && apt-file update'
 alias aptu='apt update && apt upgrade'
 alias apti='apt install'
