@@ -21,15 +21,8 @@ export HISTCONTROL=ignoredups:ignorespace
 # --- line editing ----------------------------------------------------------
 # vi mode is already implied by EDITOR=vi, set it explicitly anyway.
 set -o vi
-set -o vi-tabcomplete	# <tab> completes in insert mode
 # ^L clear, ^R redraw and / search are built into vi mode (vi.c).
 # NB: the `bind` builtin only touches the emacs keymap, it is inert under vi.
-
-# --- shell behaviour -------------------------------------------------------
-set -o trackall		# cache PATH lookups as tracked aliases
-set -o braceexpand	# {a,b} (no {1..n} in oksh)
-set -o nohup		# do not HUP background jobs on exit
-set -o bgnice		# background jobs get nice +4
 
 stty -ixon 2>/dev/null	# free ^S/^Q for the editor
 
