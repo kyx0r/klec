@@ -30,3 +30,9 @@ stty -ixon 2>/dev/null	# free ^S/^Q for the editor
 # grep, so reach for these instead.
 alias h='fc -l'		# list history
 alias redo='fc -s'	# redo: `redo`, `redo cc`, `redo old=new cc`
+
+# `cat >` not mv: mv swaps the inode, live shells keep the deleted one
+hdedup() {
+	dedup "$HISTFILE" > "${HISTFILE}_" && cat "${HISTFILE}_" > "$HISTFILE"
+	rm -f "${HISTFILE}_"
+}
