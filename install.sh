@@ -7,6 +7,7 @@ cp -r cgi/terminus-ttf-*/ /usr/share/fonts
 ln -sf $PWD/dotfiles/.bashrc ~/
 ln -sf $PWD/dotfiles/.profile ~/
 ln -sf $PWD/dotfiles/.rc ~/
+ln -sf $PWD/dotfiles/.okshrc ~/
 ln -sf $PWD/dotfiles/.gdbinit ~/
 ln -sf $PWD/dotfiles/.vimrc ~/
 ln -sf $PWD/dotfiles/.gitconfig ~/

@@ -1,0 +1,39 @@
+#
+# ~/.okshrc
+#
+# oksh-only settings. Sourced explicitly from ~/.lrc, after ~/.rc has run.
+# Bail out unless we really are oksh: $KSH_VERSION is unset in bash/dash,
+# $OKSH_VERSION is unique to oksh (both are readonly, set at startup).
+# unset HISTFILE: it is exported below, foreign shells must not inherit ~/.ohist
+case "$KSH_VERSION$OKSH_VERSION" in *[Kk][Ss][Hh]*) ;; *) unset HISTFILE; return ;; esac
+
+# --- history ---------------------------------------------------------------
+# oksh has no default HISTFILE: unset means no persistence at all.
+# Keep it apart from ~/.bhist, bash writes HISTTIMEFORMAT "#epoch" lines there.
+export HISTFILE="$HOME"/.ohist
+# The ring is preallocated (histsize+1 pointers), so ~/.rc's 67108864 costs
+# ~512MB of address space per shell. 100k lines is ~800KB and plenty.
+export HISTSIZE=100000
+export HISTCONTROL=ignoredups:ignorespace
+# oksh flushes each command to HISTFILE immediately and shares it live between
+# concurrent shells, so no PROMPT_COMMAND/histappend equivalent is needed.
+
+# --- line editing ----------------------------------------------------------
+# vi mode is already implied by EDITOR=vi, set it explicitly anyway.
+set -o vi
+set -o vi-tabcomplete	# <tab> completes in insert mode
+# ^L clear, ^R redraw and / search are built into vi mode (vi.c).
+# NB: the `bind` builtin only touches the emacs keymap, it is inert under vi.
+
+# --- shell behaviour -------------------------------------------------------
+set -o trackall		# cache PATH lookups as tracked aliases
+set -o braceexpand	# {a,b} (no {1..n} in oksh)
+set -o nohup		# do not HUP background jobs on exit
+set -o bgnice		# background jobs get nice +4
+
+stty -ixon 2>/dev/null	# free ^S/^Q for the editor
+
+# `r` is ksh's redo (alias r='fc -s'), but ~/.rc redefines r() as recursive
+# grep, so reach for these instead.
+alias h='fc -l'		# list history
+alias redo='fc -s'	# redo: `redo`, `redo cc`, `redo old=new cc`

@@ -2,8 +2,10 @@
 # ~/.bashrc
 #
 
-case "$SHELL" in *bash*) ;; *) unset HISTFILE; return ;; esac
-case "$(echo $0)" in *bash*) ;; *) unset HISTFILE; return ;; esac
+# bash only. not $SHELL: that is the passwd shell, reads "oksh" after chsh
+# unset HISTFILE: it is exported below, foreign shells must not inherit ~/.bhist
+[ -n "$BASH_VERSION" ] || { unset HISTFILE; return; }
+case "$0" in *bash*|sh|-sh) ;; *) unset HISTFILE; return ;; esac
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
