@@ -577,7 +577,7 @@ fd() {
 			continue
 		fi
 		[ -z "$line" ] && continue
-		p=${line%% | *}
+		p=${line%%" | "*}
 		cmd="${line#"$p | "}"
 		eval "export c${cnt}=$p"
 		eval "var=\"$cmd\""
@@ -600,7 +600,7 @@ fd() {
 				&& FDMAXLEN0="$((${#p} + ${#cnt} + fdc))" && maxln=$cnt;
 			x=$((FDMAXLEN0 - $((${#p} + ${#cnt} + fdc))))
 		fi
-		printf "%*s$cnt $p%*s | $cmd\n" $fdc "" $x ""
+		printf "%*s%s %s%*s | %s\n" $fdc "" "$cnt" "$p" $x "" "$cmd"
 	done < "$HOME/links"
 	FDCOUNT=${#cnt}
 	[ $maxln -ge 0 ] && FDMAXLEN0="$((FDMAXLEN0 + FDCOUNT - ${#maxln}))";
@@ -616,7 +616,7 @@ fe() {
 IFS="
 "
 	i=1; for p in $cmd; do
-		printf "$i $p\n"
+		printf '%s %s\n' "$i" "$p"
 		i=$((i + 1))
 	done 
 	if [ $i -gt 2 ]; then
