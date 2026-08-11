@@ -2,7 +2,7 @@
 # ~/.bashrc
 #
 
-# bash only. not $SHELL: that is the passwd shell, reads "oksh" after chsh
+# bash only. not $SHELL: that is the passwd shell, reads "sh" after chsh
 # unset HISTFILE: it is exported below, foreign shells must not inherit ~/.bhist
 [ -n "$BASH_VERSION" ] || { unset HISTFILE; return; }
 case "$0" in *bash*|sh|-sh) ;; *) unset HISTFILE; return ;; esac

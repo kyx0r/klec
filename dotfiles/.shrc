@@ -1,27 +1,28 @@
 #
-# ~/.okshrc
+# ~/.shrc
 #
-# oksh-only settings. Sourced explicitly from ~/.lrc, after ~/.rc has run.
-# Bail out unless we really are oksh: $KSH_VERSION is unset in bash/dash,
-# $OKSH_VERSION is unique to oksh (both are readonly, set at startup).
-# unset HISTFILE: it is exported below, foreign shells must not inherit ~/.ohist
-case "$KSH_VERSION$OKSH_VERSION" in *[Kk][Ss][Hh]*) ;; *) unset HISTFILE; return ;; esac
+# nextsh-only settings. Sourced explicitly from ~/.lrc, after ~/.rc has run.
+# nextsh is /bin/sh here, but dash/bash can be invoked as sh too, so guard:
+# $NEXTSH_VERSION is unique to nextsh and readonly, set at startup (sh.c).
+# argv[0] checks are useless, nextsh behaves the same under every name.
+# unset HISTFILE: it is exported below, foreign shells must not inherit ~/.shist
+case "$NEXTSH_VERSION" in nextsh*) ;; *) unset HISTFILE; return ;; esac
 
 # --- history ---------------------------------------------------------------
-# oksh has no default HISTFILE: unset means no persistence at all.
+# nextsh has no default HISTFILE: unset means no persistence at all.
 # Keep it apart from ~/.bhist, bash writes HISTTIMEFORMAT "#epoch" lines there.
-export HISTFILE="$HOME"/.ohist
+export HISTFILE="$HOME"/.shist
 # The ring is preallocated (histsize+1 pointers), so ~/.rc's 67108864 costs
 # ~512MB of address space per shell. 100k lines is ~800KB and plenty.
 export HISTSIZE=100000
 export HISTCONTROL=ignoredups:ignorespace
-# oksh flushes each command to HISTFILE immediately and shares it live between
+# nextsh flushes each command to HISTFILE immediately and shares it live between
 # concurrent shells, so no PROMPT_COMMAND/histappend equivalent is needed.
 
 # --- line editing ----------------------------------------------------------
 # vi mode is already implied by EDITOR=vi, set it explicitly anyway.
 set -o vi
-# ^L clear, ^R redraw and / search are built into vi mode (vi.c).
+# ^L clear, ^R redraw and / search are built into vi mode (edit.c).
 # NB: the `bind` builtin only touches the emacs keymap, it is inert under vi.
 
 stty -ixon 2>/dev/null	# free ^S/^Q for the editor

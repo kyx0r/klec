@@ -53,7 +53,7 @@ get_pool_char() {
   CHAR_VAL="${_right%%"${_right#?}"}"
 }
 
-# HOSTNAME is a bashism; ksh/oksh leave it unset -> prompt hash differs
+# HOSTNAME is a bashism; ksh/nextsh leave it unset -> prompt hash differs
 [ -n "$HOSTNAME" ] || HOSTNAME="$(hostname 2>/dev/null || uname -n)"
 export HOSTNAME
 COMBINED="$HOSTNAME$USER"
