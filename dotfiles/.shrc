@@ -10,7 +10,6 @@ case "$NEXTSH_VERSION" in nextsh*) ;; *) unset HISTFILE; return ;; esac
 
 # --- history ---------------------------------------------------------------
 # nextsh has no default HISTFILE: unset means no persistence at all.
-# Keep it apart from ~/.bhist, bash writes HISTTIMEFORMAT "#epoch" lines there.
 export HISTFILE="$HOME"/.shist
 # The ring is preallocated (histsize+1 pointers), so ~/.rc's 67108864 costs
 # ~512MB of address space per shell. 100k lines is ~800KB and plenty.
@@ -19,11 +18,7 @@ export HISTCONTROL=ignoredups:ignorespace
 # nextsh flushes each command to HISTFILE immediately and shares it live between
 # concurrent shells, so no PROMPT_COMMAND/histappend equivalent is needed.
 
-# --- line editing ----------------------------------------------------------
-# vi mode is already implied by EDITOR=vi, set it explicitly anyway.
 set -o vi
-# ^L clear, ^R redraw and / search are built into vi mode (edit.c).
-# NB: the `bind` builtin only touches the emacs keymap, it is inert under vi.
 
 stty -ixon 2>/dev/null	# free ^S/^Q for the editor
 
