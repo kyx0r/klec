@@ -47,8 +47,6 @@ typedef int32_t b32;
 typedef float f32;
 typedef double f64;
 
-typedef enum { false, true } bool;
-
 #define ARRAYCOUNT(Array) (sizeof(Array) / sizeof((Array)[0]))
 
 #define	MIN(a, b)(((a) < (b)) ? (a) : (b))
@@ -259,8 +257,8 @@ if (! (condition))\
 	{\
 		int count = 0;\
 		char line[1024];\
-		lognewline = false;\
-		logextra = false;\
+		lognewline = 0;\
+		logextra = 0;\
 		while(fgets(line, 1024, file))\
 		{\
 			count++;\
@@ -268,8 +266,8 @@ if (! (condition))\
 			{ trace("%d %s", count, &line[0]);}\
 		}\
 	}\
-	logextra = true;\
-	lognewline = true;\
+	logextra = 1;\
+	lognewline = 1;\
 	fatal("Assertion %s failed in %s", #condition, __FUNCTION__);\
 	h_pause();\
 }\
@@ -2375,8 +2373,8 @@ donez:
 #undef stbsp__int64
 #undef STBSP__UNALIGNED
 
-b32 lognewline = true;
-b32 logextra = true;
+b32 lognewline = 1;
+b32 logextra = 1;
 FILE *logfp;
 s32 loglevel;
 s32 logquiet;
