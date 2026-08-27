@@ -24133,6 +24133,8 @@ redo_no_start:
 				p = parse_comment(p, skip);
 			} else if (ch == '/') {
 				p = parse_line_comment(p, skip);
+			} else if (skip && ig) {
+				printf("/");
 			}
 			break;
 		case '#':
@@ -25121,6 +25123,12 @@ do_if:
 		} while(file->buf_ptr[tlen-2] == '\\');
 		if (c == 1) {
 			c = 0;
+			/* the do/while above printed the expression text, but
+			   buf_ptr still points at it: lex past the whole #elif
+			   line or preprocess_skip re-emits it as branch body */
+			do {
+				next_nomacro();
+			} while (tok != TOK_LINEFEED && tok != TOK_EOF);
 		} else {
 			c = expr_preprocess();
 			s1->ifdef_stack_ptr[-1] = c;
@@ -25131,7 +25139,9 @@ test_else:
 test_skip:
 		if (!(c & 1)) {
 real_skip:
-			inblock = preprocess_skip(tok != file->ifndef_macro, ig);
+			/* ig=0 only when arriving from a false #elif: without this,
+			   the first line of the skipped block would be swallowed */
+			inblock = preprocess_skip(tok != file->ifndef_macro, 1);
 			is_bof = 0; ig = 1;
 			goto redo;
 		}
