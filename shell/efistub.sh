@@ -6,6 +6,6 @@ efibootmgr \
          --disk     /dev/nvme0n1 \
          --part     1 \
          --label    KISS \
-         --loader   /vmlinuz-7.2.4 \
+         --loader   /vmlinuz-7.2.5 \
          --unicode  'root=/dev/nvme0n1p2 amdgpu.ppfeaturemask=0xffffffff' \
          --verbose
