@@ -474,9 +474,16 @@ ffor() { IFS="
 inf() { quit=0; while [ $quit -eq 0 ]; do trap 'quit=1' INT EXIT HUP TERM QUIT; eval "$1"; done }
 sd() {
 	reg=".*$1[^\/]*$"; if [ "$2" ]; then reg=".*$1"; fi
-	dir=$(find . -type d -regex "$reg"); echo "$dir"  | grep -n -E . && read -r i
+	dir=$(find . -mindepth 1 -type d -regex "$reg")
+	[ -z "$dir" ] && return 1
+	if [ "$(printf '%s\n' "$dir" | wc -l)" -eq 1 ]; then
+		cd "$dir"
+		return
+	fi
+	printf '%s\n' "$dir" | grep -n -E .
+	read -r i
 	[ -z "$i" ] && i=1
-	cd "$(echo "$dir" | sed -n "$i"p)" || return
+	cd "$(printf '%s\n' "$dir" | sed -n "$i"p)" || return
 }
 fup() { curl -F"file=@$1" https://0x0.st/; }
 r() { grep -n -r "$@" . ; }
