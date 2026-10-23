@@ -1,0 +1,392 @@
+--- a/drivers/gpu/drm/amd/amdgpu/Makefile
++++ b/drivers/gpu/drm/amd/amdgpu/Makefile
+@@ -75,6 +75,7 @@
+ 	amdgpu_wb.o
+ 
+ amdgpu-$(CONFIG_PROC_FS) += amdgpu_fdinfo.o
++amdgpu-$(CONFIG_DRM_FBDEV_EMULATION) += amdgpu_fbdev.o
+ 
+ amdgpu-$(CONFIG_PERF_EVENTS) += amdgpu_pmu.o
+ 
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.c
+@@ -1494,6 +1494,20 @@
+ 	return &amdgpu_fb->base;
+ }
+ 
++/*
++ * In-kernel framebuffer init for the native amdgpu fbdev emulation.
++ * Takes its own reference on @obj on success.
++ */
++int amdgpu_display_gem_fb_init(struct drm_device *dev,
++			       struct amdgpu_framebuffer *rfb,
++			       const struct drm_format_info *info,
++			       const struct drm_mode_fb_cmd2 *mode_cmd,
++			       struct drm_gem_object *obj)
++{
++	return amdgpu_display_gem_fb_verify_and_init(dev, rfb, NULL, info,
++						     mode_cmd, obj);
++}
++
+ const struct drm_mode_config_funcs amdgpu_mode_funcs = {
+ 	.fb_create = amdgpu_display_user_framebuffer_create,
+ };
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_display.h
+@@ -46,6 +46,25 @@
+ 				       struct drm_file *file_priv,
+ 				       const struct drm_format_info *info,
+ 				       const struct drm_mode_fb_cmd2 *mode_cmd);
++struct amdgpu_framebuffer;
++int amdgpu_display_gem_fb_init(struct drm_device *dev,
++			       struct amdgpu_framebuffer *rfb,
++			       const struct drm_format_info *info,
++			       const struct drm_mode_fb_cmd2 *mode_cmd,
++			       struct drm_gem_object *obj);
++
++/* native fbdev emulation backed by pinned VRAM (amdgpu_fbdev.c) */
++struct drm_fb_helper;
++struct drm_fb_helper_surface_size;
++#if defined(CONFIG_DRM_FBDEV_EMULATION)
++int amdgpu_fbdev_driver_fbdev_probe(struct drm_fb_helper *fb_helper,
++				    struct drm_fb_helper_surface_size *sizes);
++#define AMDGPU_FBDEV_DRIVER_OPS \
++	.fbdev_probe = amdgpu_fbdev_driver_fbdev_probe
++#else
++#define AMDGPU_FBDEV_DRIVER_OPS \
++	.fbdev_probe = NULL
++#endif
+ const struct drm_format_info *
+ amdgpu_lookup_format_info(u32 format, uint64_t modifier);
+ 
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_drv.c
+@@ -25,7 +25,6 @@
+ #include <drm/amdgpu_drm.h>
+ #include <drm/clients/drm_client_setup.h>
+ #include <drm/drm_drv.h>
+-#include <drm/drm_fbdev_ttm.h>
+ #include <drm/drm_gem.h>
+ #include <drm/drm_managed.h>
+ #include <drm/drm_pciids.h>
+@@ -42,6 +41,7 @@
+ 
+ #include "amdgpu.h"
+ #include "amdgpu_amdkfd.h"
++#include "amdgpu_display.h"
+ #include "amdgpu_dma_buf.h"
+ #include "amdgpu_drv.h"
+ #include "amdgpu_fdinfo.h"
+@@ -3127,7 +3127,7 @@
+ 	.num_ioctls = ARRAY_SIZE(amdgpu_ioctls_kms),
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+-	DRM_FBDEV_TTM_DRIVER_OPS,
++	AMDGPU_FBDEV_DRIVER_OPS,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 	.release = &amdgpu_driver_release_kms,
+ #ifdef CONFIG_PROC_FS
+@@ -3153,7 +3153,7 @@
+ 	.num_ioctls = ARRAY_SIZE(amdgpu_ioctls_kms),
+ 	.dumb_create = amdgpu_mode_dumb_create,
+ 	.dumb_map_offset = amdgpu_mode_dumb_mmap,
+-	DRM_FBDEV_TTM_DRIVER_OPS,
++	AMDGPU_FBDEV_DRIVER_OPS,
+ 	.fops = &amdgpu_driver_kms_fops,
+ 	.release = &amdgpu_driver_release_kms,
+ 
+--- /dev/null
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_fbdev.c
+@@ -0,0 +1,292 @@
++// SPDX-License-Identifier: MIT
++/*
++ * Native amdgpu fbdev emulation.
++ *
++ * Copyright © 2007 David Airlie
++ *
++ * The generic TTM fbdev helper (drm_fbdev_ttm.c) renders into a vmalloc'ed
++ * shadow buffer in system memory and copies damaged areas to the real
++ * framebuffer from a worker at most 20 times a second (fbdefio delay HZ/20),
++ * mapping and unmapping the BO every time.  On amdgpu that makes fbcon and
++ * /dev/fb0 users visibly laggy.
++ *
++ * This restores the pre-5.x behaviour (the old amdgpu_fb.c): the fbdev
++ * framebuffer is a GEM object pinned in CPU-visible VRAM, permanently
++ * kmapped, and drawn into directly.  The display engine scans it out as is,
++ * so there is no shadow copy, no deferred I/O and no update latency.
++ */
++
++#include <linux/fb.h>
++#include <linux/pm_runtime.h>
++#include <linux/slab.h>
++
++#include <drm/drm_drv.h>
++#include <drm/drm_fb_helper.h>
++#include <drm/drm_fourcc.h>
++#include <drm/drm_framebuffer.h>
++#include <drm/drm_gem_framebuffer_helper.h>
++#include <drm/drm_print.h>
++
++#include "amdgpu.h"
++#include "amdgpu_display.h"
++
++static u32 amdgpu_fbdev_align_pitch(u32 width, u32 cpp)
++{
++	u32 pitch_mask = 0;
++
++	switch (cpp) {
++	case 1:
++		pitch_mask = 255;
++		break;
++	case 2:
++		pitch_mask = 127;
++		break;
++	case 3:
++	case 4:
++		pitch_mask = 63;
++		break;
++	}
++
++	return ((width + pitch_mask) & ~pitch_mask) * cpp;
++}
++
++static void amdgpu_fbdev_destroy_pinned_object(struct drm_gem_object *gobj)
++{
++	struct amdgpu_bo *abo = gem_to_amdgpu_bo(gobj);
++	int ret;
++
++	ret = amdgpu_bo_reserve(abo, true);
++	if (likely(ret == 0)) {
++		amdgpu_bo_kunmap(abo);
++		amdgpu_bo_unpin(abo);
++		amdgpu_bo_unreserve(abo);
++	}
++}
++
++static int amdgpu_fbdev_create_pinned_object(struct amdgpu_device *adev,
++					     const struct drm_format_info *info,
++					     struct drm_mode_fb_cmd2 *mode_cmd,
++					     struct drm_gem_object **gobj_p)
++{
++	struct drm_gem_object *gobj = NULL;
++	struct amdgpu_bo *abo;
++	u64 flags = AMDGPU_GEM_CREATE_CPU_ACCESS_REQUIRED |
++		    AMDGPU_GEM_CREATE_VRAM_CONTIGUOUS;
++	unsigned long size;
++	int ret;
++
++	if (adev->mman.buffer_funcs_enabled)
++		flags |= AMDGPU_GEM_CREATE_VRAM_CLEARED;
++
++	mode_cmd->pitches[0] = amdgpu_fbdev_align_pitch(mode_cmd->width,
++							info->cpp[0]);
++	size = (unsigned long)mode_cmd->pitches[0] *
++	       ALIGN(mode_cmd->height, 8);
++	size = ALIGN(size, PAGE_SIZE);
++
++	ret = amdgpu_gem_object_create(adev, size, 0, AMDGPU_GEM_DOMAIN_VRAM,
++				       flags, ttm_bo_type_device, NULL, &gobj,
++				       0);
++	if (ret) {
++		drm_err(adev_to_drm(adev),
++			"failed to allocate fbdev framebuffer (%lu)\n", size);
++		return -ENOMEM;
++	}
++	abo = gem_to_amdgpu_bo(gobj);
++
++	ret = amdgpu_bo_reserve(abo, false);
++	if (unlikely(ret != 0))
++		goto err_put;
++
++	ret = amdgpu_bo_pin(abo, AMDGPU_GEM_DOMAIN_VRAM);
++	if (ret) {
++		amdgpu_bo_unreserve(abo);
++		goto err_put;
++	}
++
++	ret = amdgpu_ttm_alloc_gart(&abo->tbo);
++	if (ret) {
++		amdgpu_bo_unpin(abo);
++		amdgpu_bo_unreserve(abo);
++		goto err_put;
++	}
++
++	ret = amdgpu_bo_kmap(abo, NULL);
++	if (ret) {
++		amdgpu_bo_unpin(abo);
++		amdgpu_bo_unreserve(abo);
++		goto err_put;
++	}
++	amdgpu_bo_unreserve(abo);
++
++	*gobj_p = gobj;
++	return 0;
++
++err_put:
++	drm_gem_object_put(gobj);
++	*gobj_p = NULL;
++	return ret;
++}
++
++/*
++ * Fbdev ops and struct fb_ops
++ */
++
++static int amdgpu_fbdev_fb_open(struct fb_info *info, int user)
++{
++	struct drm_fb_helper *fb_helper = info->par;
++	struct drm_device *dev = fb_helper->dev;
++	int ret;
++
++	ret = pm_runtime_get_sync(dev->dev);
++	if (ret < 0 && ret != -EACCES) {
++		pm_runtime_put_autosuspend(dev->dev);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int amdgpu_fbdev_fb_release(struct fb_info *info, int user)
++{
++	struct drm_fb_helper *fb_helper = info->par;
++
++	pm_runtime_put_autosuspend(fb_helper->dev->dev);
++
++	return 0;
++}
++
++static void amdgpu_fbdev_fb_destroy(struct fb_info *info)
++{
++	struct drm_fb_helper *fb_helper = info->par;
++	struct drm_framebuffer *fb = fb_helper->fb;
++	struct drm_gem_object *gobj = drm_gem_fb_get_obj(fb, 0);
++
++	drm_fb_helper_fini(fb_helper);
++
++	amdgpu_fbdev_destroy_pinned_object(gobj);
++	drm_framebuffer_unregister_private(fb);
++	drm_gem_fb_destroy(fb); /* drops the fb's GEM reference, frees fb */
++
++	drm_client_release(&fb_helper->client);
++}
++
++static int amdgpu_fbdev_fb_dirty(struct drm_fb_helper *helper,
++				 struct drm_clip_rect *clip)
++{
++	struct drm_framebuffer *fb = helper->fb;
++
++	if (!(clip->x1 < clip->x2 && clip->y1 < clip->y2))
++		return 0;
++
++	/* kick DC: exits PSR/Panel Replay and flushes the damaged area */
++	if (fb->funcs->dirty)
++		return fb->funcs->dirty(fb, NULL, 0, 0, clip, 1);
++
++	return 0;
++}
++
++/*
++ * Draw straight into the pinned VRAM, but report damage right away so the
++ * display engine actually picks up the change (no HZ/20 deferred I/O delay).
++ */
++FB_GEN_DEFAULT_DEFERRED_IOMEM_OPS(amdgpu_fbdev_fb,
++				  drm_fb_helper_damage_range,
++				  drm_fb_helper_damage_area);
++
++static const struct fb_ops amdgpu_fbdev_fb_ops = {
++	.owner = THIS_MODULE,
++	.fb_open = amdgpu_fbdev_fb_open,
++	.fb_release = amdgpu_fbdev_fb_release,
++	__FB_DEFAULT_DEFERRED_OPS_RDWR(amdgpu_fbdev_fb),
++	DRM_FB_HELPER_DEFAULT_OPS,
++	__FB_DEFAULT_DEFERRED_OPS_DRAW(amdgpu_fbdev_fb),
++	.fb_mmap = fb_io_mmap,
++	.fb_destroy = amdgpu_fbdev_fb_destroy,
++};
++
++static const struct drm_fb_helper_funcs amdgpu_fbdev_fb_helper_funcs = {
++	.fb_dirty = amdgpu_fbdev_fb_dirty,
++};
++
++int amdgpu_fbdev_driver_fbdev_probe(struct drm_fb_helper *fb_helper,
++				    struct drm_fb_helper_surface_size *sizes)
++{
++	struct drm_device *dev = fb_helper->dev;
++	struct amdgpu_device *adev = drm_to_adev(dev);
++	const struct drm_format_info *format_info;
++	struct drm_mode_fb_cmd2 mode_cmd = { };
++	struct fb_info *info = fb_helper->info;
++	struct amdgpu_framebuffer *rfb;
++	struct drm_gem_object *gobj;
++	struct amdgpu_bo *abo;
++	u64 tmp;
++	int ret;
++
++	/* DCE can't scan out real 24bpp */
++	if (sizes->surface_bpp == 24)
++		sizes->surface_bpp = 32;
++
++	mode_cmd.width = sizes->surface_width;
++	mode_cmd.height = sizes->surface_height;
++	mode_cmd.pixel_format = drm_driver_legacy_fb_format(dev,
++							    sizes->surface_bpp,
++							    sizes->surface_depth);
++
++	format_info = drm_get_format_info(dev, mode_cmd.pixel_format,
++					  mode_cmd.modifier[0]);
++	if (!format_info)
++		return -EINVAL;
++
++	ret = amdgpu_fbdev_create_pinned_object(adev, format_info, &mode_cmd,
++						&gobj);
++	if (ret) {
++		drm_err(dev, "failed to create fbcon object %d\n", ret);
++		return ret;
++	}
++	abo = gem_to_amdgpu_bo(gobj);
++
++	rfb = kzalloc(sizeof(*rfb), GFP_KERNEL);
++	if (!rfb) {
++		ret = -ENOMEM;
++		goto err_destroy_pinned_object;
++	}
++
++	/* takes its own reference on gobj */
++	ret = amdgpu_display_gem_fb_init(dev, rfb, format_info, &mode_cmd, gobj);
++	if (ret) {
++		drm_err(dev, "failed to initialize framebuffer %d\n", ret);
++		goto err_kfree;
++	}
++	drm_gem_object_put(gobj); /* the framebuffer owns the BO now */
++
++	fb_helper->funcs = &amdgpu_fbdev_fb_helper_funcs;
++	fb_helper->fb = &rfb->base;
++
++	info->fbops = &amdgpu_fbdev_fb_ops;
++
++	drm_fb_helper_fill_info(info, fb_helper, sizes);
++
++	tmp = amdgpu_bo_gpu_offset(abo) - adev->gmc.vram_start;
++	info->fix.smem_start = adev->gmc.aper_base + tmp;
++	info->fix.smem_len = amdgpu_bo_size(abo);
++	info->screen_base = (__force void __iomem *)amdgpu_bo_kptr(abo);
++	info->screen_size = amdgpu_bo_size(abo);
++
++	memset_io(info->screen_base, 0, info->screen_size);
++
++	/* Use default scratch pixmap (info->pixmap.flags = FB_PIXMAP_SYSTEM) */
++
++	drm_info(dev, "fbdev: %ux%u in pinned VRAM, pitch %u, size %lu\n",
++		 mode_cmd.width, mode_cmd.height,
++		 rfb->base.pitches[0], amdgpu_bo_size(abo));
++
++	return 0;
++
++err_kfree:
++	kfree(rfb);
++err_destroy_pinned_object:
++	amdgpu_fbdev_destroy_pinned_object(gobj);
++	drm_gem_object_put(gobj);
++	return ret;
++}
