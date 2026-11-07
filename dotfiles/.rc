@@ -341,7 +341,7 @@ alias tzny='echo "America/New_York" > /etc/timezone && cp /usr/share/zoneinfo/Am
 alias unmute='amixer sset Master unmute && amixer set Master 50%'
 alias zdel='find . -size 0 -print -delete'
 alias llm='. prompts.sh'
-alias date='date +"%Y-%m-%d %H:%M:%S"'
+alias sdate='date +"%Y-%m-%d %H:%M:%S"'
 alias sha='sha256sum'
 alias reset='stty sane && reset'
 alias re='grep -i --color=auto'
