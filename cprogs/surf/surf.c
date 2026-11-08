@@ -1114,6 +1114,7 @@ newview(Client *c, WebKitWebView *rv)
 	WebKitWebContext *context;
 	WebKitCookieManager *cookiemanager;
 	WebKitUserContentManager *contentmanager;
+	GdkRGBA bgcolor = { 0, 0, 0, 1 };
 
 	/* Webview */
 	if (rv) {
@@ -1219,6 +1220,9 @@ newview(Client *c, WebKitWebView *rv)
 	g_signal_connect(G_OBJECT(v), "web-process-terminated",
 			 G_CALLBACK(webprocessterminated), c);
 
+	/* opaque black backdrop: blank page shows black, not the
+	 * default white canvas, once the web process starts painting */
+	webkit_web_view_set_background_color(v, &bgcolor);
 	return v;
 }
 
@@ -1423,6 +1427,7 @@ GtkWidget *
 createwindow(Client *c)
 {
 	char *wmstr;
+	GtkCssProvider *cssp;
 	GtkWidget *w;
 
 	if (embed) {
@@ -1436,6 +1441,18 @@ createwindow(Client *c)
 
 		gtk_window_set_default_size(GTK_WINDOW(w), winsize[0], winsize[1]);
 	}
+
+	/* paint the surf window itself black: GTK would otherwise draw
+	 * the theme white background while the web process spins up;
+	 * scoping to the window keeps popups such as the context menu on
+	 * the theme colors */
+	cssp = gtk_css_provider_new();
+	gtk_css_provider_load_from_data(cssp, "* { background-color: black; }",
+	                                -1, NULL);
+	gtk_style_context_add_provider(gtk_widget_get_style_context(w),
+	                              GTK_STYLE_PROVIDER(cssp),
+	                              GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	g_object_unref(cssp);
 
 	g_signal_connect(G_OBJECT(w), "destroy",
 	                 G_CALLBACK(destroywin), c);
