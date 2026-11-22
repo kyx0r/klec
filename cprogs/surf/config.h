@@ -22,7 +22,7 @@ static Parameter defconfig[ParameterLast] = {
 	[AccessWebcam]        =       { { .i = 0 },     },
 	[Certificate]         =       { { .i = 0 },     },
 	[CaretBrowsing]       =       { { .i = 0 },     },
-	[CookiePolicies]      =       { { .v = "@Aa" }, },
+	[CookiePolicies]      =       { { .v = "A@a" }, },
 	[DefaultCharset]      =       { { .v = "UTF-8" }, },
 	[DiskCache]           =       { { .i = 1 },     },
 	[FileURLsCrossAccess] =       { { .i = 0 },     },
