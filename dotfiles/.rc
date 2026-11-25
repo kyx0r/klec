@@ -348,9 +348,6 @@ alias reset='stty sane && reset'
 alias re='grep -i --color=auto'
 alias lre='ls -glhaS | grep -i --color=auto'
 alias ls='ls --color=auto'
-# nop fallback for non-interactive login shells
-unalias l 2>/dev/null
-l() { :; }
 alias l='ls -glhaS'
 alias lt='ls -glhat'
 alias i='vi -a'
@@ -363,8 +360,7 @@ alias da='gdb --args'
 alias rd='r2 -A -d -e dbg.bpinmaps=false -e bin.relocs.apply=true'
 alias fdmesg='dmesg -w | tee f'
 alias de='dmesg'
-alias c='cd ..'
-alias d='cd'
+alias c='d ..'
 alias thw='hwclock --systohc'
 alias va='valgrind --log-file=valog'
 alias ntp='busybox ntpd -qN -p pool.ntp.org -p time.google.com'
@@ -521,8 +517,8 @@ replace() {
 	tail -n "+$(($2 + 1))" "$1" >> "$tmp"
 	mv "$tmp" "$1"
 }
-alias cd='cdls'
-alias vv='cd -'
+alias d='cdls'
+alias vv='cdls -'
 alias csc='unset CDSTACK'
 cdsplit() {
 	old_ifs=$IFS
