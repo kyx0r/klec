@@ -23,8 +23,8 @@
 (function() {
 
 var charset = "sdfghjklertzuivbn".split("");
-var key_follow = "F";
-var key_follow_new_win = "not in use";
+var key_follow = "f";
+var key_follow_new_win = "F";
 
 function update_highlights_or_abort()
 {
@@ -94,7 +94,23 @@ function open_match()
     var choice = document.lariza_hints.box.value;
     var was_state = document.lariza_hints.state;
 
-    var elem = document.lariza_hints.labels[choice].elem;
+    var match = document.lariza_hints.labels ?
+                document.lariza_hints.labels[choice] : null;
+
+    /*
+     * The typed text need not name a label: nothing in the charset
+     * matched. Abandon instead of dereferencing a missing label, which
+     * used to throw before set_state() and leave the invisible input box
+     * focused, swallowing every further keypress.
+     */
+    if (match === undefined || match === null)
+    {
+        console.log("[hints] No label for [" + choice + "]");
+        set_state("inactive");
+        return;
+    }
+
+    var elem = match.elem;
     set_state("inactive");  /* Nukes labels. */
 
     if (elem)

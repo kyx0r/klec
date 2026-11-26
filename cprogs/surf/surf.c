@@ -1270,13 +1270,15 @@ createview(WebKitWebView *v, WebKitNavigationAction *a, Client *c)
 	Client *n;
 
 	switch (webkit_navigation_action_get_navigation_type(a)) {
-	case WEBKIT_NAVIGATION_TYPE_OTHER: /* fallthrough */
+	case WEBKIT_NAVIGATION_TYPE_OTHER:
 		/*
-		 * popup windows of type “other” are almost always triggered
-		 * by user gesture, so inverse the logic here
+		 * window.open() shows up as type “other”: keep refusing the
+		 * ones that come out of nowhere, but let through those the
+		 * user asked for, which is how the link hints script opens a
+		 * link in a new window (Shift+F).
 		 */
 /* instead of this, compare destination uri to mouse-over uri for validating window */
-		if (webkit_navigation_action_is_user_gesture(a))
+		if (!webkit_navigation_action_is_user_gesture(a))
 			return NULL;
 	case WEBKIT_NAVIGATION_TYPE_LINK_CLICKED: /* fallthrough */
 	case WEBKIT_NAVIGATION_TYPE_FORM_SUBMITTED: /* fallthrough */
