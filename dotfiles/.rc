@@ -72,7 +72,8 @@ COLOR_CODE=$((SUM % 8 + 30))
 [ "$COLOR_CODE" -eq 32 ] && COLOR_CODE=33
 [ "$COLOR_CODE" -eq 35 ] && COLOR_CODE=36
 export ID_PS1="\[\e[1;${COLOR_CODE}m\]${CHAR_VAL}\[\e[m\]"
-export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "
+ps1() { export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "; }
+ps1
 
 # git
 alias g='git'
@@ -489,10 +490,8 @@ fup() { curl -F"file=@$1" https://0x0.st/; }
 r() { grep -n -r "$@" . ; }
 calc() { exp=$(echo "$*" | sed 's/\[/\(/g; s/\]/\)/g; s/x/\*/g'); echo $((exp)); }
 rnm() { arg="$1"; shift; ffor "$(ls)" mv '$(echo $p | sed "$arg")'; }
-cdls() {
-	export PS1="$ID_PS1\[\e[1;32m\]\w\[\e[m\] "
-	\cd "$@" && l;
-}
+cdls() { ps1; \cd "$@" && l; }
+_cd() { ps1; \cd "$@"; }
 cdlsn() {
 	case $CDSTACK in *"c$1"|*"c$1"c*) true;; *) export CDSTACK="${CDSTACK}c$1" ;; esac
 	export PS1="$ID_PS1\[\e[1;35m\]$1\[\e[1;32m\]\w\[\e[m\] "
@@ -517,6 +516,7 @@ replace() {
 	tail -n "+$(($2 + 1))" "$1" >> "$tmp"
 	mv "$tmp" "$1"
 }
+alias cd='_cd'
 alias d='cdls'
 alias vv='cdls -'
 alias csc='unset CDSTACK'
